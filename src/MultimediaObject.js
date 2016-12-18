@@ -123,6 +123,9 @@ class MultimediaObject {
     if(!window.MultimediaObjectEditor) {
       if(window[conf.namespace]) {
         this.appendElementTo(document.getElementById(window[conf.namespace].containerId));
+        if(this.data.autostart) {
+          this.startAnimation();
+        }
       } else {
         this.appendElementTo();
       }
@@ -142,6 +145,7 @@ class MultimediaObject {
         }
       }
     }
+    this.data.autostart = true;
     this.applyAttributes();
   };
 
