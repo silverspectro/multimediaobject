@@ -79,7 +79,7 @@ var utils = {
     return ret;
   },
   checkEvent : function(evt) {
-    return /click|mousedown|mouseup|mousemove|change|touchstart|touchmove|touchend|input|focus|dlclick|mouseenter|mouseleave|mouseover|blur|search|submit|play|pause|canplay|progress/ig.test(evt)
+    return /click|mousedown|mouseup|mousemove|change|touchstart|touchmove|touchend|input|focus|dlclick|mouseenter|mouseleave|mouseover|mouseout|blur|search|submit|play|pause|canplay|progress/ig.test(evt)
   },
   getElementsWithAttribute : function(attribute, value, element) {
     var matchingElements = [];
