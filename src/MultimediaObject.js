@@ -145,7 +145,7 @@ class MultimediaObject {
         }
       }
     }
-    this.data.autostart = true;
+    this.data.autostart = this.data.autostart || true;
     this.applyAttributes();
   };
 
