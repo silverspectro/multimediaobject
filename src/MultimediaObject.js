@@ -68,8 +68,8 @@ class MultimediaObject {
       this.loadFromJSON(type);
       this.applyFunctions();
 
-      this.init();
       this.addDefaultParameters();
+      this.init();
       this.applyAttributes();
       this.applyStyle(this.style);
       this.applyEvents();
@@ -146,7 +146,9 @@ class MultimediaObject {
       }
     }
     this.data.autostart = this.data.autostart || true;
-    this.applyAttributes();
+    if(this.element){
+      this.applyAttributes();
+    }
   };
 
   /**
@@ -1169,10 +1171,9 @@ class MultimediaObject {
         window[conf.namespace].absoluteAssetURL = json.data.absoluteAssetURL;
       }
     } else {
-      this.data = json.data || {};
       this.data.absoluteAssetURL = typeof json.data.absoluteAssetURL !== "undefined" && json.data.absoluteAssetURL !== "" ? json.data.absoluteAssetURL : "./";
     }
-    // console.log(this.name, window[conf.namespace].absoluteAssetURL);
+    // console.log(this.name + ": ", this.data, window[conf.namespace].absoluteAssetURL);
   };
 };
 
