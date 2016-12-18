@@ -1,6 +1,7 @@
 module.exports = function() {
     return {
         namespace: "test",
+        container : "scene",
         defaultAttributes: {
             video: {
                 src: "",
