@@ -21,7 +21,8 @@ require("./lib/raf");
 var utils = require("./utils/utils"),
     Easings = require("./utils/easings"),
     eventManager = require("./lib/customEventManager"),
-    requireScript = require("./lib/requireScript");
+    requireScript = require("./lib/requireScript"),
+    conf = require("./config/config.js");
 
 /**
 * Represents a MultimediaObject
@@ -120,8 +121,8 @@ class MultimediaObject {
     this.element.innerHTML = this.innerHTML;
     this.getSortedSteps();
     if(!window.MultimediaObjectEditor) {
-      if(window._s4mConfig) {
-        this.appendElementTo(document.getElementById(window._s4mConfig.containerId));
+      if(window[conf.namespace]) {
+        this.appendElementTo(document.getElementById(window[conf.namespace].containerId));
       } else {
         this.appendElementTo();
       }
@@ -230,8 +231,8 @@ class MultimediaObject {
         if(_style < 1 || override) {
           this._style[utils.propertyWithPrefix(k)] = v;
         }
-        if(v.indexOf("{{absoluteAssetURL}}") >= 0 && window._s4mConfig) {
-          v = v.replace("{{absoluteAssetURL}}", window.MultimediaObjectEditor ? this.data.absoluteAssetURL : window._s4mConfig.absoluteAssetURL);
+        if(v.indexOf("{{absoluteAssetURL}}") >= 0 && window[conf.namespace]) {
+          v = v.replace("{{absoluteAssetURL}}", window.MultimediaObjectEditor ? this.data.absoluteAssetURL : window[conf.namespace].absoluteAssetURL);
         }
         this.element.style[utils.propertyWithPrefix(k)] = v;
       }
@@ -334,8 +335,8 @@ class MultimediaObject {
     if(attributes) {
       for(let attr in attributes) {
         let replaced = attributes[attr];
-        if(typeof attributes[attr] === "string" && attributes[attr].indexOf("{{absoluteAssetURL}}") >= 0 && window._s4mConfig) {
-          replaced = attributes[attr].replace("{{absoluteAssetURL}}", window.MultimediaObjectEditor ? this.data.absoluteAssetURL : window._s4mConfig.absoluteAssetURL);
+        if(typeof attributes[attr] === "string" && attributes[attr].indexOf("{{absoluteAssetURL}}") >= 0 && window[conf.namespace]) {
+          replaced = attributes[attr].replace("{{absoluteAssetURL}}", window.MultimediaObjectEditor ? this.data.absoluteAssetURL : window[conf.namespace].absoluteAssetURL);
         }
         this.attributes[attr] = attributes[attr];
         this.element.setAttribute(attr, (replaced || attributes[attr]));
@@ -343,8 +344,8 @@ class MultimediaObject {
     } else {
       for(let attr in this.attributes) {
         let replaced = this.attributes[attr];
-        if(typeof this.attributes[attr] === "string" && this.attributes[attr].indexOf("{{absoluteAssetURL}}") >= 0 && window._s4mConfig) {
-          replaced = this.attributes[attr].replace("{{absoluteAssetURL}}", window.MultimediaObjectEditor ? this.data.absoluteAssetURL : window._s4mConfig.absoluteAssetURL);
+        if(typeof this.attributes[attr] === "string" && this.attributes[attr].indexOf("{{absoluteAssetURL}}") >= 0 && window[conf.namespace]) {
+          replaced = this.attributes[attr].replace("{{absoluteAssetURL}}", window.MultimediaObjectEditor ? this.data.absoluteAssetURL : window[conf.namespace].absoluteAssetURL);
         }
         this.element.setAttribute(attr, (replaced || this.attributes[attr]));
       }
@@ -1157,17 +1158,17 @@ class MultimediaObject {
     this.data = json.data || {};
     this.type = json.type;
     this.data.absoluteAssetURL = json.data ? json.data.absoluteAssetURL : "";
-    if(window._s4mConfig) {
-      if(window._s4mConfig.absoluteAssetURL !== "undefined" && window._s4mConfig.absoluteAssetURL !== "") {
-        this.data.absoluteAssetURL = window._s4mConfig.absoluteAssetURL;
+    if(window[conf.namespace]) {
+      if(window[conf.namespace].absoluteAssetURL !== "undefined" && window[conf.namespace].absoluteAssetURL !== "") {
+        this.data.absoluteAssetURL = window[conf.namespace].absoluteAssetURL;
       } else if(typeof json.data.absoluteAssetURL !== "undefined" && json.data.absoluteAssetURL !== "" && json.data.absoluteAssetURL !== "./") {
-        window._s4mConfig.absoluteAssetURL = json.data.absoluteAssetURL;
+        window[conf.namespace].absoluteAssetURL = json.data.absoluteAssetURL;
       }
     } else {
       this.data = json.data || {};
       this.data.absoluteAssetURL = typeof json.data.absoluteAssetURL !== "undefined" && json.data.absoluteAssetURL !== "" ? json.data.absoluteAssetURL : "./";
     }
-    // console.log(this.name, window._s4mConfig.absoluteAssetURL);
+    // console.log(this.name, window[conf.namespace].absoluteAssetURL);
   };
 };
 
