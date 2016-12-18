@@ -22,7 +22,7 @@ var utils = require("./utils/utils"),
     Easings = require("./utils/easings"),
     eventManager = require("./lib/customEventManager"),
     requireScript = require("./lib/requireScript"),
-    conf = require("./config/config.js");
+    conf = require("./config/config.js")();
 
 /**
 * Represents a MultimediaObject
