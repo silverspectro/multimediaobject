@@ -1102,14 +1102,14 @@ class MultimediaObject {
     for(let evt in this.events) {
       let txt = this.events[evt].toString(),
           args = txt.slice(txt.indexOf("(")+1, txt.indexOf(")")).split(","),
-          body = txt.slice(txt.indexOf("{") + 1, txt.lastIndexOf("}")).replace(/\s(?!.)/gm,"");
+          body = txt.slice(txt.indexOf("{") + 1, txt.lastIndexOf("}"));
       ob.exportedEvents[evt] = { args : args.map((el)=>el.replace(/\s+|\n+|(\/\*\*\/\n)+/g,"")), body : body};
     }
 
     for(let func in this.functions) {
       let txt = this.functions[func].toString(),
           args = txt.slice(txt.indexOf("(")+1, txt.indexOf(")")).split(","),
-          body = txt.slice(txt.indexOf("{") + 1, txt.lastIndexOf("}")).replace(/\s(?!.)/gm,"");
+          body = txt.slice(txt.indexOf("{") + 1, txt.lastIndexOf("}"));
       ob.exportedFunctions[func] = { args : args.map((el)=>el.replace(/\s+|\n+|(\/\*\*\/\n)+/g,"")), body : body};
     }
 
