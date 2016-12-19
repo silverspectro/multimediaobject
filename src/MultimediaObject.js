@@ -537,7 +537,7 @@ class MultimediaObject {
     switch(type) {
       case "attributes" :
         if(this.attributes[propertieName]) {
-          this.element.setAttribute(propertieName, "");
+          this.element.removeAttribute(propertieName);
           delete this.attributes[propertieName];
         } else {
           console.log(propertieName + " attribute does not exist");
