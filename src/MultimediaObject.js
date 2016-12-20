@@ -132,7 +132,7 @@ class MultimediaObject {
     }
     if(!this.attributes.id) {
       this.applyAttributes({
-        id : this.name
+        id : this.name + "-" + this.uuid
       });
     }
   };
