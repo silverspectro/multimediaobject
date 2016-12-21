@@ -54,6 +54,9 @@ class MultimediaObject {
       this.computedAnimations = [];
       this.childs = [];
       this.dependencies = [];
+      this.animatedProps = {
+        "0.02" : {}
+      };
       this.innerHTML = "";
 
       this.fps = fps;
@@ -91,6 +94,9 @@ class MultimediaObject {
       this.computedAnimations = [];
       this.childs = [];
       this.dependencies = [];
+      this.animatedProps = {
+        "0.02" : {}
+      };
       this.innerHTML = "";
 
       this.DOMParent = null;
@@ -219,9 +225,11 @@ class MultimediaObject {
   applyStyle(properties, override) {
     var k, transforms, v,
         _style = Object.keys(this._style).length,
+        animatableProps = [],
         override = override || false;
 
     transforms = [];
+
     for (k in properties) {
       v = properties[k];
       if (utils.transformProperties.contains(k)) {
@@ -242,7 +250,15 @@ class MultimediaObject {
         }
         this.element.style[utils.propertyWithPrefix(k)] = v;
       }
+      if(utils.isAnimatableProp(k) && (!this.animations["0.02"] || !this.animations["0.02"][k])){
+        animatableProps.push({ key : k, value : v});
+      }
     }
+
+    if(animatableProps.length > 0){
+      this.addAnimationProperties(animatableProps);
+    }
+
     let z = [0,1,2],
         trans = {
           x : this._style.translateX ? utils.getNumFromString(this._style.translateX) : 0,
@@ -897,7 +913,7 @@ class MultimediaObject {
     if(animationsLength <= 0) {
       this.preInterpolateStep(fps);
     }
-    // console.log(this.computedAnimations[currentIteration]);
+    console.log(this.computedAnimations[currentIteration]);
     if(currentIteration <= 1 && !this.animationStarted) {
       eventManager.dispatchEvent(this.uuid + "-animationStart");
       this.currentIteration = currentIteration;
@@ -1017,23 +1033,23 @@ class MultimediaObject {
   addAnimationProperties(propertieArray) {
     let _parent = this,
         existingProp = Object.keys(this.animatedProps),
-        time = Number(this.timeline.secondsElapsed);
+        time = this.timeline ? Number(this.timeline.secondsElapsed) : 0;
 
     time = time === 0 ? 0.02 : time;
 
     propertieArray.forEach(function(refProp, index){
-      if(existingProp.indexOf(refProp) === -1) {
+      if(existingProp.indexOf(refProp.key ? refProp.key : refProp) === -1) {
         if(!_parent.animations[time]) {
           _parent.animations[time] = {};
         }
-        _parent.animations[time][refProp] = 0;
+        _parent.animations[time][refProp] = refProp.value || 0;
       }
     });
-    this.preInterpolateStep(this.timeline.fps || this.fps);
+    this.preInterpolateStep(this.timeline ? this.timeline.fps : this.fps);
     if(this.timeline) {
       this.timeline.computeSteps();
     }
-    if(this.timeline.UI) {
+    if(this.timeline && this.timeline.UI) {
       this.timeline.UI.insertInterface();
     }
     return this;

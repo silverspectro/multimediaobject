@@ -156,6 +156,10 @@ var utils = {
     return /position|background|display|visibility|opacity|scale|transform-origin|font-weight|line-height|letter-spacing|z-index|outline|text-align|skew|rotate|transform|overflow|border-style|border-color|word/.test(prop);
   },
 
+  isAnimatableProp : function(prop) {
+    return /background-color|translate|scale|rotate|skew|margin|padding|top|left|right|bottom|color|font-size|width|height/ig.test(prop);
+  },
+
   constrain : function(value, min, max) {
     if(min > value) {
       return min
@@ -324,6 +328,12 @@ var utils = {
       }
     }
     return colorObj;
+  },
+  toCamelCase : function(str) {
+    return str
+        .replace(/\s(.)/g, function($1) { return $1.toUpperCase(); })
+        .replace(/\s/g, '')
+        .replace(/^(.)/, function($1) { return $1.toLowerCase(); });
   }
 
 };
