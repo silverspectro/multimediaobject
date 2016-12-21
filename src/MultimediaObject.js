@@ -250,13 +250,6 @@ class MultimediaObject {
         }
         this.element.style[utils.propertyWithPrefix(k)] = v;
       }
-      if(utils.isAnimatableProp(k) && (!this.animations["0"] || !this.animations["0"][k])){
-        animatableProps.push({ key : k, value : v});
-      }
-    }
-
-    if(animatableProps.length > 0){
-      this.addAnimationProperties(animatableProps);
     }
 
     let z = [0,1,2],
@@ -1079,11 +1072,7 @@ class MultimediaObject {
     if(this.timeline) {
       this.timeline.computeSteps();
     }
-    if(this.timeline.UI) {
-      this.timeline.UI.drawTimelineProperties();
-      this.timeline.UI.actualizeAnimationUI();
-      this.timeline.UI.listenScroll();
-    }
+    this.dispatchEvent("actualize-timeline-elements", {}, true)
     return this;
   };
 
