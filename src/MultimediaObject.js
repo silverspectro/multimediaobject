@@ -250,7 +250,7 @@ class MultimediaObject {
         }
         this.element.style[utils.propertyWithPrefix(k)] = v;
       }
-      if(utils.isAnimatableProp(k) && (!this.animations["0.02"] || !this.animations["0.02"][k])){
+      if(utils.isAnimatableProp(k) && (!this.animations["0"] || !this.animations["0"][k])){
         animatableProps.push({ key : k, value : v});
       }
     }
@@ -577,6 +577,14 @@ class MultimediaObject {
           }
           delete this.style[propertieName];
           delete this._style[propertieName];
+        } else if(this.style[propertieName]) {
+          if(utils.transformProperties.contains(propertieName)){
+            this.element.style[utils.propertyWithPrefix("transform")] = "";
+            this.element.style.transform = "";
+          }
+          this.element.style[utils.propertyWithPrefix(propertieName)] = "";
+          this.element.style[propertieName] = "";
+          delete this.style[propertieName];
         } else {
           console.log(propertieName + " style does not exist");
         }
@@ -913,7 +921,7 @@ class MultimediaObject {
     if(animationsLength <= 0) {
       this.preInterpolateStep(fps);
     }
-    console.log(this.computedAnimations[currentIteration]);
+    // console.log(this.computedAnimations[currentIteration]);
     if(currentIteration <= 1 && !this.animationStarted) {
       eventManager.dispatchEvent(this.uuid + "-animationStart");
       this.currentIteration = currentIteration;
@@ -1035,14 +1043,14 @@ class MultimediaObject {
         existingProp = Object.keys(this.animatedProps),
         time = this.timeline ? Number(this.timeline.secondsElapsed) : 0;
 
-    time = time === 0 ? 0.02 : time;
+    time = time === 0 ? 0.00 : time;
 
     propertieArray.forEach(function(refProp, index){
       if(existingProp.indexOf(refProp.key ? refProp.key : refProp) === -1) {
         if(!_parent.animations[time]) {
           _parent.animations[time] = {};
         }
-        _parent.animations[time][refProp] = refProp.value || 0;
+        _parent.animations[time][refProp.key] = refProp.value || 0;
       }
     });
     this.preInterpolateStep(this.timeline ? this.timeline.fps : this.fps);
