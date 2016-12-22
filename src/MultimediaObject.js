@@ -144,7 +144,7 @@ class MultimediaObject {
   };
 
   addDefaultParameters() {
-    if(conf.defaultAttributes[this.type]) {
+    if(conf.defaultAttributes[this.type] && !this.load) {
       for(let key in conf.defaultAttributes[this.type]) {
         if(!this.attributes[key]) {
           this.attributes[key] = conf.defaultAttributes[this.type][key];
