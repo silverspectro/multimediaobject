@@ -49,7 +49,8 @@ class MultimediaObject {
       this._events = {};
       this.functions = {};
       this.breakpoints = [];
-      this.animations = {};
+      this.selectedAnimation = "default";
+      this.currentAnimation = {};
       this.animated = false;
       this.computedAnimations = [];
       this.childs = [];
@@ -88,7 +89,8 @@ class MultimediaObject {
       this.events = {};
       this._events = {};
       this.functions = {};
-      this.animations = {};
+      this.selectedAnimation = "default";
+      this.currentAnimation = {};
       this.breakpoints = [];
       this.animated = false;
       this.computedAnimations = [];
@@ -795,9 +797,9 @@ class MultimediaObject {
     for(let secIndex = 0; secIndex < this.numericSteps.length; secIndex++) {
       let second = this.numericSteps[secIndex].toFixed(2);
       let easing;
-      // console.log("animations : ", this.animations);
+      // console.log("animations : ", this.currentAnimation);
 
-      for(let prop in this.animations[second]) {
+      for(let prop in this.currentAnimation[second]) {
         if(prop !== "easing") {
           if(!this.animatedProps[prop]) {
             this.animatedProps[prop] = {};
@@ -814,9 +816,9 @@ class MultimediaObject {
           lastStep = lastStepProp ? this.animatedProps[prop].steps[lastStepProp] : undefined;
 
           if(/color/ig.test(prop)){
-            let colorObj = utils.transformToColor(this.animations[second][prop]);
+            let colorObj = utils.transformToColor(this.currentAnimation[second][prop]);
             this.animatedProps[prop].steps[second].startValue = lastStep ? lastStep.endValue : (this._style[prop] ? utils.transformToColor(this._style[prop]) : {r:0,g:0,b:0});
-            this.animatedProps[prop].steps[second].unit = typeof this.animations[second][prop] === "string" ? utils.getUnitFromString(this.animations[second][prop] || "") : "";
+            this.animatedProps[prop].steps[second].unit = typeof this.currentAnimation[second][prop] === "string" ? utils.getUnitFromString(this.currentAnimation[second][prop] || "") : "";
             this.animatedProps[prop].steps[second].endValue = colorObj;
             this.animatedProps[prop].steps[second].changeInValue = {
               r : this.animatedProps[prop].steps[second].endValue.r - this.animatedProps[prop].steps[second].startValue.r,
@@ -826,28 +828,28 @@ class MultimediaObject {
             };
             this.animatedProps[prop].steps[second].initIteration = lastStepProp ? Math.floor(lastStepProp*fps) : 0;
             this.animatedProps[prop].steps[second].totalStepIteration = Math.floor(second*fps - this.animatedProps[prop].steps[second].initIteration);
-            this.animatedProps[prop].steps[second].easing = this.animations[second].easing;
+            this.animatedProps[prop].steps[second].easing = this.currentAnimation[second].easing;
             this.animatedProps[prop].steps[second].currentIteration = 0;
-          } else if(!/\d/g.test(this.animations[second][prop])) {
+          } else if(!/\d/g.test(this.currentAnimation[second][prop])) {
             this.animatedProps[prop].steps[second].startValue = lastStep ? lastStep.endValue : (this._style[prop] ? this._style[prop] : "auto");
             this.animatedProps[prop].steps[second].unit = "";
-            this.animatedProps[prop].steps[second].endValue = this.animations[second][prop];
+            this.animatedProps[prop].steps[second].endValue = this.currentAnimation[second][prop];
             this.animatedProps[prop].steps[second].changeInValue = this.animatedProps[prop].steps[second].endValue;
             this.animatedProps[prop].steps[second].initIteration = lastStepProp ? Math.floor(lastStepProp*fps) : 0;
             this.animatedProps[prop].steps[second].totalStepIteration = Math.floor(second*fps) - this.animatedProps[prop].steps[second].initIteration;
-            this.animatedProps[prop].steps[second].easing = this.animations[second].easing;
+            this.animatedProps[prop].steps[second].easing = this.currentAnimation[second].easing;
             this.animatedProps[prop].steps[second].currentIteration = 0;
           } else {
             this.animatedProps[prop].steps[second].startValue = parseFloat(lastStep ? lastStep.endValue : (this._style[prop] ? (parseFloat(this._style[prop])) : 0));
-            this.animatedProps[prop].steps[second].unit = typeof this.animations[second][prop] === "string" && /px|%/g.test(this.animations[second][prop]) ? utils.getUnitFromString(this.animations[second][prop] || "") : "";
-            this.animatedProps[prop].steps[second].endValue = parseFloat(this.animations[second][prop]);
+            this.animatedProps[prop].steps[second].unit = typeof this.currentAnimation[second][prop] === "string" && /px|%/g.test(this.currentAnimation[second][prop]) ? utils.getUnitFromString(this.currentAnimation[second][prop] || "") : "";
+            this.animatedProps[prop].steps[second].endValue = parseFloat(this.currentAnimation[second][prop]);
             this.animatedProps[prop].steps[second].changeInValue = parseFloat(this.animatedProps[prop].steps[second].endValue - this.animatedProps[prop].steps[second].startValue);
             this.animatedProps[prop].steps[second].initIteration = lastStepProp ? Math.floor(lastStepProp*fps) : 0;
             this.animatedProps[prop].steps[second].totalStepIteration = Math.floor(second*fps) - this.animatedProps[prop].steps[second].initIteration;
-            this.animatedProps[prop].steps[second].easing = this.animations[second].easing;
+            this.animatedProps[prop].steps[second].easing = this.currentAnimation[second].easing;
             this.animatedProps[prop].steps[second].currentIteration = 0;
           }
-          // console.log(this.animations[second][prop],this.animatedProps[prop].steps[second].endValue);
+          // console.log(this.currentAnimation[second][prop],this.animatedProps[prop].steps[second].endValue);
         }
       }
     }
@@ -978,7 +980,7 @@ class MultimediaObject {
 
   runAnimation(){
     this.rafID = window.requestAnimationFrame((time) => { this.runAnimation() });
-    if(Object.keys(this.animations).length > 0) {
+    if(Object.keys(this.currentAnimation).length > 0) {
       this.now = performance.now() || Date.now();
       this.delta = this.now - this.then;
       if(!this.animationStarted) {
@@ -1054,15 +1056,18 @@ class MultimediaObject {
         time = this.timeline ? Number(this.timeline.secondsElapsed) : 0;
 
     time = time === 0 ? 0.00 : time;
+    propertieArray.forEach((refProp, index)=>{
+      let prop = refProp.key || refProp,
+          value = refProp.value || this._style[prop] || 0;
 
-    propertieArray.forEach(function(refProp, index){
-      if(existingProp.indexOf(refProp.key ? refProp.key : refProp) === -1) {
-        if(!_parent.animations[time]) {
-          _parent.animations[time] = {};
+      if(existingProp.indexOf(prop) === -1) {
+        if(!this.currentAnimation[time]) {
+          this.currentAnimation[time] = {};
         }
-        _parent.animations[time][refProp.key] = refProp.value || 0;
+        this.currentAnimation[time][prop] = value;
       }
     });
+    this.animations[this.selectedAnimation] = this.currentAnimation;
     this.preInterpolateStep(this.timeline ? this.timeline.fps : this.fps);
     if(this.timeline) {
       this.timeline.computeSteps();
@@ -1074,17 +1079,55 @@ class MultimediaObject {
   };
 
   deleteAnimationProperties(propertieArray) {
-    let _parent = this;
-
-    propertieArray.forEach(function(refProp, index){
-      for(let step in _parent.animations) {
-        for(let prop in _parent.animations[step]) {
+    propertieArray.forEach((refProp, index)=>{
+      for(let step in this.currentAnimation) {
+        for(let prop in this.currentAnimation[step]) {
           if(prop === refProp) {
-            delete _parent.animations[step][prop];
+            delete this.currentAnimation[step][prop];
           }
         }
       }
     });
+    this.animations[this.selectedAnimation] = this.currentAnimation;
+    this.preInterpolateStep(this.timeline.fps || this.fps);
+    if(this.timeline) {
+      this.timeline.computeSteps();
+    }
+    this.dispatchEvent("actualize-timeline-elements", {}, true);
+    return this;
+  };
+
+  deleteAnimationKeyframe(time, prop) {
+    if(this.currentAnimation[time]) {
+      if(prop) {
+        delete this.currentAnimation[time][prop];
+      } else {
+        delete this.currentAnimation[time];
+      }
+      if(Object.keys(this.currentAnimation[time]).length === 1) {
+        delete this.currentAnimation[time];
+      }
+      this.animations[this.selectedAnimation] = this.currentAnimation;
+      this.preInterpolateStep(this.timeline.fps || this.fps);
+      if(this.timeline) {
+        this.timeline.computeSteps();
+      }
+      this.dispatchEvent("actualize-timeline-elements", {}, true);
+    } else {
+      console.log(`animation at ${time} don't exist`);
+    }
+
+    return this;
+  };
+
+  addAnimationKeyframe(time, prop, value) {
+    if(!this.currentAnimation[time]) {
+      this.currentAnimation[time] = {};
+    }
+    this.currentAnimation[time][prop] = value;
+    this.animations[this.selectedAnimation] = this.currentAnimation;
+    // console.log(time, prop, value);
+    // console.log(this.currentAnimation, this.animations);
     this.preInterpolateStep(this.timeline.fps || this.fps);
     if(this.timeline) {
       this.timeline.computeSteps();
@@ -1094,16 +1137,16 @@ class MultimediaObject {
   };
 
   getSortedSteps() {
-    let numericSteps = Object.keys(this.animations).map(function(val,index){return parseFloat(val)});
+    let numericSteps = Object.keys(this.currentAnimation).map(function(val,index){return parseFloat(val)});
     numericSteps.sort(function(a,b){return a-b});
     this.numericSteps = numericSteps;
-    for(let t in this.animations) {
+    for(let t in this.currentAnimation) {
       // console.log(t);
       if(!/\d\.\d{2}/.test(t)) {
-        this.animations[parseFloat(t).toFixed(2)] = this.animations[t];
-        delete this.animations[t];
-      } else if(Object.keys(this.animations[t]).length === 0) {
-        delete this.animations[t];
+        this.currentAnimation[parseFloat(t).toFixed(2)] = this.currentAnimation[t];
+        delete this.currentAnimation[t];
+      } else if(Object.keys(this.currentAnimation[t]).length === 0) {
+        delete this.currentAnimation[t];
       }
     }
     return this.numericSteps;
@@ -1152,7 +1195,7 @@ class MultimediaObject {
     ob.breakpoints = this.breakpoints;
     ob.globalStyle = this.globalStyle;
     ob.data = this.data || {};
-    ob.animations = this.animations;
+    ob.currentAnimation = this.currentAnimation;
     ob.load = true;
     ob.type = this.type;
     ob.data.absoluteAssetURL = this.data.absoluteAssetURL || "./";
@@ -1163,7 +1206,13 @@ class MultimediaObject {
 
   loadFromJSON(json) {
     for(let key in json) {
+      if(key === "animations" && !json.animations.default) {
+        this.currentAnimation = json.animations;
+        this.animations = {};
+        this.animations.default = json.animations;
+      } else {
         this[key] = json[key];
+      }
     }
 
     for(let evt in json.exportedEvents) {
