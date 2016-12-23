@@ -644,11 +644,7 @@ class MultimediaObject {
             evaluatedRule += rule;
           }
         });
-
-        // console.log(evaluatedRule);
-
         evaluatedRule = new Function("return " + evaluatedRule);
-        // console.log(evaluatedRule(), breakpoint);
         if(evaluatedRule()) {
           for(let s in breakpoint.style) {
             style[s] = breakpoint.style[s];
@@ -700,7 +696,7 @@ class MultimediaObject {
       this.DOMParent = container;
       let childsLength = this.childs.length,
           i =  0;
-      // console.log(childsLength);
+
       if(childsLength > 0) {
         this.childs.forEach((child,index)=>{
           child.DOMParent = this;
@@ -712,7 +708,7 @@ class MultimediaObject {
       this.DOMParent = document.body;
       let childsLength = this.childs.length,
           i =  0;
-      // console.log(childsLength);
+
       if(childsLength > 0) {
         this.childs.forEach((child,index)=>{
           child.DOMParent = this;
@@ -723,7 +719,6 @@ class MultimediaObject {
     if(this.initializer) {
       this.initializer();
     }
-    // console.log(this.name,this.childs);
     return this;
   };
 
