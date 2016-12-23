@@ -570,6 +570,23 @@ class MultimediaObject {
           }
           delete this.style[propertieName];
           delete this._style[propertieName];
+          let containsTransformProps = (()=> {
+            let keys = Object.keys(this._style),
+                hasTransform = false;
+            for(let key = 0; key < keys.length; key++){
+              if(utils.transformProperties.contains(keys[key])) {
+                hasTransform = true;
+                break;
+              }
+            }
+            return hasTransform;
+          })();
+          if(!containsTransformProps) {
+            delete this.style["transform"];
+            delete this._style["transform"];
+            delete this.style[utils.propertyWithPrefix("transform")]
+            delete this._style[utils.propertyWithPrefix("transform")];
+          }
         } else if(this.style[propertieName]) {
           if(utils.transformProperties.contains(propertieName)){
             this.element.style[utils.propertyWithPrefix("transform")] = "";
