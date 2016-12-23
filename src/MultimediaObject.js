@@ -972,6 +972,7 @@ class MultimediaObject {
   stopAnimation() {
     this.animationStarted = false;
     this.animated = false;
+    this.counter = 0;
     window.cancelAnimationFrame(this.rafID);
     // this.childs.forEach(function(child){
     //   child.stopAnimation();
@@ -1048,6 +1049,25 @@ class MultimediaObject {
       return eventManager.dispatchEvent(this.uuid + "-" + eventName, params, this);
     }
 
+  };
+
+  changeAnimation(animationName) {
+    this.animations[this.selectedAnimation] = this.currentAnimation;
+    this.selectedAnimation = animationName;
+    this.computedSteps = [];
+    this.currentAnimation = this.animations[this.selectedAnimation] || {};
+    this.animations[this.selectedAnimation] = this.animations[this.selectedAnimation] || this.currentAnimation;
+
+    this.applyStyle(this._style);
+    this.stopAnimation();
+    this.preInterpolateStep(this.timeline ? this.timeline.fps : this.fps);
+    if(this.timeline) {
+      this.timeline.computeSteps();
+      this.timeline.stop();
+    }
+    if(this.timeline && this.timeline.UI) {
+      this.timeline.UI.insertInterface();
+    }
   };
 
   addAnimationProperties(propertieArray) {
