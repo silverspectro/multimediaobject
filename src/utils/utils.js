@@ -79,7 +79,7 @@ var utils = {
     return ret;
   },
   checkEvent : function(evt) {
-    return /click|mousedown|mouseup|mousemove|change|touchstart|touchmove|touchend|input|focus|dlclick|mouseenter|mouseleave|mouseover|mouseout|blur|search|submit|play|pause|canplay|progress/ig.test(evt)
+    return /^(click|mousedown|mouseup|mousemove|change|touchstart|touchmove|touchend|input|focus|dlclick|mouseenter|mouseleave|mouseover|mouseout|blur|search|submit|play|pause|canplay|progress)$/ig.test(evt)
   },
   getElementsWithAttribute : function(attribute, value, element) {
     var matchingElements = [];
@@ -153,11 +153,11 @@ var utils = {
   styleProperties : new Set('opacity,z-index'.split(',')),
 
   isUnitProp : function(prop) {
-    return /position|background|display|visibility|opacity|scale|transform-origin|font-weight|line-height|letter-spacing|z-index|outline|text-align|skew|rotate|transform|overflow|border-style|border-color|word/.test(prop);
+    return /position|background|display|visibility|opacity|scale|transform-origin|font-weight|line-height|letter-spacing|z-index|outline|text-align|skew|rotate|transform|overflow|border-style|border-color|word/ig.test(prop);
   },
 
   isAnimatableProp : function(prop) {
-    return /background-color|translate|scale|rotate|skew|margin|padding|top|left|right|bottom|color|font-size|width|height/ig.test(prop);
+    return /^(background-color|translate|scale|rotate|skew|margin|padding|top|left|right|bottom|color|font-size|width|height|opacity)/ig.test(prop);
   },
 
   constrain : function(value, min, max) {

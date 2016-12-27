@@ -399,60 +399,58 @@ class MultimediaObject {
   applyEvents(events) {
     if(events) {
       for(let evt in events) {
-        if(!this.events[evt] && !this._events[evt]) {
-          this.events[evt] = events[evt];
-          this._events[evt] = this.transformEvent(events[evt]);
-          if(utils.checkEvent(evt) && evt !== "swipe") {
-            this.element.addEventListener(evt, this._events[evt]);
-          } else if(evt === "swipe") {
-            let detecttouch = !!('ontouchstart' in window) || !!('ontouchstart' in document.documentElement) || !!window.ontouchstart || !!window.onmsgesturechange || (window.DocumentTouch && window.document instanceof window.DocumentTouch),
-            ob = this;
-            var userData = {};
-            ob.evtStarted = false;
-            this.evtStart = function(e) {
-              e.preventDefault();
-              let event = e.changedTouches ? e.changedTouches[0] : e;
-              ob.evtStarted = true;
-              userData = {
-                start: {
-                  left: event.pageX,
-                  top: event.pageY
-                }
-              };
-            };
-            this.evtEnd = function(e) {
-              e.preventDefault();
-              if (!ob.evtStarted) {
-                return;
-              }
-              let event = e.changedTouches ? e.changedTouches[0] : e;
-              userData.end = {
+        this.events[evt] = events[evt];
+        this._events[evt] = this.transformEvent(events[evt]);
+        if(utils.checkEvent(evt) && evt !== "swipe") {
+          this.element.addEventListener(evt, this._events[evt]);
+        } else if(evt === "swipe") {
+          let detecttouch = !!('ontouchstart' in window) || !!('ontouchstart' in document.documentElement) || !!window.ontouchstart || !!window.onmsgesturechange || (window.DocumentTouch && window.document instanceof window.DocumentTouch),
+          ob = this;
+          var userData = {};
+          ob.evtStarted = false;
+          this.evtStart = function(e) {
+            e.preventDefault();
+            let event = e.changedTouches ? e.changedTouches[0] : e;
+            ob.evtStarted = true;
+            userData = {
+              start: {
                 left: event.pageX,
                 top: event.pageY
-              };
-              userData.dx = userData.end.left - userData.start.left;
-              userData.dy = userData.end.top - userData.start.top;
-              userData.angle = Math.atan2(userData.dy, userData.dx);
-              userData.angle *= 180 / Math.PI;
-              userData.inMotion = (e.type == 'touchmove' || e.type == 'mousemove');
-              userData.direction = Math.abs(userData.dx) > Math.abs(userData.dy) ? ('' + userData.dx).indexOf('-') != -1 ? 'left' : 'right' : ('' + userData.dy).indexOf('-') != -1 ? 'top' : 'bottom';
-              ob.events[evt].apply(ob,[e,userData]);
-              if (userData.inMotion == false) {
-                ob.evtStarted = false;
               }
             };
-            if (detecttouch) {
-              this.element.addEventListener('touchstart', this.evtStart, false);
-              this.element.addEventListener('touchmove', this.evtEnd, false);
-              this.element.addEventListener('touchend', this.evtEnd, false);
-            } else {
-              this.element.addEventListener('mousedown', this.evtStart, false);
-              this.element.addEventListener('mousemove', this.evtEnd, false);
-              this.element.addEventListener('mouseup', this.evtEnd, false);
+          };
+          this.evtEnd = function(e) {
+            e.preventDefault();
+            if (!ob.evtStarted) {
+              return;
             }
+            let event = e.changedTouches ? e.changedTouches[0] : e;
+            userData.end = {
+              left: event.pageX,
+              top: event.pageY
+            };
+            userData.dx = userData.end.left - userData.start.left;
+            userData.dy = userData.end.top - userData.start.top;
+            userData.angle = Math.atan2(userData.dy, userData.dx);
+            userData.angle *= 180 / Math.PI;
+            userData.inMotion = (e.type == 'touchmove' || e.type == 'mousemove');
+            userData.direction = Math.abs(userData.dx) > Math.abs(userData.dy) ? ('' + userData.dx).indexOf('-') != -1 ? 'left' : 'right' : ('' + userData.dy).indexOf('-') != -1 ? 'top' : 'bottom';
+            ob.events[evt].apply(ob,[e,userData]);
+            if (userData.inMotion == false) {
+              ob.evtStarted = false;
+            }
+          };
+          if (detecttouch) {
+            this.element.addEventListener('touchstart', this.evtStart, false);
+            this.element.addEventListener('touchmove', this.evtEnd, false);
+            this.element.addEventListener('touchend', this.evtEnd, false);
           } else {
-            this.addListener(evt, this.events[evt]);
+            this.element.addEventListener('mousedown', this.evtStart, false);
+            this.element.addEventListener('mousemove', this.evtEnd, false);
+            this.element.addEventListener('mouseup', this.evtEnd, false);
           }
+        } else {
+          this.addListener(evt, this.events[evt]);
         }
       }
     } else {
@@ -783,7 +781,14 @@ class MultimediaObject {
 
   preInterpolateStep(fps) {
     this.getSortedSteps();
-    let totalAnimationTime = utils.getMaxOfArray(this.numericSteps),
+    let isAnimatedEvent = (string)=>{
+          if(Object.keys(this._events).join().indexOf(string) >= 0) {
+            return true;
+          } else {
+            return false;
+          }
+        },
+        totalAnimationTime = utils.getMaxOfArray(this.numericSteps),
         totalAnimationIteration = Math.floor(totalAnimationTime*fps);
 
     this.animatedProps = {};
@@ -854,56 +859,65 @@ class MultimediaObject {
     this.computedAnimations = !this.computedAnimations || [];
 
     for(let prop in this.animatedProps) {
-      for(let iteration = 0; iteration <= totalAnimationIteration; iteration++) {
-        let propNumericSteps = Object.keys(this.animatedProps[prop].steps),
-            iterationSeconds = (iteration/totalAnimationIteration)*totalAnimationTime,
-            secondsElapsed = isFinite(iterationSeconds) ? Number(iterationSeconds).toFixed(2) : 0,
-            stepSecond = utils.closest(secondsElapsed, propNumericSteps);
+      if(!isAnimatedEvent(prop)) {
+        for(let iteration = 0; iteration <= totalAnimationIteration; iteration++) {
+          let propNumericSteps = Object.keys(this.animatedProps[prop].steps),
+              iterationSeconds = (iteration/totalAnimationIteration)*totalAnimationTime,
+              secondsElapsed = isFinite(iterationSeconds) ? Number(iterationSeconds).toFixed(2) : 0,
+              stepSecond = utils.closest(secondsElapsed, propNumericSteps);
 
-        if(!this.computedAnimations[iteration]) {
-          this.computedAnimations[iteration] = {};
+          if(!this.computedAnimations[iteration]) {
+            this.computedAnimations[iteration] = {};
+          }
+          if(/color/ig.test(prop)) {
+            let easing = this.animatedProps[prop].steps[stepSecond].easing || "linearEase",
+                actualIteration = this.animatedProps[prop].steps[stepSecond].currentIteration,
+                startValue = this.animatedProps[prop].steps[stepSecond].startValue,
+                endValue = this.animatedProps[prop].steps[stepSecond].endValue,
+                changeInValue = this.animatedProps[prop].steps[stepSecond].changeInValue,
+                totalIterationValue = this.animatedProps[prop].steps[stepSecond].totalStepIteration,
+                r = actualIteration < totalIterationValue ? parseInt(Easings[easing](actualIteration, startValue.r, changeInValue.r, totalIterationValue)) : endValue.r,
+                g = actualIteration < totalIterationValue ? parseInt(Easings[easing](actualIteration, startValue.g, changeInValue.g, totalIterationValue)) : endValue.g,
+                b = actualIteration < totalIterationValue ? parseInt(Easings[easing](actualIteration, startValue.b, changeInValue.b, totalIterationValue)) : endValue.b,
+                a = actualIteration < totalIterationValue ? Number(Easings[easing](actualIteration, startValue.a, changeInValue.a, totalIterationValue).toFixed(2)) : endValue.a;
+
+            this.computedAnimations[iteration][prop] = `rgba(${r},${g},${b},${a})`;
+            // console.log(this.computedAnimations[iteration][prop]);
+          } else if(!/\d/g.test(this.animatedProps[prop].steps[stepSecond].startValue)) {
+            let easing = this.animatedProps[prop].steps[stepSecond].easing || "linearEase",
+                actualIteration = this.animatedProps[prop].steps[stepSecond].currentIteration,
+                startValue = this.animatedProps[prop].steps[stepSecond].startValue,
+                endValue = this.animatedProps[prop].steps[stepSecond].endValue,
+                changeInValue = this.animatedProps[prop].steps[stepSecond].changeInValue,
+                totalIterationValue = this.animatedProps[prop].steps[stepSecond].totalStepIteration,
+                value = actualIteration < totalIterationValue-1 ? startValue : endValue;
+                // console.log(prop,this.animatedProps[prop].steps[stepSecond].initIteration,iteration,actualIteration,totalIterationValue,totalAnimationIteration);
+
+            this.computedAnimations[iteration][prop] = value + this.animatedProps[prop].steps[stepSecond].unit;
+          } else {
+            let easing = this.animatedProps[prop].steps[stepSecond].easing || "linearEase",
+                actualIteration = this.animatedProps[prop].steps[stepSecond].currentIteration,
+                startValue = this.animatedProps[prop].steps[stepSecond].startValue,
+                endValue = this.animatedProps[prop].steps[stepSecond].endValue,
+                changeInValue = this.animatedProps[prop].steps[stepSecond].changeInValue,
+                totalIterationValue = this.animatedProps[prop].steps[stepSecond].totalStepIteration,
+                value = actualIteration < totalIterationValue-1 ? Easings[easing](actualIteration, startValue, changeInValue, totalIterationValue) : endValue;
+                // console.log(prop,this.animatedProps[prop].steps[stepSecond].initIteration,iteration,actualIteration,totalIterationValue,totalAnimationIteration);
+
+            this.computedAnimations[iteration][prop] = value + this.animatedProps[prop].steps[stepSecond].unit;
+          }
+
+          if(iteration >= this.animatedProps[prop].steps[stepSecond].initIteration && this.animatedProps[prop].steps[stepSecond].currentIteration <= this.animatedProps[prop].steps[stepSecond].totalStepIteration) {
+            this.animatedProps[prop].steps[stepSecond].currentIteration++;
+          }
         }
-        // console.log(this.animatedProps[prop].steps[stepSecond]);
-        if(/color/ig.test(prop)) {
-          let easing = this.animatedProps[prop].steps[stepSecond].easing || "linearEase",
-              actualIteration = this.animatedProps[prop].steps[stepSecond].currentIteration,
-              startValue = this.animatedProps[prop].steps[stepSecond].startValue,
-              endValue = this.animatedProps[prop].steps[stepSecond].endValue,
-              changeInValue = this.animatedProps[prop].steps[stepSecond].changeInValue,
-              totalIterationValue = this.animatedProps[prop].steps[stepSecond].totalStepIteration,
-              r = actualIteration < totalIterationValue ? parseInt(Easings[easing](actualIteration, startValue.r, changeInValue.r, totalIterationValue)) : endValue.r,
-              g = actualIteration < totalIterationValue ? parseInt(Easings[easing](actualIteration, startValue.g, changeInValue.g, totalIterationValue)) : endValue.g,
-              b = actualIteration < totalIterationValue ? parseInt(Easings[easing](actualIteration, startValue.b, changeInValue.b, totalIterationValue)) : endValue.b,
-              a = actualIteration < totalIterationValue ? Number(Easings[easing](actualIteration, startValue.a, changeInValue.a, totalIterationValue).toFixed(2)) : endValue.a;
-
-          this.computedAnimations[iteration][prop] = `rgba(${r},${g},${b},${a})`;
-          // console.log(this.computedAnimations[iteration][prop]);
-        } else if(!/\d/g.test(this.animatedProps[prop].steps[stepSecond].startValue)) {
-          let easing = this.animatedProps[prop].steps[stepSecond].easing || "linearEase",
-              actualIteration = this.animatedProps[prop].steps[stepSecond].currentIteration,
-              startValue = this.animatedProps[prop].steps[stepSecond].startValue,
-              endValue = this.animatedProps[prop].steps[stepSecond].endValue,
-              changeInValue = this.animatedProps[prop].steps[stepSecond].changeInValue,
-              totalIterationValue = this.animatedProps[prop].steps[stepSecond].totalStepIteration,
-              value = actualIteration < totalIterationValue-1 ? startValue : endValue;
-              // console.log(prop,this.animatedProps[prop].steps[stepSecond].initIteration,iteration,actualIteration,totalIterationValue,totalAnimationIteration);
-
-          this.computedAnimations[iteration][prop] = value + this.animatedProps[prop].steps[stepSecond].unit;
-        } else {
-          let easing = this.animatedProps[prop].steps[stepSecond].easing || "linearEase",
-              actualIteration = this.animatedProps[prop].steps[stepSecond].currentIteration,
-              startValue = this.animatedProps[prop].steps[stepSecond].startValue,
-              endValue = this.animatedProps[prop].steps[stepSecond].endValue,
-              changeInValue = this.animatedProps[prop].steps[stepSecond].changeInValue,
-              totalIterationValue = this.animatedProps[prop].steps[stepSecond].totalStepIteration,
-              value = actualIteration < totalIterationValue-1 ? Easings[easing](actualIteration, startValue, changeInValue, totalIterationValue) : endValue;
-              // console.log(prop,this.animatedProps[prop].steps[stepSecond].initIteration,iteration,actualIteration,totalIterationValue,totalAnimationIteration);
-
-          this.computedAnimations[iteration][prop] = value + this.animatedProps[prop].steps[stepSecond].unit;
-        }
-
-        if(iteration >= this.animatedProps[prop].steps[stepSecond].initIteration && this.animatedProps[prop].steps[stepSecond].currentIteration <= this.animatedProps[prop].steps[stepSecond].totalStepIteration) {
-          this.animatedProps[prop].steps[stepSecond].currentIteration++;
+      } else {
+        for(let sec in this.animatedProps[prop].steps) {
+          let iterationSec = Math.floor(Number(sec)*this.fps);
+          if(!this.computedAnimations[iterationSec]) {
+            this.computedAnimations[iterationSec] = {};
+          }
+          this.computedAnimations[iterationSec][prop] = this.animatedProps[prop].steps[sec].endValue;
         }
       }
     }
@@ -932,12 +946,12 @@ class MultimediaObject {
     if(currentIteration <= 1 && !this.animationStarted) {
       eventManager.dispatchEvent(this.uuid + "-animationStart");
       this.currentIteration = currentIteration;
-      this.applyStyle(this.computedAnimations[currentIteration]);
+      this.applyIteration();
     }
     if(animationsLength > currentIteration) {
       this.animated = true;
       this.currentIteration = currentIteration;
-      this.applyStyle(this.computedAnimations[currentIteration]);
+      this.applyIteration();
       this.checkBreakpoints();
     }
     if(animationsLength === currentIteration) {
@@ -948,6 +962,19 @@ class MultimediaObject {
   // console.log(animationsLength, currentIteration, this.animationStarted);
 
     return this;
+  };
+
+  applyIteration() {
+    if(this.computedAnimations[this.currentIteration]){
+      let style = Object.create(this.computedAnimations[this.currentIteration]);
+      for(let key in this.computedAnimations[this.currentIteration]) {
+        if(!utils.isAnimatableProp(key)) {
+          this.dispatchEvent(key, {value:this.computedAnimations[this.currentIteration][key]});
+          delete style[key];
+        }
+      }
+      this.applyStyle(style);
+    }
   };
 
   restartAnimation() {
@@ -1026,7 +1053,7 @@ class MultimediaObject {
 
   addListener(listener, fn) {
     let that = this;
-    return eventManager.addListener(this.uuid + "-" + listener, ()=>fn.call(that));
+    return eventManager.addListener(this.uuid + "-" + listener, fn);
   };
 
   removeListener(listener, fn) {
