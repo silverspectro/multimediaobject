@@ -291,7 +291,7 @@ var utils = {
   },
 
   getUnitFromString : function(str) {
-    let u = str.match(/%|px/g),
+    let u = str.match(/%|px|vh|vw|em/g),
         unit = u !== null ? u[0] : "px";
     return unit;
   },
