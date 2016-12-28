@@ -994,7 +994,7 @@ class MultimediaObject {
   stopAnimation() {
     this.animationStarted = false;
     this.animated = false;
-    this.counter = 0;
+    // this.counter = 0;
     window.cancelAnimationFrame(this.rafID);
     // this.childs.forEach(function(child){
     //   child.stopAnimation();
