@@ -128,7 +128,6 @@ class MultimediaObject {
     this.generate(utils.Atoms(this.type));
     this.element.innerHTML = this.innerHTML;
     this.getSortedSteps();
-    console.log(this.DOMParent instanceof MultimediaObject);
     if(!window.MultimediaObjectEditor && !(this.DOMParent instanceof MultimediaObject)) {
       if(window[conf.namespace]) {
         this.appendElementTo(document.getElementById(window[conf.namespace].containerId));
