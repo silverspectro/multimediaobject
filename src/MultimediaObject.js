@@ -128,14 +128,15 @@ class MultimediaObject {
     this.generate(utils.Atoms(this.type));
     this.element.innerHTML = this.innerHTML;
     this.getSortedSteps();
-    if(!window.MultimediaObjectEditor) {
+    console.log(this.DOMParent instanceof MultimediaObject);
+    if(!window.MultimediaObjectEditor && !(this.DOMParent instanceof MultimediaObject)) {
       if(window[conf.namespace]) {
         this.appendElementTo(document.getElementById(window[conf.namespace].containerId));
-        if(this.data.autostart) {
-          this.startAnimation();
-        }
       } else {
         this.appendElementTo();
+      }
+      if(this.data.autostart) {
+        this.startAnimation();
       }
     }
     if(!this.attributes.id) {
@@ -1276,8 +1277,8 @@ class MultimediaObject {
           // child.data.absoluteAssetURL = json.data.absoluteAssetURL || "";
           child.data.absoluteAssetURL = child.data.absoluteAssetURL || "";
         }
+        child.DOMParent = this;
         this.childs[index] = new MultimediaObject(child);
-        this.childs[index].DOMParent = this;
       });
     }
 
