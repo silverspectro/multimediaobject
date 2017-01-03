@@ -1058,16 +1058,28 @@ class MultimediaObject {
     }
   };
 
-  addListener(listener, fn) {
+  addListener(listener, fn, glob) {
     let that = this;
-    return eventManager.addListener(this.uuid + "-" + listener, fn);
+    if(glob) {
+      return eventManager.addListener(listener, fn);
+    } else {
+      return eventManager.addListener(this.uuid + "-" + listener, fn);
+    }
   };
 
-  removeListener(listener, fn) {
-    if(fn instanceof Function) {
-      return eventManager.removeListener(this.uuid + "-" + listener, fn);
+  removeListener(listener, fn, glob) {
+    if(glob) {
+      if(fn instanceof Function) {
+        return eventManager.removeListener(listener, fn);
+      } else {
+        return eventManager.removeListener(listener, this[fn]);
+      }
     } else {
-      return eventManager.removeListener(this.uuid + "-" + listener, this[fn]);
+      if(fn instanceof Function) {
+        return eventManager.removeListener(this.uuid + "-" + listener, fn);
+      } else {
+        return eventManager.removeListener(this.uuid + "-" + listener, this[fn]);
+      }
     }
   };
 
