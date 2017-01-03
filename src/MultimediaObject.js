@@ -397,6 +397,53 @@ class MultimediaObject {
   */
 
   applyEvents(events) {
+    let applySwipeEvent = (evt)=> {
+      let detecttouch = !!('ontouchstart' in window) || !!('ontouchstart' in document.documentElement) || !!window.ontouchstart || !!window.onmsgesturechange || (window.DocumentTouch && window.document instanceof window.DocumentTouch),
+      ob = this;
+      var userData = {};
+      ob.evtStarted = false;
+      this.evtStart = function(e) {
+        e.preventDefault();
+        let event = e.changedTouches ? e.changedTouches[0] : e;
+        ob.evtStarted = true;
+        userData = {
+          start: {
+            left: event.pageX,
+            top: event.pageY
+          }
+        };
+      };
+      this.evtEnd = function(e) {
+        e.preventDefault();
+        if (!ob.evtStarted) {
+          return;
+        }
+        let event = e.changedTouches ? e.changedTouches[0] : e;
+        userData.end = {
+          left: event.pageX,
+          top: event.pageY
+        };
+        userData.dx = userData.end.left - userData.start.left;
+        userData.dy = userData.end.top - userData.start.top;
+        userData.angle = Math.atan2(userData.dy, userData.dx);
+        userData.angle *= 180 / Math.PI;
+        userData.inMotion = (e.type == 'touchmove' || e.type == 'mousemove');
+        userData.direction = Math.abs(userData.dx) > Math.abs(userData.dy) ? ('' + userData.dx).indexOf('-') != -1 ? 'left' : 'right' : ('' + userData.dy).indexOf('-') != -1 ? 'top' : 'bottom';
+        ob.events[evt].apply(ob,[e,userData]);
+        if (userData.inMotion == false) {
+          ob.evtStarted = false;
+        }
+      };
+      if (detecttouch) {
+        this.element.addEventListener('touchstart', this.evtStart, false);
+        this.element.addEventListener('touchmove', this.evtEnd, false);
+        this.element.addEventListener('touchend', this.evtEnd, false);
+      } else {
+        this.element.addEventListener('mousedown', this.evtStart, false);
+        this.element.addEventListener('mousemove', this.evtEnd, false);
+        this.element.addEventListener('mouseup', this.evtEnd, false);
+      }
+    };
     if(events) {
       for(let evt in events) {
         this.events[evt] = events[evt];
@@ -404,51 +451,7 @@ class MultimediaObject {
         if(utils.checkEvent(evt) && evt !== "swipe") {
           this.element.addEventListener(evt, this._events[evt]);
         } else if(evt === "swipe") {
-          let detecttouch = !!('ontouchstart' in window) || !!('ontouchstart' in document.documentElement) || !!window.ontouchstart || !!window.onmsgesturechange || (window.DocumentTouch && window.document instanceof window.DocumentTouch),
-          ob = this;
-          var userData = {};
-          ob.evtStarted = false;
-          this.evtStart = function(e) {
-            e.preventDefault();
-            let event = e.changedTouches ? e.changedTouches[0] : e;
-            ob.evtStarted = true;
-            userData = {
-              start: {
-                left: event.pageX,
-                top: event.pageY
-              }
-            };
-          };
-          this.evtEnd = function(e) {
-            e.preventDefault();
-            if (!ob.evtStarted) {
-              return;
-            }
-            let event = e.changedTouches ? e.changedTouches[0] : e;
-            userData.end = {
-              left: event.pageX,
-              top: event.pageY
-            };
-            userData.dx = userData.end.left - userData.start.left;
-            userData.dy = userData.end.top - userData.start.top;
-            userData.angle = Math.atan2(userData.dy, userData.dx);
-            userData.angle *= 180 / Math.PI;
-            userData.inMotion = (e.type == 'touchmove' || e.type == 'mousemove');
-            userData.direction = Math.abs(userData.dx) > Math.abs(userData.dy) ? ('' + userData.dx).indexOf('-') != -1 ? 'left' : 'right' : ('' + userData.dy).indexOf('-') != -1 ? 'top' : 'bottom';
-            ob.events[evt].apply(ob,[e,userData]);
-            if (userData.inMotion == false) {
-              ob.evtStarted = false;
-            }
-          };
-          if (detecttouch) {
-            this.element.addEventListener('touchstart', this.evtStart, false);
-            this.element.addEventListener('touchmove', this.evtEnd, false);
-            this.element.addEventListener('touchend', this.evtEnd, false);
-          } else {
-            this.element.addEventListener('mousedown', this.evtStart, false);
-            this.element.addEventListener('mousemove', this.evtEnd, false);
-            this.element.addEventListener('mouseup', this.evtEnd, false);
-          }
+          applySwipeEvent(evt);
         } else {
           this.addListener(evt, this.events[evt]);
         }
@@ -456,11 +459,15 @@ class MultimediaObject {
     } else {
       if(Object.keys(this.events).length > 0) {
         for(let evt in this.events) {
-          this._events[evt] = this.transformEvent(this.events[evt]);
-          if(utils.checkEvent(evt)) {
-            this.element.addEventListener(evt, this._events[evt]);
+          if(evt === "swipe") {
+            applySwipeEvent(evt);
           } else {
-            this.addListener(evt, this.events[evt]);
+            this._events[evt] = this.transformEvent(this.events[evt]);
+            if(utils.checkEvent(evt)) {
+              this.element.addEventListener(evt, this._events[evt]);
+            } else {
+              this.addListener(evt, this.events[evt]);
+            }
           }
         }
       }
