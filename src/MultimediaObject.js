@@ -994,7 +994,9 @@ class MultimediaObject {
     this.animationStarted = true;
     this.runAnimation();
     this.childs.forEach(function(child){
-      child.startAnimation();
+      if(child.data.autostart){
+        child.startAnimation();
+      }
     });
   };
 
