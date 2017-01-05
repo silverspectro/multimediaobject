@@ -1061,7 +1061,7 @@ class MultimediaObject {
   };
 
   addListener(listener, fn, glob) {
-    let that = this;
+    glob = glob || /global/ig.test(listener);
     if(glob) {
       return eventManager.addListener(listener, fn);
     } else {
@@ -1070,6 +1070,7 @@ class MultimediaObject {
   };
 
   removeListener(listener, fn, glob) {
+    glob = glob || /global/ig.test(listener);
     if(glob) {
       if(fn instanceof Function) {
         return eventManager.removeListener(listener, fn);
@@ -1086,6 +1087,7 @@ class MultimediaObject {
   };
 
   dispatchEvent(eventName, params, glob) {
+    glob = glob || /global/ig.test(eventName);
     if(glob) {
       return eventManager.dispatchEvent(eventName, params, this);
     } else {
