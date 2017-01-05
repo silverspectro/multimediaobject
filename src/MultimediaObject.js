@@ -128,14 +128,18 @@ class MultimediaObject {
     this.generate(utils.Atoms(this.type));
     this.element.innerHTML = this.innerHTML;
     this.getSortedSteps();
-    if(!window.MultimediaObjectEditor && !(this.DOMParent instanceof MultimediaObject)) {
-      if(window[conf.namespace]) {
-        this.appendElementTo(document.getElementById(window[conf.namespace].containerId));
-      } else {
-        this.appendElementTo();
+    if(!window.MultimediaObjectEditor) {
+      if(!(this.DOMParent instanceof MultimediaObject)) {
+        if(window[conf.namespace]) {
+          this.appendElementTo(document.getElementById(window[conf.namespace].containerId));
+        } else {
+          this.appendElementTo();
+        }
       }
       if(this.data.autostart) {
         this.startAnimation();
+      } else {
+        this.addListener("startAfterPreload", ()=>this.startAnimation(), true);
       }
     }
     if(!this.attributes.id) {
@@ -153,7 +157,7 @@ class MultimediaObject {
         }
       }
     }
-    this.data.autostart = this.data.autostart || true;
+    this.data.autostart = typeof this.data.autostart === "undefined" ? true : this.data.autostart;
     if(this.element){
       this.applyAttributes();
     }
@@ -516,10 +520,16 @@ class MultimediaObject {
     if(this.events[eventName]) {
       if(utils.checkEvent(eventName)) {
         this.element.removeEventListener(eventName, this._events[eventName]);
+      } else if(eventName === "swipe") {
+        this.element.removeEventListener('touchstart', this.evtStart);
+        this.element.removeEventListener('touchmove', this.evtEnd);
+        this.element.removeEventListener('touchend', this.evtEnd);
+        this.element.removeEventListener('mousedown', this.evtStart);
+        this.element.removeEventListener('mousemove', this.evtEnd);
+        this.element.removeEventListener('mouseup', this.evtEnd);
       } else {
         this.removeListener(eventName, this._events[eventName]);
       }
-
     } else {
       console.log("Event does not exist");
     }
@@ -993,11 +1003,11 @@ class MultimediaObject {
   startAnimation() {
     this.animationStarted = true;
     this.runAnimation();
-    this.childs.forEach(function(child){
-      if(child.data.autostart){
-        child.startAnimation();
-      }
-    });
+    // this.childs.forEach(function(child){
+    //   if(child.data.autostart){
+    //     child.startAnimation();
+    //   }
+    // });
   };
 
   stopAnimation() {
@@ -1297,6 +1307,7 @@ class MultimediaObject {
         if(json.data) {
           child.data = child.data || {};
           // child.data.absoluteAssetURL = json.data.absoluteAssetURL || "";
+          child.data.autostart = eval(child.data.autostart);
           child.data.absoluteAssetURL = child.data.absoluteAssetURL || "";
         }
         child.DOMParent = this;
@@ -1308,6 +1319,7 @@ class MultimediaObject {
     this.data = json.data || {};
     this.type = json.type;
     this.data.absoluteAssetURL = json.data ? json.data.absoluteAssetURL : "";
+    this.data.autostart = eval(json.data.autostart);
     if(window[conf.namespace]) {
       if(window[conf.namespace].absoluteAssetURL !== "undefined" && window[conf.namespace].absoluteAssetURL !== "") {
         this.data.absoluteAssetURL = window[conf.namespace].absoluteAssetURL;
