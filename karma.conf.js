@@ -1,8 +1,8 @@
 // Karma configuration
 // Generated on Tue Jan 17 2017 19:19:58 GMT+0100 (Romance Standard Time)
-var dirname = "./";
+const dirname = './';
 
-module.exports = function(config) {
+module.exports = function (config) {
   config.set({
 
     // base path that will be used to resolve all patterns (eg. files, exclude)
@@ -19,7 +19,7 @@ module.exports = function(config) {
       'test/test-main.js',
       'test/lib/Set.js',
       'test/lib/utils.js',
-      {pattern: 'test/**/*.js', included: true}
+      { pattern: 'test/**/*.js', included: true },
     ],
 
 
@@ -31,20 +31,20 @@ module.exports = function(config) {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-      'test/**/*.js' : ['babel'],
+      'test/**/*.js': ['babel'],
     },
 
     babelPreprocessor: {
       options: {
         presets: ['es2015'],
-        sourceMap: 'inline'
+        sourceMap: 'inline',
       },
-      filename: function (file) {
+      filename(file) {
         return file.originalPath.replace(/\.js$/, '.es5.js');
       },
-      sourceFileName: function (file) {
+      sourceFileName(file) {
         return file.originalPath;
-      }
+      },
     },
 
 
@@ -82,6 +82,6 @@ module.exports = function(config) {
 
     // Concurrency level
     // how many browser should be started simultaneous
-    concurrency: Infinity
-  })
-}
+    concurrency: Infinity,
+  });
+};

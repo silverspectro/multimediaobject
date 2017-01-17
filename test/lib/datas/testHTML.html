@@ -1,0 +1,1795 @@
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <meta name="format-detection" content="telephone=no">
+  <title>MultimediaObjectEditor</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+<style type="text/css">/*! normalize.css v4.0.0 | MIT License | github.com/necolas/normalize.css */
+
+/**
+ * 1. Change the default font family in all browsers (opinionated).
+ * 2. Prevent adjustments of font size after orientation changes in IE and iOS.
+ */
+
+
+html {
+  font-family: sans-serif; /* 1 */
+  -ms-text-size-adjust: 100%; /* 2 */
+  -webkit-text-size-adjust: 100%; /* 2 */
+}
+
+/**
+ * Remove the margin in all browsers (opinionated).
+ */
+
+body {
+  margin: 0;
+}
+
+/* HTML5 display definitions
+   ========================================================================== */
+
+/**
+ * Add the correct display in IE 9-.
+ * 1. Add the correct display in Edge, IE, and Firefox.
+ * 2. Add the correct display in IE.
+ */
+
+article,
+aside,
+details, /* 1 */
+figcaption,
+figure,
+footer,
+header,
+main, /* 2 */
+menu,
+nav,
+section,
+summary { /* 1 */
+  display: block;
+}
+
+/**
+ * Add the correct display in IE 9-.
+ */
+
+audio,
+canvas,
+progress,
+video {
+  display: inline-block;
+}
+
+/**
+ * Add the correct display in iOS 4-7.
+ */
+
+audio:not([controls]) {
+  display: none;
+  height: 0;
+}
+
+/**
+ * Add the correct vertical alignment in Chrome, Firefox, and Opera.
+ */
+
+progress {
+  vertical-align: baseline;
+}
+
+/**
+ * Add the correct display in IE 10-.
+ * 1. Add the correct display in IE.
+ */
+
+template, /* 1 */
+[hidden] {
+  display: none;
+}
+
+/* Links
+   ========================================================================== */
+
+/**
+ * Remove the gray background on active links in IE 10.
+ */
+
+a {
+  background-color: transparent;
+}
+
+/**
+ * Remove the outline on focused links when they are also active or hovered
+ * in all browsers (opinionated).
+ */
+
+a:active,
+a:hover {
+  outline-width: 0;
+}
+
+/* Text-level semantics
+   ========================================================================== */
+
+/**
+ * 1. Remove the bottom border in Firefox 39-.
+ * 2. Add the correct text decoration in Chrome, Edge, IE, Opera, and Safari.
+ */
+
+abbr[title] {
+  border-bottom: none; /* 1 */
+  text-decoration: underline; /* 2 */
+  text-decoration: underline dotted; /* 2 */
+}
+
+/**
+ * Prevent the duplicate application of `bolder` by the next rule in Safari 6.
+ */
+
+b,
+strong {
+  font-weight: inherit;
+}
+
+/**
+ * Add the correct font weight in Chrome, Edge, and Safari.
+ */
+
+b,
+strong {
+  font-weight: bolder;
+}
+
+/**
+ * Add the correct font style in Android 4.3-.
+ */
+
+dfn {
+  font-style: italic;
+}
+
+/**
+ * Correct the font size and margin on `h1` elements within `section` and
+ * `article` contexts in Chrome, Firefox, and Safari.
+ */
+
+h1 {
+  font-size: 2em;
+  margin: 0.67em 0;
+}
+
+/**
+ * Add the correct background and color in IE 9-.
+ */
+
+mark {
+  background-color: #ff0;
+  color: #000;
+}
+
+/**
+ * Add the correct font size in all browsers.
+ */
+
+small {
+  font-size: 80%;
+}
+
+/**
+ * Prevent `sub` and `sup` elements from affecting the line height in
+ * all browsers.
+ */
+
+sub,
+sup {
+  font-size: 75%;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+
+sub {
+  bottom: -0.25em;
+}
+
+sup {
+  top: -0.5em;
+}
+
+/* Embedded content
+   ========================================================================== */
+
+/**
+ * Remove the border on images inside links in IE 10-.
+ */
+
+img {
+  border-style: none;
+}
+
+/**
+ * Hide the overflow in IE.
+ */
+
+svg:not(:root) {
+  overflow: hidden;
+}
+
+/* Grouping content
+   ========================================================================== */
+
+/**
+ * 1. Correct the inheritance and scaling of font size in all browsers.
+ * 2. Correct the odd `em` font sizing in all browsers.
+ */
+
+code,
+kbd,
+pre,
+samp {
+  font-family: monospace, monospace; /* 1 */
+  font-size: 1em; /* 2 */
+}
+
+/**
+ * Add the correct margin in IE 8.
+ */
+
+figure {
+  margin: 1em 40px;
+}
+
+/**
+ * 1. Add the correct box sizing in Firefox.
+ * 2. Show the overflow in Edge and IE.
+ */
+
+hr {
+  box-sizing: content-box; /* 1 */
+  height: 0; /* 1 */
+  overflow: visible; /* 2 */
+}
+
+/* Forms
+   ========================================================================== */
+
+/**
+ * Change font properties to `inherit` in all browsers (opinionated).
+ */
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+/**
+ * Restore the font weight unset by the previous rule.
+ */
+
+optgroup {
+  font-weight: bold;
+}
+
+/**
+ * Show the overflow in IE.
+ * 1. Show the overflow in Edge.
+ * 2. Show the overflow in Edge, Firefox, and IE.
+ */
+
+button,
+input, /* 1 */
+select { /* 2 */
+  overflow: visible;
+}
+
+/**
+ * Remove the margin in Safari.
+ * 1. Remove the margin in Firefox and Safari.
+ */
+
+button,
+input,
+select,
+textarea { /* 1 */
+  margin: 0;
+}
+
+/**
+ * Remove the inheritence of text transform in Edge, Firefox, and IE.
+ * 1. Remove the inheritence of text transform in Firefox.
+ */
+
+button,
+select { /* 1 */
+  text-transform: none;
+}
+
+/**
+ * Change the cursor in all browsers (opinionated).
+ */
+
+button,
+[type="button"],
+[type="reset"],
+[type="submit"] {
+  cursor: pointer;
+}
+
+/**
+ * Restore the default cursor to disabled elements unset by the previous rule.
+ */
+
+[disabled] {
+  cursor: default;
+}
+
+/**
+ * 1. Prevent a WebKit bug where (2) destroys native `audio` and `video`
+ *    controls in Android 4.
+ * 2. Correct the inability to style clickable types in iOS.
+ */
+
+button,
+html [type="button"], /* 1 */
+[type="reset"],
+[type="submit"] {
+  -webkit-appearance: button; /* 2 */
+}
+
+/**
+ * Remove the inner border and padding in Firefox.
+ */
+
+button::-moz-focus-inner,
+input::-moz-focus-inner {
+  border: 0;
+  padding: 0;
+}
+
+/**
+ * Restore the focus styles unset by the previous rule.
+ */
+
+button:-moz-focusring,
+input:-moz-focusring {
+  outline: 1px dotted ButtonText;
+}
+
+/**
+ * Change the border, margin, and padding in all browsers (opinionated).
+ */
+
+fieldset {
+  border: 1px solid #c0c0c0;
+  margin: 0 2px;
+  padding: 0.35em 0.625em 0.75em;
+}
+
+/**
+ * 1. Correct the text wrapping in Edge and IE.
+ * 2. Correct the color inheritance from `fieldset` elements in IE.
+ * 3. Remove the padding so developers are not caught out when they zero out
+ *    `fieldset` elements in all browsers.
+ */
+
+legend {
+  box-sizing: border-box; /* 1 */
+  color: inherit; /* 2 */
+  display: table; /* 1 */
+  max-width: 100%; /* 1 */
+  padding: 0; /* 3 */
+  white-space: normal; /* 1 */
+}
+
+/**
+ * Remove the default vertical scrollbar in IE.
+ */
+
+textarea {
+  overflow: auto;
+}
+
+/**
+ * 1. Add the correct box sizing in IE 10-.
+ * 2. Remove the padding in IE 10-.
+ */
+
+[type="checkbox"],
+[type="radio"] {
+  box-sizing: border-box; /* 1 */
+  padding: 0; /* 2 */
+}
+
+/**
+ * Correct the cursor style of increment and decrement buttons in Chrome.
+ */
+
+[type="number"]::-webkit-inner-spin-button,
+[type="number"]::-webkit-outer-spin-button {
+  height: auto;
+}
+
+/**
+ * Correct the odd appearance of search inputs in Chrome and Safari.
+ */
+
+[type="search"] {
+  -webkit-appearance: textfield;
+}
+
+/**
+ * Remove the inner padding and cancel buttons in Chrome on OS X and
+ * Safari on OS X.
+ */
+
+[type="search"]::-webkit-search-cancel-button,
+[type="search"]::-webkit-search-decoration {
+  -webkit-appearance: none;
+}
+
+/**
+ * reset list margin
+ */
+ul, menu, dir {
+   display: block;
+   list-style-type: none;
+   -webkit-margin-before: 0em;
+   -webkit-margin-after: 0em;
+   -webkit-margin-start: 0px;
+   -webkit-margin-end: 0px;
+   -webkit-padding-start: 0px;
+}
+
+@-moz-document url-prefix() {
+  ul,li {
+    padding:0;
+    margin:0;
+  }
+}
+</style><style type="text/css">@import url(https://fonts.googleapis.com/css?family=Source+Code+Pro:300,500,700);</style><style type="text/css">/* VARIABLES */
+input[type=range].timeline-slider {
+  position: absolute;
+  display: block;
+  -webkit-appearance: none;
+  width: 75%;
+  margin: 14.5px 0;
+  left: 2%; }
+
+input[type=range].timeline-slider:focus {
+  outline: none; }
+
+input[type=range].timeline-slider::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 3px;
+  cursor: pointer;
+  box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
+  background: #484d4d;
+  border-radius: 25px;
+  border: 0px solid #010101; }
+
+input[type=range].timeline-slider::-webkit-slider-thumb {
+  box-shadow: 0px 0px 1px #670000, 0px 0px 0px #810000;
+  border: 0px solid #ff1e00;
+  height: 32px;
+  width: 10px;
+  border-radius: 15px;
+  background: #e72b47;
+  cursor: pointer;
+  -webkit-appearance: none;
+  margin-top: -14.5px; }
+
+input[type=range].timeline-slider:focus::-webkit-slider-runnable-track {
+  background: #bbbfbf; }
+
+input[type=range].timeline-slider::-moz-range-track {
+  width: 100%;
+  height: 3px;
+  cursor: pointer;
+  box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
+  background: #484d4d;
+  border-radius: 25px;
+  border: 0px solid #010101; }
+
+input[type=range].timeline-slider::-moz-range-thumb {
+  box-shadow: 0px 0px 1px #670000, 0px 0px 0px #810000;
+  border: 0px solid #ff1e00;
+  height: 32px;
+  width: 10px;
+  border-radius: 15px;
+  background: rgba(255, 67, 95, 0.93);
+  cursor: pointer; }
+
+input[type=range].timeline-slider::-ms-track {
+  width: 100%;
+  height: 3px;
+  cursor: pointer;
+  background: transparent;
+  border-color: transparent;
+  color: transparent; }
+
+input[type=range].timeline-slider::-ms-fill-lower {
+  background: #000000;
+  border: 0px solid #010101;
+  border-radius: 50px;
+  box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d; }
+
+input[type=range].timeline-slider::-ms-fill-upper {
+  background: #484d4d;
+  border: 0px solid #010101;
+  border-radius: 50px;
+  box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d; }
+
+input[type=range].timeline-slider::-ms-thumb {
+  box-shadow: 0px 0px 1px #670000, 0px 0px 0px #810000;
+  border: 0px solid #ff1e00;
+  height: 32px;
+  width: 10px;
+  border-radius: 15px;
+  background: rgba(255, 67, 95, 0.93);
+  cursor: pointer;
+  height: 3px; }
+
+input[type=range].timeline-slider:focus::-ms-fill-lower {
+  background: #484d4d; }
+
+input[type=range].timeline-slider:focus::-ms-fill-upper {
+  background: #bbbfbf; }
+
+.container {
+  position: static;
+  width: 100%;
+  height: auto;
+  display: block; }
+
+.container-inline {
+  position: static;
+  width: auto;
+  height: auto;
+  display: inline-block; }
+
+i {
+  transform-origin: center; }
+
+#timelineUI {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 45%;
+  padding: 0.7em 0 0 0;
+  background-color: #2e2c2c;
+  transform: translate3d(0, 85%, 0);
+  overflow: hidden;
+  z-index: 100; }
+  #timelineUI #timeline-header {
+    z-index: 10;
+    height: 50px; }
+  #timelineUI #timeline-core {
+    height: 90%; }
+  #timelineUI #timeline-controls-container {
+    position: absolute;
+    width: auto;
+    height: auto;
+    top: 0;
+    right: 0;
+    padding: 0.8em; }
+    #timelineUI #timeline-controls-container button {
+      outline: none;
+      border: none;
+      background-color: #484d4d;
+      color: #e72b47;
+      padding: 0.3em; }
+    #timelineUI #timeline-controls-container input[type="number"] {
+      background-color: transparent;
+      font-weight: 300;
+      width: 55px;
+      border: none;
+      outline: none;
+      color: #e72b47; }
+      #timelineUI #timeline-controls-container input[type="number"]:nth-child(2) {
+        width: 60px; }
+  #timelineUI #step-container {
+    position: static;
+    display: block;
+    width: 100%;
+    min-height: 25px;
+    height: 100%;
+    background-color: #383838;
+    overflow-y: auto; }
+    #timelineUI #step-container button {
+      outline: none;
+      border: none;
+      float: right;
+      background-color: transparent;
+      color: #e72b47;
+      font-size: 1.2em;
+      transition: all 0.5s; }
+    #timelineUI #step-container button:hover {
+      color: #f22b10;
+      background-color: #484d4d; }
+    #timelineUI #step-container .timeline-propertie-add {
+      margin-top: -16px; }
+    #timelineUI #step-container #step-container-list {
+      list-style: none;
+      display: block;
+      width: 15%;
+      min-height: 100%;
+      background-color: #2e2c2c;
+      float: left;
+      z-index: 1; }
+      #timelineUI #step-container #step-container-list li.timeline-element {
+        display: block;
+        width: auto;
+        min-height: 25px;
+        font-weight: 300;
+        font-size: 0.8em;
+        vertical-align: top;
+        background-color: #2e2c2c;
+        color: #e72b47;
+        border-top: 1px solid rgba(144, 144, 144, 0.2);
+        padding-top: 0.5em; }
+        #timelineUI #step-container #step-container-list li.timeline-element.selected {
+          background-color: #484d4d;
+          color: #dddbed; }
+          #timelineUI #step-container #step-container-list li.timeline-element.selected button {
+            color: #dddbed; }
+        #timelineUI #step-container #step-container-list li.timeline-element select {
+          background-color: #3e3b3b;
+          font-weight: 300;
+          width: 100%;
+          border: none;
+          outline: none;
+          color: #e72b47; }
+        #timelineUI #step-container #step-container-list li.timeline-element:last-child {
+          margin-bottom: 150px; }
+        #timelineUI #step-container #step-container-list li.timeline-element p {
+          -webkit-margin-before: 0em;
+          -webkit-margin-after: 0em;
+          margin: 0em 0 0 0.5em; }
+        #timelineUI #step-container #step-container-list li.timeline-element .propertie-element {
+          display: block;
+          clear: both; }
+          #timelineUI #step-container #step-container-list li.timeline-element .propertie-element .timeline-propertie-add-keyframes {
+            margin-top: 0; }
+    #timelineUI #step-container #timeline-interface {
+      position: static;
+      width: 85%;
+      height: 100%;
+      z-index: 1;
+      float: right; }
+      #timelineUI #step-container #timeline-interface li.seconds {
+        position: relative;
+        border-right: 1px solid rgba(144, 144, 144, 0.2);
+        height: 100%;
+        z-index: 0;
+        margin-top: -45px;
+        float: left; }
+      #timelineUI #step-container #timeline-interface li.propertie-timeline-element {
+        position: relative;
+        display: block;
+        width: 100%;
+        height: 1px;
+        min-height: 1px;
+        left: 0;
+        border-bottom: 1px solid rgba(144, 144, 144, 0.2);
+        background-color: transparent;
+        z-index: 2; }
+        #timelineUI #step-container #timeline-interface li.propertie-timeline-element .timeline-progress {
+          position: absolute;
+          width: 0%;
+          height: 1.1px;
+          min-height: 1.1px;
+          top: 1px;
+          left: 0;
+          background-color: #ab0f26; }
+        #timelineUI #step-container #timeline-interface li.propertie-timeline-element .timeline-keyframe {
+          position: absolute;
+          width: 10px;
+          height: 10px;
+          top: -5px;
+          background-color: #e72b47;
+          border: 2px solid #ab0f26;
+          transform-origin: center;
+          z-index: 2; }
+          #timelineUI #step-container #timeline-interface li.propertie-timeline-element .timeline-keyframe form {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center; }
+          #timelineUI #step-container #timeline-interface li.propertie-timeline-element .timeline-keyframe select {
+            background-color: #3e3b3b;
+            font-weight: 300;
+            width: 100%;
+            border: none;
+            outline: none;
+            color: #e72b47; }
+          #timelineUI #step-container #timeline-interface li.propertie-timeline-element .timeline-keyframe input {
+            height: 15px;
+            font-size: 0.9em;
+            vertical-align: top; }
+          #timelineUI #step-container #timeline-interface li.propertie-timeline-element .timeline-keyframe input[type="text"] {
+            background-color: transparent;
+            font-weight: 300;
+            width: 100%;
+            border: none;
+            outline: none;
+            color: white;
+            text-align: center;
+            margin-top: -2px; }
+          #timelineUI #step-container #timeline-interface li.propertie-timeline-element .timeline-keyframe input[type="color"] {
+            background-color: transparent;
+            font-weight: 300;
+            width: 35px;
+            border: none;
+            outline: none;
+            margin-top: -2px; }
+          #timelineUI #step-container #timeline-interface li.propertie-timeline-element .timeline-keyframe input[type="submit"] {
+            background-color: #ab0f26;
+            font-weight: 300;
+            width: 100%;
+            border: none;
+            outline: none;
+            color: white;
+            float: right;
+            padding: 0;
+            transition: background-color 0.2s ease-out;
+            font-size: 0.8em;
+            vertical-align: top;
+            text-align: center; }
+          #timelineUI #step-container #timeline-interface li.propertie-timeline-element .timeline-keyframe input[type="submit"]:hover {
+            background-color: #7e0819; }
+
+.select-wrapper {
+  display: block;
+  width: 130px;
+  height: 80px;
+  background-color: #3e3b3b;
+  overflow-y: auto;
+  overflow-x: hidden; }
+  .select-wrapper select {
+    background-color: #3e3b3b;
+    font-weight: 300;
+    width: 100px;
+    border: none;
+    outline: none;
+    color: #e72b47; }
+
+#submit-new-propertie, #submit-new-breakpoint {
+  display: block;
+  outline: none;
+  border: 1px solid #e72b47;
+  background-color: transparent;
+  color: #e72b47;
+  font-size: 1.2em;
+  margin: 0.5em auto 0 auto;
+  transition: color,background-color 0.5s; }
+
+#submit-new-propertie:hover, #submit-new-breakpoint:hover {
+  color: white;
+  background-color: #e72b47; }
+
+.timeline-element .element-properties {
+  overflow: hidden; }
+
+#toolbar {
+  position: fixed;
+  width: auto;
+  height: auto;
+  top: 5%;
+  left: 0;
+  padding: 0.8em;
+  background-color: #2e2c2c; }
+
+#add-button, #event-button {
+  position: fixed;
+  width: 3.2em;
+  height: 3.2em;
+  border-radius: 100%;
+  border: none;
+  outline: none;
+  background-color: #e72b47;
+  text-align: center;
+  transition: background-color 0.4s; }
+  #add-button i, #event-button i {
+    color: white;
+    font-size: 2em;
+    margin-top: 0.1em;
+    transition: color 0.4s; }
+  #add-button:hover, #event-button:hover {
+    background-color: white; }
+    #add-button:hover i, #event-button:hover i {
+      color: #ab0f26; }
+  #add-button.selected, #event-button.selected {
+    background-color: #484d4d;
+    color: #665a5a; }
+
+.icon-list li {
+  outline: none;
+  border: none;
+  background-color: #484d4d;
+  color: #e72b47;
+  padding: 0.6em;
+  margin: 0.4em 0 0.4em 0;
+  cursor: pointer; }
+  .icon-list li:hover {
+    background-color: #3e3b3b; }
+  .icon-list li.selected {
+    background-color: #3e3b3b; }
+
+.multimedia-panel {
+  position: fixed;
+  width: 300px;
+  height: auto;
+  top: 5%;
+  right: 0;
+  z-index: 10; }
+  .multimedia-panel .header {
+    display: flex;
+    flex-direction: row;
+    align-content: baseline;
+    justify-content: space-between;
+    width: 100%;
+    height: auto;
+    color: #f22b10;
+    background-color: #2e2c2c; }
+    .multimedia-panel .header h4 {
+      width: 90%;
+      margin: 5px 0 5px 5px;
+      padding: 0;
+      font-weight: 300;
+      cursor: all-scroll; }
+    .multimedia-panel .header ul {
+      display: flex;
+      width: 10%;
+      margin: 4px 5px 0 0;
+      flex-direction: row-reverse;
+      cursor: pointer; }
+      .multimedia-panel .header ul li {
+        transition: transform 0.4s cubic-bezier(0.53, 0.37, 0.61, 1.36); }
+  .multimedia-panel .container {
+    display: flex;
+    width: 100%;
+    height: auto;
+    max-height: 600px;
+    overflow: auto;
+    transform-origin: center top;
+    transition: transform 0.4s cubic-bezier(0.88, 0.22, 0.57, 0.96);
+    background-color: #484d4d;
+    flex-direction: column;
+    font-family: "Source Code Pro", Arial, sans;
+    font-size: 0.8em; }
+    .multimedia-panel .container button {
+      outline: none;
+      border: none;
+      background-color: transparent;
+      color: #e72b47;
+      font-size: 1.2em;
+      transition: color 0.5s;
+      float: right;
+      transition: background-color 0.4s 0s linear; }
+      .multimedia-panel .container button:hover {
+        background-color: #2e2c2c; }
+    .multimedia-panel .container h5 {
+      width: 95%;
+      color: #f22b10;
+      font-weight: 500;
+      margin-left: 5px;
+      padding-top: 30px;
+      font-size: 1.4em;
+      text-transform: uppercase;
+      -webkit-margin-before: 0;
+      -webkit-margin-after: 0.3em; }
+      .multimedia-panel .container h5:first-child {
+        padding-top: 5px; }
+    .multimedia-panel .container h6 {
+      width: 100%;
+      color: #f22b10;
+      font-weight: 500;
+      margin-left: 5px;
+      font-size: 1.1em;
+      text-transform: uppercase;
+      -webkit-margin-before: 0;
+      -webkit-margin-after: 0.3em; }
+    .multimedia-panel .container div {
+      display: flex;
+      width: 90%;
+      height: auto;
+      margin: 5px auto 0 auto; }
+      .multimedia-panel .container div label {
+        width: 40%;
+        color: #dacbc9; }
+      .multimedia-panel .container div input {
+        width: 55%;
+        margin-left: 4%;
+        background-color: transparent;
+        outline: none;
+        border: 0px;
+        border-bottom: 3px solid #2e2c2c;
+        color: #e72b47;
+        text-align: right;
+        transition: background-color 0.4s ease-out;
+        padding: 0.2em; }
+        .multimedia-panel .container div input:focus {
+          background-color: #2e2c2c; }
+        .multimedia-panel .container div input[disabled]:not(.css-panel__cache-file) {
+          border-bottom: 1px;
+          background-color: #2e2c2c; }
+      .multimedia-panel .container div select {
+        width: auto;
+        margin-left: 4%;
+        background-color: transparent;
+        outline: none;
+        border: 0px;
+        border-bottom: 3px solid #2e2c2c;
+        color: #e72b47;
+        text-align: right;
+        padding: 0.2em; }
+      .multimedia-panel .container div form {
+        position: relative;
+        width: 55%;
+        margin-left: 4%; }
+        .multimedia-panel .container div form input {
+          position: absolute;
+          width: 100%;
+          margin-left: 0;
+          opacity: 0;
+          top: 0;
+          right: 0;
+          z-index: 2; }
+        .multimedia-panel .container div form .css-panel__cache-file {
+          top: 3px;
+          opacity: 1;
+          z-index: 1; }
+      .multimedia-panel .container div.propertie-wrap {
+        flex-direction: column;
+        overflow-y: auto;
+        overflow-x: hidden; }
+
+#element-panel {
+  top: 15%;
+  left: 0; }
+  #element-panel .container {
+    overflow-x: hidden; }
+    #element-panel .container div {
+      display: block;
+      position: relative;
+      cursor: pointer;
+      color: #ba2239; }
+      #element-panel .container div .selected {
+        background-color: #777d7e;
+        color: #dddbed; }
+        #element-panel .container div .selected button {
+          color: #dddbed; }
+        #element-panel .container div .selected:hover {
+          color: #dddbed;
+          font-weight: bold; }
+      #element-panel .container div button {
+        float: none; }
+      #element-panel .container div:hover {
+        color: #f22b10;
+        font-weight: bold; }
+
+#dependencie-panel {
+  display: none; }
+  #dependencie-panel .container input {
+    width: 100%; }
+
+#querie-panel {
+  display: none;
+  height: auto;
+  right: 0; }
+  #querie-panel .querie-panel__cache-file {
+    top: 3px;
+    opacity: 1;
+    z-index: 1; }
+  #querie-panel .propertie-wrap {
+    padding: 15px 10px 0px 10px;
+    border-top: 1px solid #3e3b3b; }
+
+#event-panel.multimedia-panel, #function-panel.multimedia-panel {
+  display: none;
+  width: 300px; }
+  #event-panel.multimedia-panel .container div, #function-panel.multimedia-panel .container div {
+    display: block; }
+    #event-panel.multimedia-panel .container div:after, #function-panel.multimedia-panel .container div:after {
+      clear: both; }
+    #event-panel.multimedia-panel .container div textarea, #function-panel.multimedia-panel .container div textarea {
+      width: 100%;
+      height: 150px;
+      background-color: #2e2c2c;
+      color: #e72b47;
+      border: none; }
+    #event-panel.multimedia-panel .container div *, #function-panel.multimedia-panel .container div * {
+      margin: 0.3em 0; }
+  #event-panel.multimedia-panel .container .propertie-wrap, #function-panel.multimedia-panel .container .propertie-wrap {
+    flex-direction: column; }
+    #event-panel.multimedia-panel .container .propertie-wrap div, #function-panel.multimedia-panel .container .propertie-wrap div {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      height: auto; }
+      #event-panel.multimedia-panel .container .propertie-wrap div label, #function-panel.multimedia-panel .container .propertie-wrap div label {
+        width: 70%;
+        align-self: flex-start; }
+      #event-panel.multimedia-panel .container .propertie-wrap div button, #function-panel.multimedia-panel .container .propertie-wrap div button {
+        align-self: flex-end; }
+    #event-panel.multimedia-panel .container .propertie-wrap *, #function-panel.multimedia-panel .container .propertie-wrap * {
+      margin: 0.3em 0; }
+
+#css-panel {
+  width: 400px; }
+  #css-panel .container {
+    display: block;
+    max-height: 80vh; }
+
+#function-panel .container, #event-panel .container, #querie-panel .container, #element-panel .container {
+  display: block;
+  max-height: 30vh; }
+
+#menu-bar {
+  position: fixed;
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 25px;
+  top: 0;
+  left: 0;
+  background-color: #2e2c2c;
+  color: #e72b47;
+  z-index: 100; }
+  #menu-bar #info-bar {
+    position: absolute;
+    width: 500px;
+    left: 50%;
+    transform: translate(-50%, 0);
+    text-align: center; }
+    #menu-bar #info-bar #orientation-changer {
+      display: block;
+      cursor: pointer;
+      margin: 0 auto;
+      width: 30px;
+      padding: 3px;
+      border-radius: 100%;
+      border: 1px solid #e72b47;
+      transition: padding 0.3s ease-out;
+      transform-origin: center; }
+      #menu-bar #info-bar #orientation-changer:hover {
+        padding: 6px; }
+    #menu-bar #info-bar select {
+      background-color: #3e3b3b;
+      font-weight: 300;
+      width: 100px;
+      border: none;
+      outline: none;
+      color: #e72b47; }
+    #menu-bar #info-bar input {
+      width: 70px;
+      margin-right: 4%;
+      background-color: transparent;
+      outline: none;
+      border: none;
+      color: #e72b47;
+      text-align: right;
+      transition: background-color 0.4s ease-out;
+      padding: 0.2em; }
+      #menu-bar #info-bar input:focus {
+        background-color: #2e2c2c; }
+      #menu-bar #info-bar input[type="checkbox"] {
+        position: absolute;
+        -webkit-appearance: inherit;
+        content: '';
+        top: 5px;
+        width: 15px;
+        height: 15px;
+        border: 1px solid #e72b47;
+        transition: border-width 0.2s ease-out;
+        color: red; }
+        #menu-bar #info-bar input[type="checkbox"]:checked {
+          border-width: 3px; }
+          #menu-bar #info-bar input[type="checkbox"]:checked:after {
+            left: 14px;
+            top: -10px; }
+        #menu-bar #info-bar input[type="checkbox"]:after {
+          position: relative;
+          content: "overflow";
+          color: red;
+          font-size: 0.6em;
+          left: 15px;
+          top: -8px; }
+  #menu-bar .menu-element {
+    padding: 0.2em 0.6em;
+    cursor: pointer;
+    transition: all 0.3s; }
+    #menu-bar .menu-element p {
+      -webkit-margin-before: 0em;
+      -webkit-margin-after: 0em;
+      font-weight: bolder;
+      margin: 0; }
+    #menu-bar .menu-element:hover {
+      background-color: #484d4d;
+      color: #f22b10; }
+    #menu-bar .menu-element .menu-list {
+      width: 100%;
+      transform: scale(1, 0);
+      transform-origin: top;
+      transition: transform 0.3s;
+      background-color: #2e2c2c;
+      margin: 0;
+      margin-left: -10px; }
+      #menu-bar .menu-element .menu-list .menu-list-element {
+        transition: background-color 0.3s;
+        padding: 0.2em 0.6em;
+        width: 100%;
+        background-color: #2e2c2c; }
+        #menu-bar .menu-element .menu-list .menu-list-element:hover {
+          background-color: #484d4d; }
+    #menu-bar .menu-element:hover .menu-list {
+      transform: scale(1, 1); }
+
+#modal-overlay {
+  background: #000;
+  filter: alpha(opacity=60);
+  height: 100%;
+  left: 0;
+  -moz-opacity: 0.6;
+  -webkit-opacity: 0.6;
+  -ms-filter: alpha(opacity=60);
+  opacity: 0.6;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  z-index: 998; }
+
+#modal-container {
+  position: fixed;
+  background: #2e2c2c;
+  border: 1px solid #ababab;
+  box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2);
+  height: auto;
+  padding: 10px;
+  font-family: arial,sans-serif;
+  font-size: 14px;
+  position: absolute;
+  z-index: 998;
+  color: #e72b47;
+  opacity: 0;
+  transform: scale(0.5); }
+  #modal-container .select-wrapper {
+    height: auto; }
+  #modal-container textarea {
+    width: 100%;
+    height: 150px;
+    background-color: #f2f2f2;
+    color: #2e2c2c;
+    margin-top: 10px;
+    border: none; }
+
+#modal-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 20px;
+  padding-top: 5px;
+  overflow: hidden;
+  clear: both;
+  background-color: #3e3b3b; }
+
+#modal-close::before {
+  content: " ";
+  cursor: pointer;
+  display: block;
+  filter: alpha(opacity=100);
+  -moz-opacity: 1;
+  -webkit-opacity: 1;
+  -ms-filter: alpha(opacity=100);
+  opacity: 1;
+  float: right;
+  height: 14px;
+  width: 13px;
+  color: #e72b47;
+  border: 1px solid #e72b47;
+  font-size: 1.4em;
+  border-radius: 50%;
+  margin-right: 5px; }
+
+#modal-close::after {
+  content: "x";
+  cursor: pointer;
+  display: block;
+  filter: alpha(opacity=100);
+  -moz-opacity: 1;
+  -webkit-opacity: 1;
+  -ms-filter: alpha(opacity=100);
+  opacity: 1;
+  float: right;
+  height: 12px;
+  width: 12px;
+  margin-right: -13px;
+  margin-top: -1px;
+  color: #e72b47;
+  text-align: center; }
+
+#modal-close:hover {
+  filter: alpha(opacity=100);
+  -moz-opacity: 1.0;
+  -webkit-opacity: 1.0;
+  -ms-filter: alpha(opacity=100);
+  opacity: 1.0; }
+
+#modal-content {
+  display: block;
+  margin-top: 30px;
+  padding: 0 20px 10px 20px;
+  z-index: 999; }
+  #modal-content input[type="text"] {
+    background-color: #2e2c2c;
+    font-weight: 300;
+    width: 110px;
+    border: 1px solid #e72b47;
+    outline: none;
+    margin: 0.6em auto;
+    padding: 5px 10px;
+    color: #e72b47; }
+
+#modal-container.modal-loading {
+  background: #2e2c2c url(public/images/ffcba6b9d77d6e9420b1efa7ac327a35.gif) no-repeat center center; }
+
+.scene-info__bars, .scene-info__bars-corners {
+  position: absolute;
+  background-color: #2e2c2c;
+  transition: background-color 0.5s; }
+  .scene-info__bars:hover, .scene-info__bars-corners:hover {
+    background-color: #484d4d; }
+
+.scene-info__bars-corners {
+  width: 25px;
+  height: 25px; }
+
+#scene-info__top-left-bar {
+  border-top-left-radius: 100%;
+  cursor: se-resize; }
+
+#scene-info__top-right-bar {
+  border-top-right-radius: 100%;
+  cursor: sw-resize; }
+
+#scene-info__bottom-left-bar {
+  border-bottom-left-radius: 100%;
+  cursor: ne-resize; }
+
+#scene-info__bottom-right-bar {
+  border-bottom-right-radius: 100%;
+  cursor: nw-resize; }
+
+#scene-info__bottom-bar {
+  height: 25px;
+  cursor: n-resize; }
+
+#scene-info__top-bar {
+  height: 25px;
+  cursor: n-resize; }
+
+#scene-info__left-bar, #scene-info__right-bar {
+  width: 25px;
+  cursor: e-resize; }
+
+#project-editor {
+  position: fixed;
+  top: 5%;
+  left: 1%;
+  width: auto;
+  height: auto;
+  background-color: #2e2c2c;
+  padding: 1em; }
+  #project-editor label {
+    color: #665a5a;
+    margin-bottom: 0.5em; }
+
+#explorer-form {
+  width: 100%;
+  height: 350px; }
+  #explorer-form .select-wrapper {
+    height: 95%;
+    width: 100%; }
+    #explorer-form .select-wrapper ul li {
+      cursor: pointer; }
+      #explorer-form .select-wrapper ul li[data-selected="selected"] {
+        background-color: #4b40b4;
+        color: #dddbed; }
+
+#project-input {
+  width: 90%;
+  background-color: transparent;
+  outline: none;
+  border: 0px;
+  border-bottom: 3px solid #2e2c2c;
+  color: #e72b47;
+  text-align: left;
+  transition: background-color 0.4s ease-out;
+  padding: 0.2em;
+  text-transform: uppercase; }
+  #project-input:focus {
+    background-color: #484d4d; }
+
+#modal-content #new-project-input {
+  position: absolute;
+  width: 55%;
+  left: 50%;
+  top: 30%;
+  transform: translate(-50%, -50%);
+  outline: none;
+  border: 0px;
+  border-bottom: 3px solid #3e3b3b;
+  color: #e72b47;
+  transition: background-color 0.4s ease-out;
+  padding: 0.2em; }
+  #modal-content #new-project-input:focus {
+    background-color: #3e3b3b; }
+
+#modal-content #new-project-button {
+  display: block;
+  position: absolute;
+  left: 50%;
+  top: 55%;
+  transform: translate(-50%, -50%);
+  outline: none;
+  border: 1px solid #e72b47;
+  background-color: transparent;
+  color: #e72b47;
+  font-size: 1.2em;
+  padding: 0.2em 0.5em;
+  transition: all 0.4s 0s linear; }
+  #modal-content #new-project-button:hover {
+    background-color: #e72b47;
+    color: white; }
+
+#component-selector {
+  display: flex;
+  flex-direction: row;
+  text-align: center;
+  align-items: baseline;
+  flex-wrap: wrap; }
+  #component-selector li {
+    width: 20%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    word-wrap: break-word;
+    word-break: break-word;
+    padding: 1em; }
+    #component-selector li iframe {
+      width: 90px;
+      height: 150px;
+      margin: 0.5em auto; }
+    #component-selector li button {
+      width: 100%;
+      outline: none;
+      border: none;
+      background-color: transparent;
+      color: #e72b47;
+      font-size: 1.2em;
+      transition: all 0.5s; }
+    #component-selector li button:hover {
+      color: #f22b10;
+      background-color: #484d4d; }
+
+#galerie-panel {
+  width: 400px;
+  height: auto;
+  left: 0;
+  top: auto;
+  top: 55%; }
+  #galerie-panel .upload {
+    display: block;
+    width: 100%;
+    order: 0;
+    flex-shrink: 0; }
+  #galerie-panel .filedrag {
+    display: none;
+    font-weight: bold;
+    text-align: center;
+    padding: 1em 0.5em;
+    margin: 1em 0em 1em 2.5em;
+    color: #dacbc9;
+    border: 2px dashed #dacbc9;
+    border-radius: 7px;
+    cursor: default; }
+  #galerie-panel .filedrag.hover {
+    color: #f00;
+    border-color: #f00;
+    border-style: solid;
+    box-shadow: inset 0 3px 4px #888; }
+  #galerie-panel .container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 100%;
+    max-height: 35vh;
+    overflow-x: hidden;
+    overflow-y: auto; }
+    #galerie-panel .container .galerie__image,
+    #galerie-panel .container .galerie__video {
+      position: relative;
+      display: inline-flex;
+      width: auto;
+      width: 85px;
+      height: 60px;
+      margin: 20px 0 10px 10px; }
+      #galerie-panel .container .galerie__image:before,
+      #galerie-panel .container .galerie__video:before {
+        content: attr(data-content);
+        position: absolute;
+        top: 65px;
+        color: #dacbc9;
+        font-size: 0.9em;
+        max-width: 115px;
+        word-wrap: break-word; }
+
+*:not(input) {
+  -webkit-user-select: none;
+  /* Chrome all / Safari all */
+  -moz-user-select: none;
+  /* Firefox all */
+  -ms-user-select: none;
+  /* IE 10+ */
+  user-select: none;
+  /* Likely future */ }
+
+input {
+  -webkit-user-select: all;
+  /* Chrome all / Safari all */
+  -moz-user-select: all;
+  /* Firefox all */
+  -ms-user-select: all;
+  /* IE 10+ */
+  user-select: all;
+  /* Likely future */ }
+
+html, body {
+  font-family: "Source Code Pro", Arial, sans;
+  font-weight: 500;
+  color: #202020;
+  background-color: #171c20; }
+
+body {
+  overflow-x: hidden; }
+
+#scene {
+  position: fixed;
+  width: 320px;
+  height: 568px;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  border: 1px solid #b4b4b4;
+  background-color: white;
+  overflow: visible; }
+</style></head>
+
+<body>
+  <div id="scene" style="width: 320px; height: 568px;"><div id="abarth-intervideo" style="position: absolute; width: 100%; height: 100%; background-color: rgb(1, 1, 1);"><div id="time-tracking" style="position: absolute;"></div><div id="s4m-html5-library" style="position: absolute;"></div><video id="videoAd" src="http://builder.sam4m.com:8000/ABARTH_INTERVIDEO_FR2_20170111/public/images/video.mp4" type="video/mp4" muted="true" playsinline="true" preload="true" style="position: absolute; width: 100%; top: 15%;"></video><div id="preloader" style="position: absolute; width: 100%; height: 100%; top: 0px; left: 0px; background-color: rgb(255, 255, 255); z-index: 999; display: block;"><div id="preloader__cube-container" style="position: absolute; width: 70px; height: 70px; top: 50%; left: 50%; transform: translate3d(-50%, -50%, 0px) rotate(360deg) scale(1, 1); background-color: rgb(206, 206, 206);"><div id="cube1" style="position: absolute; width: 50%; height: 50%; top: 0px; left: 0px; background-color: rgb(51, 158, 247);"></div><div id="cube2" style="position: absolute; width: 50%; height: 50%; right: 0px; background-color: rgb(44, 139, 235);"></div><div id="cube3" style="position: absolute; width: 50%; height: 50%; bottom: 0px; background-color: rgb(52, 135, 237);"></div><div id="cube4" style="position: absolute; width: 50%; height: 50%; right: 0px; bottom: 0px; background-color: rgb(84, 179, 235);"></div></div></div><div id="logo" style="position: absolute; width: 15%; height: 9%; background-size: contain; background-repeat: no-repeat; background-position: center center; background-image: url(&quot;http://builder.sam4m.com:8000/ABARTH_INTERVIDEO_FR2_20170111/public/images/LOGO.png&quot;); left: 50%; top: 3%; transform: translate3d(-50%, 0px, 0px) rotate(0deg) scale(1, 1);"></div><div id="videotracking" style="position: fixed;"></div><div id="car" style="position: absolute; width: 100%; height: 40%; background-size: cover; background-repeat: no-repeat; background-position: center center; background-image: url(&quot;http://builder.sam4m.com:8000/ABARTH_INTERVIDEO_FR2_20170111/public/images/car.jpg&quot;); left: 0%; top: 50%;"></div><div id="footer-cta" style="position: absolute; width: 100%; height: 9%; background-size: contain; background-repeat: no-repeat; background-position: center center; background-image: url(&quot;http://builder.sam4m.com:8000/ABARTH_INTERVIDEO_FR2_20170111/public/images/footer.png&quot;); bottom: 1%; min-height: 45px;"></div></div></div>
+  <div id="project-editor">
+  <label>Project Name</label>
+  <input id="project-input" type="text" placeholder="No project selected" disabled="">
+</div>
+
+  <div id="toolbar" style="left: 901px; top: 210px;">
+  <ul class="icon-list">
+    <li class="tool" id="move-tool" data-tool="move"><i class="fa fa-arrows" aria-hidden="true" data-tool="move"></i></li>
+    <li class="tool" id="crop-tool" data-tool="crop"><i class="fa fa-crop" aria-hidden="true" data-tool="crop"></i></li>
+    <li class="tool" id="rotate-tool" data-tool="rotate"><i class="fa fa-refresh" aria-hidden="true" data-tool="rotate"></i></li>
+  </ul>
+</div>
+
+  <div id="timelineUI">
+  <div class="container" id="timeline-header">
+    <input type="range" id="timeline-slider" class="timeline-slider" min="0" max="301.2" step="1" value="0">
+    <div id="timeline-controls-container">
+      <input name="time" id="timeline-time" type="number" min="0" max="5.02" step="0.01" value="0" disabled="">
+      <input name="max-time" id="timeline-time-max" type="number" min="0" step="0.1" value="0">
+      <button name="play" id="timeline-play" class="timeline-button"><i class="fa fa-play"></i></button>
+      <button name="pause" id="timeline-pause" class="timeline-button"><i class="fa fa-pause"></i></button>
+      <button name="stop" id="timeline-stop" class="timeline-button"><i class="fa fa-stop"></i></button>
+      <button name="button-godown" id="timeline-godown" class="timeline-button"><i class="fa fa-arrow-up"></i></button>
+    </div>
+  </div>
+  <div class="container" id="timeline-core">
+    <div id="step-container">
+      <ul id="step-container-list"><li class="timeline-element" data-uuid="9e0db967-f3c9-47b0-9fcb-82dae164f053">
+  <ul class="element-properties" id="element-9e0db967-f3c9-47b0-9fcb-82dae164f053">
+    <p class="openProperties">0 - abarth-intervideo</p>
+    <button class="timeline-propertie-add"><i class="fa fa-plus-square-o" aria-hidden="true"></i></button>
+    <select class="animation-selection">
+      <option value="default" selected="">default</option>
+<option value="new-animation">new animation</option>
+    </select>
+  </ul>
+</li>
+<li class="timeline-element" data-uuid="fa38b4e1-201a-4dc3-857d-6c206dc8653f">
+  <ul class="element-properties" id="element-fa38b4e1-201a-4dc3-857d-6c206dc8653f">
+    <p class="openProperties">1 - time-tracking</p>
+    <button class="timeline-propertie-add"><i class="fa fa-plus-square-o" aria-hidden="true"></i></button>
+    <select class="animation-selection">
+      <option value="default" selected="">default</option>
+<option value="new-animation">new animation</option>
+    </select>
+  </ul>
+</li>
+<li class="timeline-element" data-uuid="87b683af-19f5-4db8-9296-0c0afd30d878">
+  <ul class="element-properties" id="element-87b683af-19f5-4db8-9296-0c0afd30d878">
+    <p class="openProperties">2 - s4m-html5-library</p>
+    <button class="timeline-propertie-add"><i class="fa fa-plus-square-o" aria-hidden="true"></i></button>
+    <select class="animation-selection">
+      <option value="default" selected="">default</option>
+<option value="new-animation">new animation</option>
+    </select>
+  </ul>
+</li>
+<li class="timeline-element" data-uuid="1e542d84-f09e-4ee6-a747-a9c63f3c23f4">
+  <ul class="element-properties" id="element-1e542d84-f09e-4ee6-a747-a9c63f3c23f4">
+    <p class="openProperties">3 - videoAd</p>
+    <button class="timeline-propertie-add"><i class="fa fa-plus-square-o" aria-hidden="true"></i></button>
+    <select class="animation-selection">
+      <option value="default" selected="">default</option>
+<option value="new-animation">new animation</option>
+    </select>
+  </ul>
+</li>
+<li class="timeline-element" data-uuid="91044a6a-5984-44a7-a69a-45fa1aab20ef">
+  <ul class="element-properties" id="element-91044a6a-5984-44a7-a69a-45fa1aab20ef">
+    <p class="openProperties">4 - preloader</p>
+    <button class="timeline-propertie-add"><i class="fa fa-plus-square-o" aria-hidden="true"></i></button>
+    <select class="animation-selection">
+      <option value="default" selected="">default</option>
+<option value="new-animation">new animation</option>
+    </select>
+  <li class="propertie-element" data-propertie="opacity">
+  <label class="propertie-name">opacity</label>
+  <button class="timeline-propertie-delete"><i class="fa fa-trash" aria-hidden="true"></i></button>
+  <button class="timeline-propertie-add-keyframes"><i class="fa fa-plus-square-o" aria-hidden="true"></i></button>
+</li>
+<li class="propertie-element" data-propertie="display">
+  <label class="propertie-name">display</label>
+  <button class="timeline-propertie-delete"><i class="fa fa-trash" aria-hidden="true"></i></button>
+  <button class="timeline-propertie-add-keyframes"><i class="fa fa-plus-square-o" aria-hidden="true"></i></button>
+</li>
+</ul>
+</li>
+<li class="timeline-element" data-uuid="bdc09f86-65e1-4645-b539-41cc59a8ea7c">
+  <ul class="element-properties" id="element-bdc09f86-65e1-4645-b539-41cc59a8ea7c">
+    <p class="openProperties">5 - preloader__cube-container</p>
+    <button class="timeline-propertie-add"><i class="fa fa-plus-square-o" aria-hidden="true"></i></button>
+    <select class="animation-selection">
+      <option value="default" selected="">default</option>
+<option value="new-animation">new animation</option>
+    </select>
+  <li class="propertie-element" data-propertie="rotate">
+  <label class="propertie-name">rotate</label>
+  <button class="timeline-propertie-delete"><i class="fa fa-trash" aria-hidden="true"></i></button>
+  <button class="timeline-propertie-add-keyframes"><i class="fa fa-plus-square-o" aria-hidden="true"></i></button>
+</li>
+</ul>
+</li>
+<li class="timeline-element" data-uuid="bde9c1db-ad03-4378-829f-d5c00fd7491f">
+  <ul class="element-properties" id="element-bde9c1db-ad03-4378-829f-d5c00fd7491f">
+    <p class="openProperties">6 - cube1</p>
+    <button class="timeline-propertie-add"><i class="fa fa-plus-square-o" aria-hidden="true"></i></button>
+    <select class="animation-selection">
+      <option value="default" selected="">default</option>
+<option value="new-animation">new animation</option>
+    </select>
+  </ul>
+</li>
+<li class="timeline-element" data-uuid="5393a8e1-05b2-4d66-a835-06b8c5f2aa38">
+  <ul class="element-properties" id="element-5393a8e1-05b2-4d66-a835-06b8c5f2aa38">
+    <p class="openProperties">7 - cube2</p>
+    <button class="timeline-propertie-add"><i class="fa fa-plus-square-o" aria-hidden="true"></i></button>
+    <select class="animation-selection">
+      <option value="default" selected="">default</option>
+<option value="new-animation">new animation</option>
+    </select>
+  </ul>
+</li>
+<li class="timeline-element" data-uuid="e874cdbf-b09b-4fbd-854c-98b3fd45b8e9">
+  <ul class="element-properties" id="element-e874cdbf-b09b-4fbd-854c-98b3fd45b8e9">
+    <p class="openProperties">8 - cube3</p>
+    <button class="timeline-propertie-add"><i class="fa fa-plus-square-o" aria-hidden="true"></i></button>
+    <select class="animation-selection">
+      <option value="default" selected="">default</option>
+<option value="new-animation">new animation</option>
+    </select>
+  </ul>
+</li>
+<li class="timeline-element" data-uuid="9a46bc38-8123-4a69-a187-a2f003960b62">
+  <ul class="element-properties" id="element-9a46bc38-8123-4a69-a187-a2f003960b62">
+    <p class="openProperties">9 - cube4</p>
+    <button class="timeline-propertie-add"><i class="fa fa-plus-square-o" aria-hidden="true"></i></button>
+    <select class="animation-selection">
+      <option value="default" selected="">default</option>
+<option value="new-animation">new animation</option>
+    </select>
+  </ul>
+</li>
+<li class="timeline-element" data-uuid="4cf02b7b-5be2-4a58-a126-fa05469438c2">
+  <ul class="element-properties" id="element-4cf02b7b-5be2-4a58-a126-fa05469438c2">
+    <p class="openProperties">10 - logo</p>
+    <button class="timeline-propertie-add"><i class="fa fa-plus-square-o" aria-hidden="true"></i></button>
+    <select class="animation-selection">
+      <option value="default" selected="">default</option>
+<option value="new-animation">new animation</option>
+    </select>
+  </ul>
+</li>
+<li class="timeline-element" data-uuid="70305fd1-1c90-4db9-b32b-f5a486f53f89">
+  <ul class="element-properties" id="element-70305fd1-1c90-4db9-b32b-f5a486f53f89">
+    <p class="openProperties">11 - videotracking</p>
+    <button class="timeline-propertie-add"><i class="fa fa-plus-square-o" aria-hidden="true"></i></button>
+    <select class="animation-selection">
+      <option value="default" selected="">default</option>
+<option value="new-animation">new animation</option>
+    </select>
+  </ul>
+</li>
+<li class="timeline-element" data-uuid="8b433e33-1bcb-4d1e-8521-ed42eb49c5e1">
+  <ul class="element-properties" id="element-8b433e33-1bcb-4d1e-8521-ed42eb49c5e1">
+    <p class="openProperties">12 - car</p>
+    <button class="timeline-propertie-add"><i class="fa fa-plus-square-o" aria-hidden="true"></i></button>
+    <select class="animation-selection">
+      <option value="default" selected="">default</option>
+<option value="new-animation">new animation</option>
+    </select>
+  </ul>
+</li>
+<li class="timeline-element" data-uuid="c5e1413d-6ccd-479a-b9e2-0b145131ae82">
+  <ul class="element-properties" id="element-c5e1413d-6ccd-479a-b9e2-0b145131ae82">
+    <p class="openProperties">13 - footer-cta</p>
+    <button class="timeline-propertie-add"><i class="fa fa-plus-square-o" aria-hidden="true"></i></button>
+    <select class="animation-selection">
+      <option value="default" selected="">default</option>
+<option value="new-animation">new animation</option>
+    </select>
+  </ul>
+</li>
+</ul>
+      <ul id="timeline-interface" data-total-time="5.02">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li class="propertie-timeline-element" data-propertie="opacity" data-uuid="91044a6a-5984-44a7-a69a-45fa1aab20ef" data-total-time="0.72" style="top: 240px;">
+
+<div class="timeline-progress" style="width: 0%;"></div><div id="multimediaObject" data-uuid="91044a6a-5984-44a7-a69a-45fa1aab20ef" data-propertie="opacity" data-time="0.01" data-value="1" data-easing="linearEase" class="timeline-keyframe" style="left: 0.195219%; cursor: pointer;"></div><div id="multimediaObject" data-uuid="91044a6a-5984-44a7-a69a-45fa1aab20ef" data-propertie="opacity" data-time="0.41" data-value="0" data-easing="linearEase" class="timeline-keyframe" style="left: 8.00398%; cursor: pointer;"></div></li>
+<li class="propertie-timeline-element" data-propertie="display" data-uuid="91044a6a-5984-44a7-a69a-45fa1aab20ef" data-total-time="0.72" style="top: 259px;">
+
+<div class="timeline-progress" style="width: 0%;"></div><div id="multimediaObject" data-uuid="91044a6a-5984-44a7-a69a-45fa1aab20ef" data-propertie="display" data-time="0.72" data-value="none" data-easing="linearEase" class="timeline-keyframe" style="left: 14.0558%; cursor: pointer;"></div><div id="multimediaObject" data-uuid="91044a6a-5984-44a7-a69a-45fa1aab20ef" data-propertie="display" data-time="0.03" data-value="block" data-easing="linearEase" class="timeline-keyframe" style="left: 0.585657%; cursor: pointer;"></div></li>
+<li class="propertie-timeline-element" data-propertie="rotate" data-uuid="bdc09f86-65e1-4645-b539-41cc59a8ea7c" data-total-time="5.02" style="top: 325px;">
+
+<div class="timeline-progress" style="width: 0%;"></div><div id="multimediaObject" data-uuid="bdc09f86-65e1-4645-b539-41cc59a8ea7c" data-propertie="rotate" data-time="0.01" data-value="0" data-easing="linearEase" class="timeline-keyframe" style="left: 0.195219%; cursor: pointer;"></div><div id="multimediaObject" data-uuid="bdc09f86-65e1-4645-b539-41cc59a8ea7c" data-propertie="rotate" data-time="3.99" data-value="270" data-easing="linearEase" class="timeline-keyframe" style="left: 77.8924%; cursor: pointer;"></div><div id="multimediaObject" data-uuid="bdc09f86-65e1-4645-b539-41cc59a8ea7c" data-propertie="rotate" data-time="2.59" data-value="180" data-easing="linearEase" class="timeline-keyframe" style="left: 50.5618%; cursor: pointer;"></div><div id="multimediaObject" data-uuid="bdc09f86-65e1-4645-b539-41cc59a8ea7c" data-propertie="rotate" data-time="1.24" data-value="90" data-easing="linearEase" class="timeline-keyframe" style="left: 24.2072%; cursor: pointer;"></div><div id="multimediaObject" data-uuid="bdc09f86-65e1-4645-b539-41cc59a8ea7c" data-propertie="rotate" data-time="0.81" data-value="0" data-easing="linearEase" class="timeline-keyframe" style="left: 15.8127%; cursor: pointer;"></div><div id="multimediaObject" data-uuid="bdc09f86-65e1-4645-b539-41cc59a8ea7c" data-propertie="rotate" data-time="2.19" data-value="90" data-easing="linearEase" class="timeline-keyframe" style="left: 42.753%; cursor: pointer;"></div><div id="multimediaObject" data-uuid="bdc09f86-65e1-4645-b539-41cc59a8ea7c" data-propertie="rotate" data-time="3.69" data-value="180" data-easing="linearEase" class="timeline-keyframe" style="left: 72.0359%; cursor: pointer;"></div><div id="multimediaObject" data-uuid="bdc09f86-65e1-4645-b539-41cc59a8ea7c" data-propertie="rotate" data-time="5.02" data-value="360" data-easing="linearEase" class="timeline-keyframe" style="left: 98%; cursor: pointer;"></div><div id="multimediaObject" data-uuid="bdc09f86-65e1-4645-b539-41cc59a8ea7c" data-propertie="rotate" data-time="4.79" data-value="270" data-easing="linearEase" class="timeline-keyframe" style="left: 93.51%; cursor: pointer;"></div></li>
+<li class="seconds" style="width: 16.9323%; height: 862.469px;"></li><li class="seconds" style="width: 16.9323%; height: 862.469px;"></li><li class="seconds" style="width: 16.9323%; height: 862.469px;"></li><li class="seconds" style="width: 16.9323%; height: 862.469px;"></li><li class="seconds" style="width: 16.9323%; height: 862.469px;"></li></ul>
+    </div>
+  </div>
+</div>
+
+  <script type="text/javascript" async="" src="http://eu-adstatic.sam4m.com/analytics/js/ad/2.0/s4m.js"></script><script type="text/javascript" src="public/main.js" charset="utf-8"></script><header id="menu-bar">
+
+<div class="menu-element"><p>File</p><ul class="menu-list"><li class="menu-list-element">New Project</li><li class="menu-list-element">Save Project</li><li class="menu-list-element">Load Project</li><li class="menu-list-element">Save Component</li><li class="menu-list-element">Load Component</li><li class="menu-list-element">Test</li><li class="menu-list-element">Download Project</li><li class="menu-list-element">Export to JSON</li><li class="menu-list-element">ReAuthenticate</li></ul></div><div class="menu-element"><p>Windows</p><ul class="menu-list"><li class="menu-list-element">Elements</li><li class="menu-list-element">Css</li><li class="menu-list-element">Event</li><li class="menu-list-element">Functions</li><li class="menu-list-element">Dependencies</li><li class="menu-list-element">Timeline</li><li class="menu-list-element">Queries</li><li class="menu-list-element">Galerie</li></ul></div><div id="info-bar"><select id="device-selector"><option value="iphone6+">iphone6+</option><option value="iphone6">iphone6</option><option value="iphone5" selected="selected">iphone5</option><option value="iphone4">iphone4</option><option value="ipad">ipad</option><option value="nexus6P">nexus6P</option><option value="nexus5x">nexus5x</option><option value="nexus7">nexus7</option><option value="nexus5">nexus5</option><option value="nexus4">nexus4</option><option value="galaxyS5">galaxyS5</option><option value="galaxyS3">galaxyS3</option></select><input type="number"><span>x</span><input type="number"><input type="number"><input type="checkbox"><div id="orientation-changer"><i class="fa fa-mobile fa-2x" aria-hidden="true" style="transform: rotate(0deg);"></i></div></div></header>
+<div id="scene-info__top-bar" class="scene-info__bars" style="top: 165px; width: 323px; left: 554px;"></div><div id="scene-info__right-bar" class="scene-info__bars" style="top: 190px; height: 571px; left: 876px;"></div><div id="scene-info__bottom-bar" class="scene-info__bars" style="top: 760px; width: 323px; left: 554px;"></div><div id="scene-info__left-bar" class="scene-info__bars" style="top: 190px; height: 571px; left: 529px;"></div><div id="scene-info__top-left-bar" class="scene-info__bars-corners" style="top: 165px; left: 529px;"></div><div id="scene-info__top-right-bar" class="scene-info__bars-corners" style="top: 165px; left: 876px;"></div><div id="scene-info__bottom-left-bar" class="scene-info__bars-corners" style="top: 760px; left: 529px;"></div><div id="scene-info__bottom-right-bar" class="scene-info__bars-corners" style="top: 760px; left: 876px;"></div><div id="css-panel" class="multimedia-panel"><div class="header">
+    <h4>CSSManager</h4>
+    <ul>
+        <li class="minimize"><i class="fa fa-angle-up" aria-hidden="true"></i></li>
+    </ul>
+</div>
+
+<div class="container"></div>
+</div><div id="element-panel" class="multimedia-panel"><div class="header">
+    <h4>ElementManager</h4>
+    <ul>
+        <li class="minimize"><i class="fa fa-angle-up" aria-hidden="true"></i></li>
+    </ul>
+</div>
+
+<div class="container"><div><div class="element-panel__element" data-object-uuid="9e0db967-f3c9-47b0-9fcb-82dae164f053">abarth-intervideo<button data-object-uuid="9e0db967-f3c9-47b0-9fcb-82dae164f053" class="delete-element-button"><i class="fa fa-trash" aria-hidden="true" data-object-uuid="9e0db967-f3c9-47b0-9fcb-82dae164f053"></i></button><button data-object-uuid="9e0db967-f3c9-47b0-9fcb-82dae164f053" class="duplicate-element-button"><i class="fa fa-clone" aria-hidden="true" data-object-uuid="9e0db967-f3c9-47b0-9fcb-82dae164f053"></i></button><button class="hide-element-button" data-object-uuid="9e0db967-f3c9-47b0-9fcb-82dae164f053"><i class="fa fa-eye" aria-hidden="true" data-object-uuid="9e0db967-f3c9-47b0-9fcb-82dae164f053"></i></button></div><div class="element-panel__element" data-object-uuid="fa38b4e1-201a-4dc3-857d-6c206dc8653f" style="left: 10px;">time-tracking<button data-object-uuid="fa38b4e1-201a-4dc3-857d-6c206dc8653f" class="delete-element-button"><i class="fa fa-trash" aria-hidden="true" data-object-uuid="fa38b4e1-201a-4dc3-857d-6c206dc8653f"></i></button><button data-object-uuid="fa38b4e1-201a-4dc3-857d-6c206dc8653f" class="duplicate-element-button"><i class="fa fa-clone" aria-hidden="true" data-object-uuid="fa38b4e1-201a-4dc3-857d-6c206dc8653f"></i></button><button class="hide-element-button" data-object-uuid="fa38b4e1-201a-4dc3-857d-6c206dc8653f"><i class="fa fa-eye" aria-hidden="true" data-object-uuid="fa38b4e1-201a-4dc3-857d-6c206dc8653f"></i></button></div><div class="element-panel__element" data-object-uuid="87b683af-19f5-4db8-9296-0c0afd30d878" style="left: 10px;">s4m-html5-library<button data-object-uuid="87b683af-19f5-4db8-9296-0c0afd30d878" class="delete-element-button"><i class="fa fa-trash" aria-hidden="true" data-object-uuid="87b683af-19f5-4db8-9296-0c0afd30d878"></i></button><button data-object-uuid="87b683af-19f5-4db8-9296-0c0afd30d878" class="duplicate-element-button"><i class="fa fa-clone" aria-hidden="true" data-object-uuid="87b683af-19f5-4db8-9296-0c0afd30d878"></i></button><button class="hide-element-button" data-object-uuid="87b683af-19f5-4db8-9296-0c0afd30d878"><i class="fa fa-eye" aria-hidden="true" data-object-uuid="87b683af-19f5-4db8-9296-0c0afd30d878"></i></button></div><div class="element-panel__element" data-object-uuid="1e542d84-f09e-4ee6-a747-a9c63f3c23f4" style="left: 10px;">videoAd<button data-object-uuid="1e542d84-f09e-4ee6-a747-a9c63f3c23f4" class="delete-element-button"><i class="fa fa-trash" aria-hidden="true" data-object-uuid="1e542d84-f09e-4ee6-a747-a9c63f3c23f4"></i></button><button data-object-uuid="1e542d84-f09e-4ee6-a747-a9c63f3c23f4" class="duplicate-element-button"><i class="fa fa-clone" aria-hidden="true" data-object-uuid="1e542d84-f09e-4ee6-a747-a9c63f3c23f4"></i></button><button class="hide-element-button" data-object-uuid="1e542d84-f09e-4ee6-a747-a9c63f3c23f4"><i class="fa fa-eye" aria-hidden="true" data-object-uuid="1e542d84-f09e-4ee6-a747-a9c63f3c23f4"></i></button></div><div class="element-panel__element" data-object-uuid="91044a6a-5984-44a7-a69a-45fa1aab20ef" style="left: 10px;">preloader<button data-object-uuid="91044a6a-5984-44a7-a69a-45fa1aab20ef" class="delete-element-button"><i class="fa fa-trash" aria-hidden="true" data-object-uuid="91044a6a-5984-44a7-a69a-45fa1aab20ef"></i></button><button data-object-uuid="91044a6a-5984-44a7-a69a-45fa1aab20ef" class="duplicate-element-button"><i class="fa fa-clone" aria-hidden="true" data-object-uuid="91044a6a-5984-44a7-a69a-45fa1aab20ef"></i></button><button class="hide-element-button" data-object-uuid="91044a6a-5984-44a7-a69a-45fa1aab20ef"><i class="fa fa-eye" aria-hidden="true" data-object-uuid="91044a6a-5984-44a7-a69a-45fa1aab20ef"></i></button></div><div class="element-panel__element" data-object-uuid="bdc09f86-65e1-4645-b539-41cc59a8ea7c" style="left: 20px;">preloader__cube-container<button data-object-uuid="bdc09f86-65e1-4645-b539-41cc59a8ea7c" class="delete-element-button"><i class="fa fa-trash" aria-hidden="true" data-object-uuid="bdc09f86-65e1-4645-b539-41cc59a8ea7c"></i></button><button data-object-uuid="bdc09f86-65e1-4645-b539-41cc59a8ea7c" class="duplicate-element-button"><i class="fa fa-clone" aria-hidden="true" data-object-uuid="bdc09f86-65e1-4645-b539-41cc59a8ea7c"></i></button><button class="hide-element-button" data-object-uuid="bdc09f86-65e1-4645-b539-41cc59a8ea7c"><i class="fa fa-eye" aria-hidden="true" data-object-uuid="bdc09f86-65e1-4645-b539-41cc59a8ea7c"></i></button></div><div class="element-panel__element" data-object-uuid="bde9c1db-ad03-4378-829f-d5c00fd7491f" style="left: 30px;">cube1<button data-object-uuid="bde9c1db-ad03-4378-829f-d5c00fd7491f" class="delete-element-button"><i class="fa fa-trash" aria-hidden="true" data-object-uuid="bde9c1db-ad03-4378-829f-d5c00fd7491f"></i></button><button data-object-uuid="bde9c1db-ad03-4378-829f-d5c00fd7491f" class="duplicate-element-button"><i class="fa fa-clone" aria-hidden="true" data-object-uuid="bde9c1db-ad03-4378-829f-d5c00fd7491f"></i></button><button class="hide-element-button" data-object-uuid="bde9c1db-ad03-4378-829f-d5c00fd7491f"><i class="fa fa-eye" aria-hidden="true" data-object-uuid="bde9c1db-ad03-4378-829f-d5c00fd7491f"></i></button></div><div class="element-panel__element" data-object-uuid="5393a8e1-05b2-4d66-a835-06b8c5f2aa38" style="left: 30px;">cube2<button data-object-uuid="5393a8e1-05b2-4d66-a835-06b8c5f2aa38" class="delete-element-button"><i class="fa fa-trash" aria-hidden="true" data-object-uuid="5393a8e1-05b2-4d66-a835-06b8c5f2aa38"></i></button><button data-object-uuid="5393a8e1-05b2-4d66-a835-06b8c5f2aa38" class="duplicate-element-button"><i class="fa fa-clone" aria-hidden="true" data-object-uuid="5393a8e1-05b2-4d66-a835-06b8c5f2aa38"></i></button><button class="hide-element-button" data-object-uuid="5393a8e1-05b2-4d66-a835-06b8c5f2aa38"><i class="fa fa-eye" aria-hidden="true" data-object-uuid="5393a8e1-05b2-4d66-a835-06b8c5f2aa38"></i></button></div><div class="element-panel__element" data-object-uuid="e874cdbf-b09b-4fbd-854c-98b3fd45b8e9" style="left: 30px;">cube3<button data-object-uuid="e874cdbf-b09b-4fbd-854c-98b3fd45b8e9" class="delete-element-button"><i class="fa fa-trash" aria-hidden="true" data-object-uuid="e874cdbf-b09b-4fbd-854c-98b3fd45b8e9"></i></button><button data-object-uuid="e874cdbf-b09b-4fbd-854c-98b3fd45b8e9" class="duplicate-element-button"><i class="fa fa-clone" aria-hidden="true" data-object-uuid="e874cdbf-b09b-4fbd-854c-98b3fd45b8e9"></i></button><button class="hide-element-button" data-object-uuid="e874cdbf-b09b-4fbd-854c-98b3fd45b8e9"><i class="fa fa-eye" aria-hidden="true" data-object-uuid="e874cdbf-b09b-4fbd-854c-98b3fd45b8e9"></i></button></div><div class="element-panel__element" data-object-uuid="9a46bc38-8123-4a69-a187-a2f003960b62" style="left: 30px;">cube4<button data-object-uuid="9a46bc38-8123-4a69-a187-a2f003960b62" class="delete-element-button"><i class="fa fa-trash" aria-hidden="true" data-object-uuid="9a46bc38-8123-4a69-a187-a2f003960b62"></i></button><button data-object-uuid="9a46bc38-8123-4a69-a187-a2f003960b62" class="duplicate-element-button"><i class="fa fa-clone" aria-hidden="true" data-object-uuid="9a46bc38-8123-4a69-a187-a2f003960b62"></i></button><button class="hide-element-button" data-object-uuid="9a46bc38-8123-4a69-a187-a2f003960b62"><i class="fa fa-eye" aria-hidden="true" data-object-uuid="9a46bc38-8123-4a69-a187-a2f003960b62"></i></button></div><div class="element-panel__element" data-object-uuid="4cf02b7b-5be2-4a58-a126-fa05469438c2" style="left: 10px;">logo<button data-object-uuid="4cf02b7b-5be2-4a58-a126-fa05469438c2" class="delete-element-button"><i class="fa fa-trash" aria-hidden="true" data-object-uuid="4cf02b7b-5be2-4a58-a126-fa05469438c2"></i></button><button data-object-uuid="4cf02b7b-5be2-4a58-a126-fa05469438c2" class="duplicate-element-button"><i class="fa fa-clone" aria-hidden="true" data-object-uuid="4cf02b7b-5be2-4a58-a126-fa05469438c2"></i></button><button class="hide-element-button" data-object-uuid="4cf02b7b-5be2-4a58-a126-fa05469438c2"><i class="fa fa-eye" aria-hidden="true" data-object-uuid="4cf02b7b-5be2-4a58-a126-fa05469438c2"></i></button></div><div class="element-panel__element" data-object-uuid="70305fd1-1c90-4db9-b32b-f5a486f53f89" style="left: 10px;">videotracking<button data-object-uuid="70305fd1-1c90-4db9-b32b-f5a486f53f89" class="delete-element-button"><i class="fa fa-trash" aria-hidden="true" data-object-uuid="70305fd1-1c90-4db9-b32b-f5a486f53f89"></i></button><button data-object-uuid="70305fd1-1c90-4db9-b32b-f5a486f53f89" class="duplicate-element-button"><i class="fa fa-clone" aria-hidden="true" data-object-uuid="70305fd1-1c90-4db9-b32b-f5a486f53f89"></i></button><button class="hide-element-button" data-object-uuid="70305fd1-1c90-4db9-b32b-f5a486f53f89"><i class="fa fa-eye" aria-hidden="true" data-object-uuid="70305fd1-1c90-4db9-b32b-f5a486f53f89"></i></button></div><div class="element-panel__element" data-object-uuid="8b433e33-1bcb-4d1e-8521-ed42eb49c5e1" style="left: 10px;">car<button data-object-uuid="8b433e33-1bcb-4d1e-8521-ed42eb49c5e1" class="delete-element-button"><i class="fa fa-trash" aria-hidden="true" data-object-uuid="8b433e33-1bcb-4d1e-8521-ed42eb49c5e1"></i></button><button data-object-uuid="8b433e33-1bcb-4d1e-8521-ed42eb49c5e1" class="duplicate-element-button"><i class="fa fa-clone" aria-hidden="true" data-object-uuid="8b433e33-1bcb-4d1e-8521-ed42eb49c5e1"></i></button><button class="hide-element-button" data-object-uuid="8b433e33-1bcb-4d1e-8521-ed42eb49c5e1"><i class="fa fa-eye" aria-hidden="true" data-object-uuid="8b433e33-1bcb-4d1e-8521-ed42eb49c5e1"></i></button></div><div class="element-panel__element" data-object-uuid="c5e1413d-6ccd-479a-b9e2-0b145131ae82" style="left: 10px;">footer-cta<button data-object-uuid="c5e1413d-6ccd-479a-b9e2-0b145131ae82" class="delete-element-button"><i class="fa fa-trash" aria-hidden="true" data-object-uuid="c5e1413d-6ccd-479a-b9e2-0b145131ae82"></i></button><button data-object-uuid="c5e1413d-6ccd-479a-b9e2-0b145131ae82" class="duplicate-element-button"><i class="fa fa-clone" aria-hidden="true" data-object-uuid="c5e1413d-6ccd-479a-b9e2-0b145131ae82"></i></button><button class="hide-element-button" data-object-uuid="c5e1413d-6ccd-479a-b9e2-0b145131ae82"><i class="fa fa-eye" aria-hidden="true" data-object-uuid="c5e1413d-6ccd-479a-b9e2-0b145131ae82"></i></button></div></div></div>
+</div><div id="querie-panel" class="multimedia-panel"><div class="header">
+    <h4>MediaQuerieManager</h4>
+    <ul>
+        <li class="minimize"><i class="fa fa-angle-up" aria-hidden="true"></i></li>
+    </ul>
+</div>
+
+<div class="container"></div>
+</div><div id="event-panel" class="multimedia-panel"><div class="header">
+    <h4>EventManager</h4>
+    <ul>
+        <li class="minimize"><i class="fa fa-angle-up" aria-hidden="true"></i></li>
+    </ul>
+</div>
+
+<div class="container"></div>
+</div><div id="function-panel" class="multimedia-panel"><div class="header">
+    <h4>FunctionPanel</h4>
+    <ul>
+        <li class="minimize"><i class="fa fa-angle-up" aria-hidden="true"></i></li>
+    </ul>
+</div>
+
+<div class="container"></div>
+</div><div id="dependencie-panel" class="multimedia-panel"><div class="header">
+    <h4>DependenciePanel</h4>
+    <ul>
+        <li class="minimize"><i class="fa fa-angle-up" aria-hidden="true"></i></li>
+    </ul>
+</div>
+
+<div class="container"></div>
+</div><div id="galerie-panel" class="multimedia-panel"><div class="header">
+    <h4>Galerie</h4>
+    <ul>
+        <li class="minimize"><i class="fa fa-angle-up" aria-hidden="true"></i></li>
+    </ul>
+</div>
+
+<div class="container"><form class="upload" method="POST" enctype="multipart/form-data">
+
+<fieldset>
+<legend>File Upload</legend>
+
+<input type="hidden" id="MAX_FILE_SIZE" name="MAX_FILE_SIZE" value="300000" enctype="multipart/form-data">
+
+<div>
+	<label for="fileselect">Files to upload:</label>
+	<input type="file" class="fileselect" multiple="multiple">
+	<div class="filedrag" style="display: block;">or drop files here</div>
+</div>
+
+<div class="submitbutton" style="display: none;">
+	<button type="submit">Upload Files</button>
+</div>
+
+</fieldset>
+
+<div class="messages">
+<p>Status Messages</p>
+</div>
+
+</form>
+<div id="72647173-c7f0-430f-988d-833f0b1eb730" class="galerie__image" data-content="LOGO.png" style="background-image: url(&quot;http://builder.sam4m.com:8000/ABARTH_INTERVIDEO_FR2_20170111/public/images/LOGO.png&quot;); background-size: contain; background-repeat: no-repeat; background-position: center center;"></div><button class="galerie__delete-image" data-value="http://builder.sam4m.com:8000/ABARTH_INTERVIDEO_FR2_20170111/public/images/LOGO.png"><i class="fa fa-trash" aria-hidden="true" data-value="http://builder.sam4m.com:8000/ABARTH_INTERVIDEO_FR2_20170111/public/images/LOGO.png"></i></button><div id="99a5154f-722c-4a04-84ad-ae2607f05085" class="galerie__image" data-content="car.jpg" style="background-image: url(&quot;http://builder.sam4m.com:8000/ABARTH_INTERVIDEO_FR2_20170111/public/images/car.jpg&quot;); background-size: contain; background-repeat: no-repeat; background-position: center center;"></div><button class="galerie__delete-image" data-value="http://builder.sam4m.com:8000/ABARTH_INTERVIDEO_FR2_20170111/public/images/car.jpg"><i class="fa fa-trash" aria-hidden="true" data-value="http://builder.sam4m.com:8000/ABARTH_INTERVIDEO_FR2_20170111/public/images/car.jpg"></i></button><div id="d1b362a6-35e5-422f-bae1-24968b7a18c2" class="galerie__image" data-content="footer.png" style="background-image: url(&quot;http://builder.sam4m.com:8000/ABARTH_INTERVIDEO_FR2_20170111/public/images/footer.png&quot;); background-size: contain; background-repeat: no-repeat; background-position: center center;"></div><button class="galerie__delete-image" data-value="http://builder.sam4m.com:8000/ABARTH_INTERVIDEO_FR2_20170111/public/images/footer.png"><i class="fa fa-trash" aria-hidden="true" data-value="http://builder.sam4m.com:8000/ABARTH_INTERVIDEO_FR2_20170111/public/images/footer.png"></i></button><video id="5cb98a0b-8821-44ae-9ecd-8afc1f772c29" src="http://builder.sam4m.com:8000/ABARTH_INTERVIDEO_FR2_20170111/public/images/video.mp4" type="video/mp4" loop="true" preload="true" webkit-playsinline="true" class="galerie__video" data-content="video.mp4"></video><button class="galerie__delete-image" data-value="http://builder.sam4m.com:8000/ABARTH_INTERVIDEO_FR2_20170111/public/images/video.mp4"><i class="fa fa-trash" aria-hidden="true" data-value="http://builder.sam4m.com:8000/ABARTH_INTERVIDEO_FR2_20170111/public/images/video.mp4"></i></button></div>
+</div><button id="add-button" style="left: 917.778px; top: 711.667px;"><i class="fa fa-plus" aria-hidden="true"></i></button><button id="event-button" style="left: 917.778px; top: 647.121px;"><i class="fa fa-check" aria-hidden="true"></i></button>
+
+
+
+<div id="modal-overlay" style="visibility: hidden;"></div><div id="modal-container" style="visibility: hidden;"><div id="modal-header" style="cursor: default;"><div id="modal-close"></div></div><div id="modal-content"></div></div></body></html>
