@@ -1,14 +1,18 @@
-let Set = require("../lib/Set.js");
+const Set = require("../lib/Set.js");
+const staticData = require("../config/data.static.js")();
 
-var cacheFn = function(func) {
-  var data;
-  data = {};
-  return function() {
-    var i, k, key, len, result;
+const cacheFn = function (func) {
+  const data = {};
+  return function () {
+    let i;
+    let k;
+    let key;
+    let len;
+    let result;
     key = "";
     for (i = 0, len = arguments.length; i < len; i++) {
       k = arguments[i];
-      key += k.toString() + ",";
+      key += `${k.toString()},`;
     }
     result = data[key];
     if (!result) {
@@ -18,174 +22,148 @@ var cacheFn = function(func) {
   };
 };
 
-var utils = {
-  Atoms : function(type="block"){
-    let types = {
-      "block" : "div",
-      "div" : "div",
-      "header" : "header",
-      "footer" : "footer",
-      "aside" : "aside",
-      "article" : "article",
-      "main" : "main",
-      "nav" : "nav",
-      "navigation" : "nav",
-      "span" : "span",
-      "text" : "p",
-      "p" : "p",
-      "paragraphe" : "p",
-      "ulist-container" : "ul",
-      "ulist" : "ul",
-      "ul" : "ul",
-      "unordered-list" : "ul",
-      "olist-container" : "ol",
-      "olist" : "ol",
-      "ol" : "ol",
-      "ordered-list" : "ol",
-      "list-element" : "li",
-      "li" : "li",
-      "code" : "pre",
-      "pre" : "pre",
-      "input" : "input",
-      "textarea" : "textarea",
-      "form" : "form",
-      "image" : "img",
-      "img" : "img",
-      "button" : "button",
-      "iframe" : "iframe",
-      "video" : "video",
-      "canvas" : "canvas",
-      "audio" : "audio"
-    };
+const utils = {
+  Atoms(type = "block") {
+    const types = staticData.Atoms;
     return types[type];
   },
-  convertLeftToTime : function(left, totalTime) {
-    let parentWidth = parseInt(window.getComputedStyle(document.getElementById("timeline-interface"), null).width),
-        percentageLeftFromPixel = (left*100)/parentWidth,
-        timeFromLeft = (percentageLeftFromPixel/98)*totalTime;
-        // console.log(left, parentWidth, timeFromLeft);
-        return parseFloat(timeFromLeft).toFixed(2);
+  convertLeftToTime(base, left, totalTime) {
+    const parentWidth = base;
+    const percentageLeftFromPixel = (left * 100) / parentWidth;
+    const timeFromLeft = (percentageLeftFromPixel / 98) * totalTime;
+    const result = parseFloat(timeFromLeft).toFixed(2);
+
+    return parseFloat(result) > totalTime ? totalTime.toFixed(2) : result;
   },
-  concatObject : function(...objects) {
-    var ret = {};
-    var len = arguments.length;
-    for (let i=0; i<len; i++) {
-      for (let p in objects[i]) {
-        if (objects[i].hasOwnProperty(p)) {
+  concatObject(...objects) {
+    const ret = {};
+    const len = arguments.length;
+    for (let i = 0; i < len; i++) {
+      for (const p in objects[i]) {
+        if (!ret[p]) {
           ret[p] = objects[i][p];
         }
       }
     }
     return ret;
   },
-  checkEvent : function(evt) {
-    return /^(click|mousedown|mouseup|mousemove|change|touchstart|touchmove|touchend|input|focus|dlclick|mouseenter|mouseleave|mouseover|mouseout|blur|search|submit|play|pause|canplay|progress)$/ig.test(evt)
+  checkEvent(evt) {
+    return staticData.regex.DOMEvent.test(evt);
   },
-  getElementsWithAttribute : function(attribute, value, element) {
-    var matchingElements = [];
-    var allElements = element ? (element instanceof Array ? element : document.querySelectorAll(element)) : document.getElementsByTagName('*');
-    for (var i = 0, n = allElements.length; i < n; i++) {
-      let attrValue = allElements[i].getAttribute(attribute);
-      if (allElements[i].getAttribute(attribute) !== null) {
+  getElementsWithAttribute(attribute, value, element) {
+    const matchingElements = [];
+    const allElements = element ? (element instanceof Array ? element : document.querySelectorAll(element)) : document.getElementsByTagName("*");
+    for (let i = 0, n = allElements.length; i < n; i++) {
+      const attrValue = allElements[i].getAttribute(attribute);
+      if (attrValue !== null) {
         // Element exists with attribute. Add to array.
-        if(value) {
-          if(allElements[i].getAttribute(attribute) === value) {
-            matchingElements.push(allElements[i]);
-          }
-        } else {
-          matchingElements.push(allElements[i]);
-        }
+        matchingElements.push(allElements[i]);
       }
     }
     return matchingElements;
   },
-  getObjectUnderCursor : function(elements, cursorPosition, callback) {
+  getObjectUnderCursor(elements, cursorPosition, callback) {
     let ret = false;
-    elements.forEach((object,index) => {
-      let box = object.element ? object.element.getBoundingClientRect() : object.getBoundingClientRect();
-      if((cursorPosition.x >= box.left && cursorPosition.x <= box.right) && (cursorPosition.y >= box.top && cursorPosition.y <= box.bottom)) {
+    elements.forEach((object) => {
+      const box = object.element ? object.element.getBoundingClientRect() : object.getBoundingClientRect();
+      if ((cursorPosition.x >= box.left && cursorPosition.x <= box.right) && (cursorPosition.y >= box.top && cursorPosition.y <= box.bottom)) {
         ret = object;
       }
     });
-    if(callback) {
+    if (callback) {
       callback(ret);
     }
     return ret;
   },
-  isEmpty : function(obj) {
-      var hasOwnProperty = Object.prototype.hasOwnProperty;
+  isEmpty(obj) {
+    const hasOwnProperty = Object.prototype.hasOwnProperty;
 
       // null and undefined are "empty"
-      if (obj == null){ return true;}
+    if (obj == null) { return true; }
 
       // Assume if it has a length property with a non-zero value
       // that that property is correct.
-      if (obj.length > 0){return false;}
-      if (obj.length === 0){return true;}
+    if (obj.length > 0) { return false; }
+    if (obj.length === 0) { return true; }
 
       // Otherwise, does it have any properties of its own?
       // Note that this doesn't handle
       // toString and valueOf enumeration bugs in IE < 9
-      for (var key in obj) {
-          if (hasOwnProperty.call(obj, key)) return false;
+    for (const key in obj) {
+      if (hasOwnProperty.call(obj, key)) return false;
+    }
+
+    return true;
+  },
+
+  generateRandomHexColor() {
+    let rndColour = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
+    while (rndColour.length < 7) {
+      rndColour += "f";
+    }
+    return rndColour;
+  },
+
+  closest(num, arr) {
+    const sortedArr = arr.sort((a, b) => a - b);
+    let chosen;
+    for (let i = 0; i < sortedArr.length; i++) {
+      let prevInd = i;
+      chosen = sortedArr[i];
+      if (i > 0) {
+        prevInd = i - 1;
       }
-
-      return true;
-  },
-
-  generateRandomHexColor : function() {
-    return '#'+Math.floor(Math.random()*16777215).toString(16);
-  },
-
-  closest : function(num, arr) {
-    let sortedArr = arr.sort(function(a, b){return a-b});
-    for(let i = 0; i < sortedArr.length; i++) {
-        if(num < sortedArr[i]) {
-          return sortedArr[i];
+      if (num < sortedArr[i]) {
+        if (num - sortedArr[prevInd] < sortedArr[i] - num) {
+          chosen = sortedArr[prevInd];
+        } else {
+          chosen = sortedArr[i];
         }
+        break;
+      }
     }
-    return sortedArr[sortedArr.length-1];
+    return chosen;
   },
 
-  pxProperties : new Set('marginTop,marginLeft,marginBottom,marginRight,paddingTop,paddingLeft,paddingBottom,paddingRight,top,left,bottom,right,translateX,translateY,translateZ,perspectiveX,perspectiveY,perspectiveZ,width,height,maxWidth,maxHeight,minWidth,minHeight,borderRadius'.split(',')),
-  degProperties : new Set('rotate,rotateX,rotateY,rotateZ,skew,skewX,skewY,skewZ'.split(',')),
-  transformProperties : new Set('translate,translateX,translateY,translateZ,scale,scaleX,scaleY,scaleZ,rotate,rotateX,rotateY,rotateZ,rotateC,rotateCX,rotateCY,skew,skewX,skewY,skewZ,perspective'.split(',')),
-  styleProperties : new Set('opacity,z-index'.split(',')),
+  pxProperties: new Set(staticData.sets.pxProperties.split(",")),
+  degProperties: new Set(staticData.sets.degProperties.split(",")),
+  transformProperties: new Set(staticData.sets.transformProperties.split(",")),
+  styleProperties: new Set(staticData.sets.styleProperties.split(",")),
 
-  isUnitProp : function(prop) {
-    return /position|background|display|visibility|opacity|scale|transform-origin|font-weight|line-height|letter-spacing|z-index|outline|text-align|skew|rotate|transform|overflow|border-style|border-color|word/ig.test(prop);
+  isUnitProp(prop) {
+    return staticData.regex.unitProp.test(prop);
   },
 
-  isAnimatableProp : function(prop) {
-    return /^(background-color|translate|scale|rotate|skew|margin|padding|top|left|right|bottom|color|font-size|width|height|opacity)/ig.test(prop);
+  isAnimatableProp(prop) {
+    return staticData.regex.animatableProps.test(prop);
   },
 
-  constrain : function(value, min, max) {
-    if(min > value) {
-      return min
-    } else if(max < value) {
-      return max
+  constrain(value, min, max) {
+    if (min > value) {
+      return min;
     }
-    return value
+    if (max < value) {
+      return max;
+    }
+    return value;
   },
 
-  getRandomInt : function(min, max) {
+  getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   },
 
-  applyDefaults : function(options, defaults) {
-    var k, results, v;
-    results = [];
-    for (k in defaults) {
-      v = defaults[k];
-      results.push(options[k] != null ? options[k] : options[k] = v);
+  applyDefaults(options, defaults) {
+    for (const k in defaults) {
+      options[k] = defaults[k];
     }
-    return results;
+    return options;
   },
 
-  clone : function(o) {
-    var k, newO, v;
-    newO = {};
+  clone(o) {
+    const newO = {};
+    let k;
+    let v;
+
     for (k in o) {
       v = o[k];
       newO[k] = v;
@@ -193,62 +171,67 @@ var utils = {
     return newO;
   },
 
-  roundf : function(v, decimal) {
-    var d;
-    d = Math.pow(10, decimal);
-    return Math.round(v * d) / d;
+  roundf(v, decimal) {
+    const tV = v.toString();
+    const preDecimal = tV.match(/^(.+)!?\./) ? tV.match(/^(.+)!?\./)[0] : "0.";
+    return Number(`${preDecimal}${v.toString().replace(preDecimal, "").slice(0, decimal)}`);
   },
 
-  toDashed : function(str) {
-    return str.replace(/([A-Z])/g, function($1) {
-      return "-" + $1.toLowerCase();
-    });
+  toDashed(str) {
+    return str.replace(/([A-Z])/g, $1 => `-${$1.toLowerCase()}`);
   },
 
-  prefixFor : cacheFn(function(property) {
-    var i, j, k, len, len1, prefix, prop, propArray, propertyName, ref;
-    if (document.body.style[property] !== void 0) {
-      return '';
+  prefixFor: cacheFn((property) => {
+    const propArray = property.split("-");
+    const ref = ["Webkit", "Moz", "ms"];
+
+    let i;
+    let j;
+    let k;
+    let len;
+    let len1;
+    let prefix;
+    let prop;
+    let propertyName;
+    if (document.body.style[property] !== undefined) {
+      return "";
     }
-    propArray = property.split('-');
     propertyName = "";
     for (i = 0, len = propArray.length; i < len; i++) {
       prop = propArray[i];
       propertyName += prop.substring(0, 1).toUpperCase() + prop.substring(1);
     }
-    ref = ["Webkit", "Moz", "ms"];
     for (j = 0, len1 = ref.length; j < len1; j++) {
       prefix = ref[j];
       k = prefix + propertyName;
-      if (document.body.style[k] !== void 0) {
+      if (document.body.style[k] !== undefined) {
         return prefix;
       }
     }
-    return '';
+    return "";
   }),
 
-  propertyWithPrefix : cacheFn(function(property) {
-    var prefix;
-    prefix = utils.prefixFor(property);
-    if (prefix === 'Moz') {
-      return "" + prefix + (property.substring(0, 1).toUpperCase() + property.substring(1));
+  propertyWithPrefix: cacheFn((property) => {
+    const prefix = utils.prefixFor(property);
+    if (prefix === "Moz") {
+      return `${prefix}${property.substring(0, 1).toUpperCase() + property.substring(1)}`;
     }
-    if (prefix !== '') {
-      return "-" + (prefix.toLowerCase()) + "-" + (utils.toDashed(property));
+    if (prefix !== "") {
+      return `-${prefix.toLowerCase()}-${utils.toDashed(property)}`;
     }
     return utils.toDashed(property);
   }),
 
-  unitForProperty : function(k, v) {
-    if (typeof v !== 'number') {
-      return '';
+  unitForProperty(k, v) {
+    if (typeof v !== "number") {
+      return "";
     }
     if (utils.pxProperties.contains(k)) {
-      return 'px';
+      return "px";
     } else if (utils.degProperties.contains(k)) {
-      return 'deg';
+      return "deg";
     }
-    return '';
+    return "";
   },
 
   getMaxOfArray(numArray) {
@@ -256,9 +239,9 @@ var utils = {
     return Math.max.apply(null, numArray);
   },
 
-  transformValueForProperty : function(k, v) {
-    var match, unit;
-    match = ("" + v).match(/^([0-9.-]*)([^0-9]*)$/);
+  transformValueForProperty(k, v) {
+    let unit;
+    const match = (`${v}`).match(/^([0-9.-]*)([^0-9]*)$/);
     if (match != null) {
       v = match[1];
       unit = match[2];
@@ -269,72 +252,72 @@ var utils = {
     if ((unit == null) || unit === "") {
       unit = utils.unitForProperty(k, v);
     }
-    return k + "(" + v + unit + ")";
+    return `${k}(${v}${unit})`;
   },
 
-  generateUUID : function(){
-      var d = new Date().getTime();
-      if(window.performance && typeof window.performance.now === "function"){
-          d += performance.now(); //use high-precision timer if available
-      }
-      var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-          var r = (d + Math.random()*16)%16 | 0;
-          d = Math.floor(d/16);
-          return (c=='x' ? r : (r&0x3|0x8)).toString(16);
-      });
-      return uuid;
+  generateUUID() {
+    let d = new Date().getTime();
+    if (window.performance && typeof window.performance.now === "function") {
+      d += performance.now(); // use high-precision timer if available
+    }
+    const uuid = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+      const r = (d + Math.random() * 16) % 16 | 0;
+      d = Math.floor(d / 16);
+      return (c === "x" ? r : (r & 0x3 | 0x8)).toString(16);
+    });
+    return uuid;
   },
 
-  getNumFromString : function(str) {
-      var num = str.match(/-(?=\d)|\d+|\.\d+/g);
-      return num !== null ? parseFloat(num.join("")) : str;
+  getNumFromString(str) {
+    const num = str.match(/-(?=\d)|\d+|\.\d+/g);
+    return num !== null ? parseFloat(num.join("")) : str;
   },
 
-  getUnitFromString : function(str) {
-    let u = str.match(/%|px|vh|vw|em/g),
-        unit = u !== null ? u[0] : "px";
+  getUnitFromString(str) {
+    const u = str.match(/%|px|vh|vw|em/g);
+    const unit = u !== null ? u[0] : "px";
     return unit;
   },
 
-  hexToR : function(h) {return parseInt((utils.cutHex(h)).substring(0,2),16)},
-  hexToG : function(h) {return parseInt((utils.cutHex(h)).substring(2,4),16)},
-  hexToB : function(h) {return parseInt((utils.cutHex(h)).substring(4,6),16)},
-  cutHex : function(h) {return (h.charAt(0)=="#") ? h.substring(1,7):h},
-  rgb2hex : function(red, green, blue) {
-      var rgb = blue | (green << 8) | (red << 16);
-      return '#' + (0x1000000 + rgb).toString(16).slice(1)
+  hexToR(h) { return parseInt((utils.cutHex(h)).substring(0, 2), 16); },
+  hexToG(h) { return parseInt((utils.cutHex(h)).substring(2, 4), 16); },
+  hexToB(h) { return parseInt((utils.cutHex(h)).substring(4, 6), 16); },
+  cutHex(h) { return (h.charAt(0) === "#") ? h.substring(1, 7) : h; },
+  rgb2hex(red, green, blue) {
+    const rgb = blue | (green << 8) | (red << 16);
+    return `#${(0x1000000 + rgb).toString(16).slice(1)}`;
   },
 
-  transformToColor : function(propertie) {
+  transformToColor(propertie) {
     let colorObj;
-    if(propertie[0] === "#") {
+    if (propertie[0] === "#") {
       colorObj = {
-        r : utils.hexToR(propertie),
-        g : utils.hexToG(propertie),
-        b : utils.hexToB(propertie),
-        a : 1
-      }
+        r: utils.hexToR(propertie),
+        g: utils.hexToG(propertie),
+        b: utils.hexToB(propertie),
+        a: 1,
+      };
     } else {
-      let par = typeof propertie === "string" ? propertie.indexOf("\(") : -1;
-      if(par >= 0) {
-        propertie = propertie.slice(par+1,propertie.length-1);
+      const par = typeof propertie === "string" ? propertie.indexOf("(") : -1;
+      if (par >= 0) {
+        propertie = propertie.slice(par + 1, propertie.length - 1);
       }
-      let rgba = typeof propertie === "string" ? propertie.split(",") : [0,0,0,0];
+      const rgba = typeof propertie === "string" ? propertie.split(",") : [0, 0, 0, 0];
       colorObj = {
-        r : parseInt(rgba[0]),
-        g : parseInt(rgba[1]),
-        b : parseInt(rgba[2]),
-        a : parseFloat(rgba[3] || 1)
-      }
+        r: parseInt(rgba[0], 10),
+        g: parseInt(rgba[1], 10),
+        b: parseInt(rgba[2], 10),
+        a: parseFloat(rgba[3] || 1),
+      };
     }
     return colorObj;
   },
-  toCamelCase : function(str) {
+  toCamelCase(str) {
     return str
-        .replace(/\s(.)/g, function($1) { return $1.toUpperCase(); })
-        .replace(/\s/g, '')
-        .replace(/^(.)/, function($1) { return $1.toLowerCase(); });
-  }
+        .replace(/\s(.)/g, $1 => $1.toUpperCase())
+        .replace(/\s/g, "")
+        .replace(/^(.)/, $1 => $1.toLowerCase());
+  },
 
 };
 

@@ -78,7 +78,9 @@ describe("utils.getObjectUnderCursor", () => {
     },
   ];
   const testFunction = function (ret, index) {
-    expect(ret).toEqual(expectations[index]);
+    it(`should return ${JSON.stringify(expectations[index])} for cursor position ${JSON.stringify(ret)}`, () => {
+      expect(ret).toEqual(expectations[index]);
+    });
   };
   const getObjectUnderCursor = (elements, cursorPosition, callback) => {
     let ret = false;
@@ -95,11 +97,9 @@ describe("utils.getObjectUnderCursor", () => {
     return ret;
   };
 
-  it("should return a set of objects for a certain cursor position", () => {
-    cursorPositions.forEach((cursor, index) => {
-      getObjectUnderCursor(testingElements, cursor, (ret) => {
-        testFunction(ret, index);
-      });
+  cursorPositions.forEach((cursor, index) => {
+    getObjectUnderCursor(testingElements, cursor, (ret) => {
+      testFunction(ret, index);
     });
   });
 });

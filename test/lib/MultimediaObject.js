@@ -16,13 +16,7 @@ limitations under the License.
 
 */
 
-
-require("./lib/raf");
-let utils = require("./utils/utils"),
-  Easings = require("./utils/easings"),
-  eventManager = require("./lib/customEventManager"),
-  requireScript = require("./lib/requireScript"),
-  conf = require("./config/config.js")();
+const conf = config();
 
 /**
 * Represents a MultimediaObject
@@ -1322,5 +1316,3 @@ class MultimediaObject {
     }
   }
 }
-
-module.exports = MultimediaObject;

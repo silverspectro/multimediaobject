@@ -9,6 +9,10 @@ module.exports = {
       "func-names" : 0,
       "prefer-rest-params" : 1,
       "no-restricted-syntax" : 0,
+      "no-mixed-operators" : 0,
+      "guard-for-in" : 0,
+      "no-param-reassign" : 1,
+      "no-bitwise" : 0,
     },
     "env": {
       "browser": true,

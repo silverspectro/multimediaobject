@@ -1,6 +1,6 @@
 // Karma configuration
 // Generated on Tue Jan 17 2017 19:19:58 GMT+0100 (Romance Standard Time)
-const dirname = './';
+const dirname = "./";
 
 module.exports = function (config) {
   config.set({
@@ -11,15 +11,15 @@ module.exports = function (config) {
 
     // frameworks to use
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-    frameworks: ['jasmine', 'requirejs'],
+    frameworks: ["jasmine", "requirejs"],
 
 
     // list of files / patterns to load in the browser
     files: [
-      'test/test-main.js',
-      'test/lib/Set.js',
-      'test/lib/utils.js',
-      { pattern: 'test/**/*.js', included: true },
+      "test/test-main.js",
+      { pattern: "test/datas/*.js", included: true },
+      "test/lib/*.js",
+      { pattern: "test/**/*.js", included: true },
     ],
 
 
@@ -31,16 +31,16 @@ module.exports = function (config) {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-      'test/**/*.js': ['babel'],
+      "test/**/*.js": ["babel"],
     },
 
     babelPreprocessor: {
       options: {
-        presets: ['es2015'],
-        sourceMap: 'inline',
+        presets: ["es2015"],
+        sourceMap: "inline",
       },
       filename(file) {
-        return file.originalPath.replace(/\.js$/, '.es5.js');
+        return file.originalPath.replace(/\.js$/, ".es5.js");
       },
       sourceFileName(file) {
         return file.originalPath;
@@ -51,7 +51,7 @@ module.exports = function (config) {
     // test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: ['progress'],
+    reporters: ["progress"],
 
 
     // web server port
@@ -68,12 +68,12 @@ module.exports = function (config) {
 
 
     // enable / disable watching file and executing tests whenever any file changes
-    autoWatch: false,
+    autoWatch: true,
 
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ['Chrome'],
+    browsers: ["Chrome"],
 
 
     // Continuous Integration mode

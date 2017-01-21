@@ -1,3 +1,4 @@
+const staticData = data();
 const cacheFn = function (func) {
   const data = {};
   return function () {
@@ -21,43 +22,7 @@ const cacheFn = function (func) {
 
 const utils = {
   Atoms(type = "block") {
-    const types = {
-      block: "div",
-      div: "div",
-      header: "header",
-      footer: "footer",
-      aside: "aside",
-      article: "article",
-      main: "main",
-      nav: "nav",
-      navigation: "nav",
-      span: "span",
-      text: "p",
-      p: "p",
-      paragraphe: "p",
-      "ulist-container": "ul",
-      ulist: "ul",
-      ul: "ul",
-      "unordered-list": "ul",
-      "olist-container": "ol",
-      olist: "ol",
-      ol: "ol",
-      "ordered-list": "ol",
-      "list-element": "li",
-      li: "li",
-      code: "pre",
-      pre: "pre",
-      input: "input",
-      textarea: "textarea",
-      form: "form",
-      image: "img",
-      img: "img",
-      button: "button",
-      iframe: "iframe",
-      video: "video",
-      canvas: "canvas",
-      audio: "audio",
-    };
+    const types = staticData.Atoms;
     return types[type];
   },
   convertLeftToTime(base, left, totalTime) {
@@ -73,7 +38,7 @@ const utils = {
     const len = arguments.length;
     for (let i = 0; i < len; i++) {
       for (const p in objects[i]) {
-        if (!ret.hasOwnProperty(p)) {
+        if (!ret[p]) {
           ret[p] = objects[i][p];
         }
       }
@@ -81,22 +46,16 @@ const utils = {
     return ret;
   },
   checkEvent(evt) {
-    return /^(click|mousedown|mouseup|mousemove|change|touchstart|touchmove|touchend|input|focus|dlclick|mouseenter|mouseleave|mouseover|mouseout|blur|search|submit|play|pause|canplay|progress)$/ig.test(evt);
+    return staticData.regex.DOMEvent.test(evt);
   },
   getElementsWithAttribute(attribute, value, element) {
     const matchingElements = [];
     const allElements = element ? (element instanceof Array ? element : document.querySelectorAll(element)) : document.getElementsByTagName("*");
     for (let i = 0, n = allElements.length; i < n; i++) {
       const attrValue = allElements[i].getAttribute(attribute);
-      if (allElements[i].getAttribute(attribute) !== null) {
+      if (attrValue !== null) {
         // Element exists with attribute. Add to array.
-        if (value) {
-          if (allElements[i].getAttribute(attribute) === value) {
-            matchingElements.push(allElements[i]);
-          }
-        } else {
-          matchingElements.push(allElements[i]);
-        }
+        matchingElements.push(allElements[i]);
       }
     }
     return matchingElements;
@@ -136,36 +95,52 @@ const utils = {
   },
 
   generateRandomHexColor() {
-    return `#${Math.floor(Math.random() * 16777215).toString(16)}`;
+    let rndColour = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
+    while (rndColour.length < 7) {
+      rndColour += "f";
+    }
+    return rndColour;
   },
 
   closest(num, arr) {
     const sortedArr = arr.sort((a, b) => a - b);
+    let chosen;
     for (let i = 0; i < sortedArr.length; i++) {
+      let prevInd = i;
+      chosen = sortedArr[i];
+      if (i > 0) {
+        prevInd = i - 1;
+      }
       if (num < sortedArr[i]) {
-        return sortedArr[i];
+        if (num - sortedArr[prevInd] < sortedArr[i] - num) {
+          chosen = sortedArr[prevInd];
+        } else {
+          chosen = sortedArr[i];
+        }
+        break;
       }
     }
-    return sortedArr[sortedArr.length - 1];
+    return chosen;
   },
 
-  pxProperties: new Set("marginTop,marginLeft,marginBottom,marginRight,paddingTop,paddingLeft,paddingBottom,paddingRight,top,left,bottom,right,translateX,translateY,translateZ,perspectiveX,perspectiveY,perspectiveZ,width,height,maxWidth,maxHeight,minWidth,minHeight,borderRadius".split(",")),
-  degProperties: new Set("rotate,rotateX,rotateY,rotateZ,skew,skewX,skewY,skewZ".split(",")),
-  transformProperties: new Set("translate,translateX,translateY,translateZ,scale,scaleX,scaleY,scaleZ,rotate,rotateX,rotateY,rotateZ,rotateC,rotateCX,rotateCY,skew,skewX,skewY,skewZ,perspective".split(",")),
-  styleProperties: new Set("opacity,z-index".split(",")),
+  pxProperties: new Set(staticData.sets.pxProperties.split(",")),
+  degProperties: new Set(staticData.sets.degProperties.split(",")),
+  transformProperties: new Set(staticData.sets.transformProperties.split(",")),
+  styleProperties: new Set(staticData.sets.styleProperties.split(",")),
 
   isUnitProp(prop) {
-    return /position|background|display|visibility|opacity|scale|transform-origin|font-weight|line-height|letter-spacing|z-index|outline|text-align|skew|rotate|transform|overflow|border-style|border-color|word/ig.test(prop);
+    return staticData.regex.unitProp.test(prop);
   },
 
   isAnimatableProp(prop) {
-    return /^(background-color|translate|scale|rotate|skew|margin|padding|top|left|right|bottom|color|font-size|width|height|opacity)/ig.test(prop);
+    return staticData.regex.animatableProps.test(prop);
   },
 
   constrain(value, min, max) {
     if (min > value) {
       return min;
-    } else if (max < value) {
+    }
+    if (max < value) {
       return max;
     }
     return value;
@@ -176,22 +151,17 @@ const utils = {
   },
 
   applyDefaults(options, defaults) {
-    let k,
-      results,
-      v;
-    results = [];
-    for (k in defaults) {
-      v = defaults[k];
-      results.push(options[k] != null ? options[k] : options[k] = v);
+    for (const k in defaults) {
+      options[k] = defaults[k];
     }
-    return results;
+    return options;
   },
 
   clone(o) {
-    let k,
-      newO,
-      v;
-    newO = {};
+    const newO = {};
+    let k;
+    let v;
+
     for (k in o) {
       v = o[k];
       newO[k] = v;
@@ -200,9 +170,9 @@ const utils = {
   },
 
   roundf(v, decimal) {
-    let d;
-    d = Math.pow(10, decimal);
-    return Math.round(v * d) / d;
+    const tV = v.toString();
+    const preDecimal = tV.match(/^(.+)!?\./) ? tV.match(/^(.+)!?\./)[0] : "0.";
+    return Number(`${preDecimal}${v.toString().replace(preDecimal, "").slice(0, decimal)}`);
   },
 
   toDashed(str) {
@@ -210,30 +180,29 @@ const utils = {
   },
 
   prefixFor: cacheFn((property) => {
-    let i,
-      j,
-      k,
-      len,
-      len1,
-      prefix,
-      prop,
-      propArray,
-      propertyName,
-      ref;
-    if (document.body.style[property] !== void 0) {
+    const propArray = property.split("-");
+    const ref = ["Webkit", "Moz", "ms"];
+
+    let i;
+    let j;
+    let k;
+    let len;
+    let len1;
+    let prefix;
+    let prop;
+    let propertyName;
+    if (document.body.style[property] !== undefined) {
       return "";
     }
-    propArray = property.split("-");
     propertyName = "";
     for (i = 0, len = propArray.length; i < len; i++) {
       prop = propArray[i];
       propertyName += prop.substring(0, 1).toUpperCase() + prop.substring(1);
     }
-    ref = ["Webkit", "Moz", "ms"];
     for (j = 0, len1 = ref.length; j < len1; j++) {
       prefix = ref[j];
       k = prefix + propertyName;
-      if (document.body.style[k] !== void 0) {
+      if (document.body.style[k] !== undefined) {
         return prefix;
       }
     }
@@ -241,8 +210,7 @@ const utils = {
   }),
 
   propertyWithPrefix: cacheFn((property) => {
-    let prefix;
-    prefix = utils.prefixFor(property);
+    const prefix = utils.prefixFor(property);
     if (prefix === "Moz") {
       return `${prefix}${property.substring(0, 1).toUpperCase() + property.substring(1)}`;
     }
@@ -270,9 +238,8 @@ const utils = {
   },
 
   transformValueForProperty(k, v) {
-    let match,
-      unit;
-    match = (`${v}`).match(/^([0-9.-]*)([^0-9]*)$/);
+    let unit;
+    const match = (`${v}`).match(/^([0-9.-]*)([^0-9]*)$/);
     if (match != null) {
       v = match[1];
       unit = match[2];
@@ -294,7 +261,7 @@ const utils = {
     const uuid = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
       const r = (d + Math.random() * 16) % 16 | 0;
       d = Math.floor(d / 16);
-      return (c == "x" ? r : (r & 0x3 | 0x8)).toString(16);
+      return (c === "x" ? r : (r & 0x3 | 0x8)).toString(16);
     });
     return uuid;
   },
@@ -305,15 +272,15 @@ const utils = {
   },
 
   getUnitFromString(str) {
-    let u = str.match(/%|px|vh|vw|em/g),
-      unit = u !== null ? u[0] : "px";
+    const u = str.match(/%|px|vh|vw|em/g);
+    const unit = u !== null ? u[0] : "px";
     return unit;
   },
 
   hexToR(h) { return parseInt((utils.cutHex(h)).substring(0, 2), 16); },
   hexToG(h) { return parseInt((utils.cutHex(h)).substring(2, 4), 16); },
   hexToB(h) { return parseInt((utils.cutHex(h)).substring(4, 6), 16); },
-  cutHex(h) { return (h.charAt(0) == "#") ? h.substring(1, 7) : h; },
+  cutHex(h) { return (h.charAt(0) === "#") ? h.substring(1, 7) : h; },
   rgb2hex(red, green, blue) {
     const rgb = blue | (green << 8) | (red << 16);
     return `#${(0x1000000 + rgb).toString(16).slice(1)}`;
@@ -329,15 +296,15 @@ const utils = {
         a: 1,
       };
     } else {
-      const par = typeof propertie === "string" ? propertie.indexOf("\(") : -1;
+      const par = typeof propertie === "string" ? propertie.indexOf("(") : -1;
       if (par >= 0) {
         propertie = propertie.slice(par + 1, propertie.length - 1);
       }
       const rgba = typeof propertie === "string" ? propertie.split(",") : [0, 0, 0, 0];
       colorObj = {
-        r: parseInt(rgba[0]),
-        g: parseInt(rgba[1]),
-        b: parseInt(rgba[2]),
+        r: parseInt(rgba[0], 10),
+        g: parseInt(rgba[1], 10),
+        b: parseInt(rgba[2], 10),
         a: parseFloat(rgba[3] || 1),
       };
     }

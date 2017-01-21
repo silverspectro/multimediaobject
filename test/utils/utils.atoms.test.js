@@ -76,10 +76,10 @@ describe("utils.Atoms", () => {
     audio: "audio",
   };
 
-  it("should return a type based on the input", () => {
-    for (let x = 0; x < atomArray.length; x++) {
+  for (let x = 0; x < atomArray.length; x++) {
+    it(`should return ${refObject[atomArray[x]]} for input ${atomArray[x]}`, () => {
       expect(utils.Atoms(atomArray[x]))
       .toEqual(refObject[atomArray[x]]);
-    }
-  });
+    });
+  }
 });
