@@ -1,5 +1,5 @@
-const Set = require("../lib/Set.js");
-const staticData = require("../config/data.static.js")();
+const Set = require('../lib/Set.js');
+const staticData = require('../config/data.static.js')();
 
 const cacheFn = function (func) {
   const data = {};
@@ -9,7 +9,7 @@ const cacheFn = function (func) {
     let key;
     let len;
     let result;
-    key = "";
+    key = '';
     for (i = 0, len = arguments.length; i < len; i++) {
       k = arguments[i];
       key += `${k.toString()},`;
@@ -23,7 +23,7 @@ const cacheFn = function (func) {
 };
 
 const utils = {
-  Atoms(type = "block") {
+  Atoms(type = 'block') {
     const types = staticData.Atoms;
     return types[type];
   },
@@ -52,7 +52,7 @@ const utils = {
   },
   getElementsWithAttribute(attribute, value, element) {
     const matchingElements = [];
-    const allElements = element ? (element instanceof Array ? element : document.querySelectorAll(element)) : document.getElementsByTagName("*");
+    const allElements = element ? (element instanceof Array ? element : document.querySelectorAll(element)) : document.getElementsByTagName('*');
     for (let i = 0, n = allElements.length; i < n; i++) {
       const attrValue = allElements[i].getAttribute(attribute);
       if (attrValue !== null) {
@@ -99,7 +99,7 @@ const utils = {
   generateRandomHexColor() {
     let rndColour = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
     while (rndColour.length < 7) {
-      rndColour += "f";
+      rndColour += 'f';
     }
     return rndColour;
   },
@@ -125,10 +125,10 @@ const utils = {
     return chosen;
   },
 
-  pxProperties: new Set(staticData.sets.pxProperties.split(",")),
-  degProperties: new Set(staticData.sets.degProperties.split(",")),
-  transformProperties: new Set(staticData.sets.transformProperties.split(",")),
-  styleProperties: new Set(staticData.sets.styleProperties.split(",")),
+  pxProperties: new Set(staticData.sets.pxProperties.split(',')),
+  degProperties: new Set(staticData.sets.degProperties.split(',')),
+  transformProperties: new Set(staticData.sets.transformProperties.split(',')),
+  styleProperties: new Set(staticData.sets.styleProperties.split(',')),
 
   isUnitProp(prop) {
     return staticData.regex.unitProp.test(prop);
@@ -173,8 +173,8 @@ const utils = {
 
   roundf(v, decimal) {
     const tV = v.toString();
-    const preDecimal = tV.match(/^(.+)!?\./) ? tV.match(/^(.+)!?\./)[0] : "0.";
-    return Number(`${preDecimal}${v.toString().replace(preDecimal, "").slice(0, decimal)}`);
+    const preDecimal = tV.match(/^(.+)!?\./) ? tV.match(/^(.+)!?\./)[0] : '0.';
+    return Number(`${preDecimal}${v.toString().replace(preDecimal, '').slice(0, decimal)}`);
   },
 
   toDashed(str) {
@@ -182,8 +182,8 @@ const utils = {
   },
 
   prefixFor: cacheFn((property) => {
-    const propArray = property.split("-");
-    const ref = ["Webkit", "Moz", "ms"];
+    const propArray = property.split('-');
+    const ref = ['Webkit', 'Moz', 'ms'];
 
     let i;
     let j;
@@ -194,9 +194,9 @@ const utils = {
     let prop;
     let propertyName;
     if (document.body.style[property] !== undefined) {
-      return "";
+      return '';
     }
-    propertyName = "";
+    propertyName = '';
     for (i = 0, len = propArray.length; i < len; i++) {
       prop = propArray[i];
       propertyName += prop.substring(0, 1).toUpperCase() + prop.substring(1);
@@ -208,30 +208,30 @@ const utils = {
         return prefix;
       }
     }
-    return "";
+    return '';
   }),
 
   propertyWithPrefix: cacheFn((property) => {
     const prefix = utils.prefixFor(property);
-    if (prefix === "Moz") {
+    if (prefix === 'Moz') {
       return `${prefix}${property.substring(0, 1).toUpperCase() + property.substring(1)}`;
     }
-    if (prefix !== "") {
+    if (prefix !== '') {
       return `-${prefix.toLowerCase()}-${utils.toDashed(property)}`;
     }
     return utils.toDashed(property);
   }),
 
   unitForProperty(k, v) {
-    if (typeof v !== "number") {
-      return "";
+    if (typeof v !== 'number') {
+      return '';
     }
     if (utils.pxProperties.contains(k)) {
-      return "px";
+      return 'px';
     } else if (utils.degProperties.contains(k)) {
-      return "deg";
+      return 'deg';
     }
-    return "";
+    return '';
   },
 
   getMaxOfArray(numArray) {
@@ -249,7 +249,7 @@ const utils = {
       v = parseFloat(v);
     }
     v = utils.roundf(parseFloat(v), 10);
-    if ((unit == null) || unit === "") {
+    if ((unit == null) || unit === '') {
       unit = utils.unitForProperty(k, v);
     }
     return `${k}(${v}${unit})`;
@@ -257,32 +257,35 @@ const utils = {
 
   generateUUID() {
     let d = new Date().getTime();
-    if (window.performance && typeof window.performance.now === "function") {
+    if (window.performance && typeof window.performance.now === 'function') {
       d += performance.now(); // use high-precision timer if available
     }
-    const uuid = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+    const uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
       const r = (d + Math.random() * 16) % 16 | 0;
       d = Math.floor(d / 16);
-      return (c === "x" ? r : (r & 0x3 | 0x8)).toString(16);
+      return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
     });
     return uuid;
   },
 
   getNumFromString(str) {
-    const num = str.match(/-(?=\d)|\d+|\.\d+/g);
-    return num !== null ? parseFloat(num.join("")) : str;
+    if (typeof str === 'string') {
+      const num = str.match(/-(?=\d)|\d+|\.\d+/g);
+      return num !== null ? parseFloat(num.join('')) : str;
+    }
+    return '';
   },
 
   getUnitFromString(str) {
     const u = str.match(/%|px|vh|vw|em/g);
-    const unit = u !== null ? u[0] : "px";
+    const unit = u !== null ? u[0] : 'px';
     return unit;
   },
 
   hexToR(h) { return parseInt((utils.cutHex(h)).substring(0, 2), 16); },
   hexToG(h) { return parseInt((utils.cutHex(h)).substring(2, 4), 16); },
   hexToB(h) { return parseInt((utils.cutHex(h)).substring(4, 6), 16); },
-  cutHex(h) { return (h.charAt(0) === "#") ? h.substring(1, 7) : h; },
+  cutHex(h) { return (h.charAt(0) === '#') ? h.substring(1, 7) : h; },
   rgb2hex(red, green, blue) {
     const rgb = blue | (green << 8) | (red << 16);
     return `#${(0x1000000 + rgb).toString(16).slice(1)}`;
@@ -290,7 +293,7 @@ const utils = {
 
   transformToColor(propertie) {
     let colorObj;
-    if (propertie[0] === "#") {
+    if (propertie[0] === '#') {
       colorObj = {
         r: utils.hexToR(propertie),
         g: utils.hexToG(propertie),
@@ -298,11 +301,11 @@ const utils = {
         a: 1,
       };
     } else {
-      const par = typeof propertie === "string" ? propertie.indexOf("(") : -1;
+      const par = typeof propertie === 'string' ? propertie.indexOf('(') : -1;
       if (par >= 0) {
         propertie = propertie.slice(par + 1, propertie.length - 1);
       }
-      const rgba = typeof propertie === "string" ? propertie.split(",") : [0, 0, 0, 0];
+      const rgba = typeof propertie === 'string' ? propertie.split(',') : [0, 0, 0, 0];
       colorObj = {
         r: parseInt(rgba[0], 10),
         g: parseInt(rgba[1], 10),
@@ -315,7 +318,7 @@ const utils = {
   toCamelCase(str) {
     return str
         .replace(/\s(.)/g, $1 => $1.toUpperCase())
-        .replace(/\s/g, "")
+        .replace(/\s/g, '')
         .replace(/^(.)/, $1 => $1.toLowerCase());
   },
 
