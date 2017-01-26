@@ -239,18 +239,26 @@ const utils = {
 
   transformValueForProperty(k, v) {
     let unit;
-    const match = (`${v}`).match(/^([0-9.-]*)([^0-9]*)$/);
-    if (match != null) {
-      v = match[1];
-      unit = match[2];
-    } else {
+    if (v && v !== null) {
+      const match = v.match(/^([0-9.-]*)([^0-9]*)$/);
+      if (match != null) {
+        v = match[1];
+        unit = match[2];
+      }
       v = parseFloat(v);
+      if (unit === null || unit === "") {
+        unit = utils.unitForProperty(k, v);
+      }
+      return `${k}(${v}${unit})`;
     }
-    v = utils.roundf(parseFloat(v), 10);
-    if ((unit == null) || unit === "") {
-      unit = utils.unitForProperty(k, v);
+    if (k.indexOf("scale") >= 0) {
+      unit = "";
+    } else if (k.indexOf("rotate") >= 0) {
+      unit = "deg";
+    } else {
+      unit = "px";
     }
-    return `${k}(${v}${unit})`;
+    return `${k}(0${unit})`;
   },
 
   generateUUID() {

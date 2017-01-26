@@ -1,3 +1,5 @@
+/* globals utils requireScript config eventManager */
+
 /*
 
 Copyright 2016 Ciro André DE CARO
@@ -37,6 +39,7 @@ class MultimediaObject {
   constructor(type = "block", name = "multimediaObject", fps = 60) {
     if (typeof type === "object") {
       this.name = name || type.name;
+      this.type = type.type || "block";
       this._style = {};
       this.style = {};
       this.events = {};
@@ -72,6 +75,7 @@ class MultimediaObject {
       this.applyStyle(this.style);
       this.applyEvents();
       this.applyBreakpoints();
+      this.applyDependencies();
     } else {
       this.uuid = utils.generateUUID();
       this.name = name;
@@ -136,7 +140,7 @@ class MultimediaObject {
         this.addListener("startAfterPreload", () => this.startAnimation(), true);
       }
     }
-    if (!this.attributes.id) {
+    if (this.attributes && !this.attributes.id) {
       this.applyAttributes({
         id: this.name,
       });
@@ -157,6 +161,22 @@ class MultimediaObject {
     }
   }
 
+  checkDep(dependency, pushOrSplice = "push") {
+    const depIndex = this.dependencies.indexOf(dependency);
+    switch (pushOrSplice) {
+      case "splice" :
+        if (depIndex >= 0) {
+          this.dependencies.splice(depIndex, 1);
+        }
+        break;
+      case "push" :
+      default :
+        if (depIndex < 0) {
+          this.dependencies.push(dependency);
+        }
+    }
+  }
+
   /**
   * @function
   * Require dependencies and add it to a dependencie bundle
@@ -164,20 +184,26 @@ class MultimediaObject {
   * @return {object} MultimediaObject
   */
 
-  applyDependencies(dependency) {
-    if (dependency) {
-      const depIndex = this.dependencies.indexOf(dependency);
-      if (depIndex < 0) {
-        this.dependencies.push(dependency);
-      }
+  applyDependencies(dependencies) {
+    dependencies = dependencies || this.dependencies;
+    if (dependencies instanceof Array) {
+      dependencies.forEach((dep) => {
+        this.checkDep(dep);
+      });
+    } else {
+      this.checkDep(dependencies);
     }
     return this;
   }
 
-  removeDependencies(dependency) {
-    const depIndex = this.dependencies.indexOf(dependency);
-    if (depIndex >= 0) {
-      this.dependencies.splice(depIndex, 1);
+  removeDependencies(dependencies) {
+    dependencies = dependencies || this.dependencies;
+    if (dependencies instanceof Array) {
+      dependencies.forEach((dep) => {
+        this.checkDep(dep, "splice");
+      });
+    } else {
+      this.checkDep(dependencies, "splice");
     }
     return this;
   }
@@ -200,8 +226,8 @@ class MultimediaObject {
   */
 
   addGlobalStyle(style, callback) {
-    let styleMarkup = document.createElement("style"),
-      styleText = style;
+    const styleMarkup = document.createElement("style");
+    const styleText = style;
 
     styleMarkup.innerHTML = styleText;
     styleMarkup.id = `${this.uuid}-style`;
@@ -223,23 +249,22 @@ class MultimediaObject {
   */
 
   applyStyle(properties, override) {
-    var k,
-      transforms,
-      v,
-      _style = Object.keys(this._style).length,
-      animatableProps = [],
-      override = override || false;
-
-    transforms = [];
+    let k;
+    const transforms = [];
+    let v;
+    const _style = Object.keys(this._style).length;
+    override = override || false;
 
     for (k in properties) {
       v = properties[k];
       if (utils.transformProperties.contains(k)) {
         transforms.push([k, v]);
+        const val = utils.transformValueForProperty(k, v);
+        const treatedVal = val.slice(val.indexOf("(") + 1, val.lastIndexOf(")"));
         if (_style < 1 || override) {
-          this._style[k] = v;
+          this._style[k] = treatedVal;
         }
-        this.style[k] = v;
+        this.style[k] = treatedVal;
       } else {
         v = `${v}${utils.unitForProperty(k, v)}`;
         // console.log(v);
@@ -254,28 +279,28 @@ class MultimediaObject {
       }
     }
 
-    let z = [0, 1, 2],
-      trans = {
-        x: this._style.translateX ? utils.getNumFromString(this._style.translateX) : 0,
-        y: this._style.translateY ? utils.getNumFromString(this._style.translateY) : 0,
-        z: this._style.translateZ ? utils.getNumFromString(this._style.translateZ) : 0,
-        xU: this._style.translateX ? utils.getUnitFromString(this._style.translateX) : "px",
-        yU: this._style.translateY ? utils.getUnitFromString(this._style.translateY) : "px",
-        zU: this._style.translateZ ? utils.getUnitFromString(this._style.translateZ) : "px",
-      },
-      rot = {
-        value: this._style.rotate ? utils.getNumFromString(this._style.rotate) : 0,
-        u: "deg",
-      },
-      sca = {
-        x: this._style.scaleX ? utils.getNumFromString(this._style.scaleX) : 1,
-        y: this._style.scaleY ? utils.getNumFromString(this._style.scaleY) : 1,
-      };
+    let z = [0, 1, 2];
+    const trans = {
+      x: this._style.translateX ? utils.getNumFromString(this._style.translateX) : 0,
+      y: this._style.translateY ? utils.getNumFromString(this._style.translateY) : 0,
+      z: this._style.translateZ ? utils.getNumFromString(this._style.translateZ) : 0,
+      xU: this._style.translateX ? utils.getUnitFromString(this._style.translateX) : "px",
+      yU: this._style.translateY ? utils.getUnitFromString(this._style.translateY) : "px",
+      zU: this._style.translateZ ? utils.getUnitFromString(this._style.translateZ) : "px",
+    };
+    const rot = {
+      value: this._style.rotate ? utils.getNumFromString(this._style.rotate) : 0,
+      u: "deg",
+    };
+    const sca = {
+      x: this._style.scaleX ? utils.getNumFromString(this._style.scaleX) : 1,
+      y: this._style.scaleY ? utils.getNumFromString(this._style.scaleY) : 1,
+    };
 
     if (transforms.length > 0) {
       v = (transforms.map(transform => utils.transformValueForProperty(transform[0], transform[1])));
 
-      v = v.map((a, b) => {
+      v.forEach((a) => {
         if (a.indexOf("translateX") >= 0) {
           trans.x = utils.getNumFromString(a);
           trans.xU = utils.getUnitFromString(a);
@@ -298,7 +323,6 @@ class MultimediaObject {
           sca.y = utils.getNumFromString(a);
         }
       });
-      // console.log(v,trans,rot,sca);
       // console.log(z);
       z[0] = `translate3d(${trans.x}${trans.xU},${trans.y}${trans.yU},${trans.z}${trans.zU})`;
       z[1] = `rotate(${rot.value}${rot.u})`;
@@ -306,12 +330,7 @@ class MultimediaObject {
       // console.log(z);
       z = z.filter(el => !/^[0-9]/.test(el)).join(" ");
 
-      // this.style[utils.propertyWithPrefix("transform")] = z;
-      // if(_style < 1 || override) {
-      //   this._style[utils.propertyWithPrefix("transform")] = z;
-      // }
       this.element.style[utils.propertyWithPrefix("transform")] = z;
-
       eventManager.dispatchEvent("actualize-style", this._style);
     }
 
@@ -1264,6 +1283,20 @@ class MultimediaObject {
     return ob;
   }
 
+  setAbsoluteAssetURL(json) {
+    if (window[conf.namespace] && json) {
+      if (typeof window[conf.namespace].absoluteAssetURL !== "undefined" && window[conf.namespace].absoluteAssetURL !== "undefined" && window[conf.namespace].absoluteAssetURL !== "") {
+        this.data.absoluteAssetURL = window[conf.namespace].absoluteAssetURL;
+      } else if (typeof json.data.absoluteAssetURL !== "undefined" && json.data.absoluteAssetURL !== "" && json.data.absoluteAssetURL !== "./") {
+        window[conf.namespace].absoluteAssetURL = json.data.absoluteAssetURL;
+      } else {
+        this.data.absoluteAssetURL = "./";
+      }
+    } else {
+      this.data.absoluteAssetURL = json.data && typeof json.data.absoluteAssetURL !== "undefined" && json.data.absoluteAssetURL !== "" ? json.data.absoluteAssetURL : "./";
+    }
+  }
+
   loadFromJSON(json) {
     for (const key in json) {
       if (key === "animations" && !json.animations.default) {
@@ -1304,15 +1337,7 @@ class MultimediaObject {
     this.data = json.data || {};
     this.type = json.type;
     this.data.absoluteAssetURL = json.data && json.data.absoluteAssetURL ? json.data.absoluteAssetURL : "";
-    this.data.autostart = json.data && json.data.autostart ? eval(json.data.autostart) : true;
-    if (window[conf.namespace]) {
-      if (window[conf.namespace].absoluteAssetURL !== "undefined" && window[conf.namespace].absoluteAssetURL !== "") {
-        this.data.absoluteAssetURL = window[conf.namespace].absoluteAssetURL;
-      } else if (typeof json.data.absoluteAssetURL !== "undefined" && json.data.absoluteAssetURL !== "" && json.data.absoluteAssetURL !== "./") {
-        window[conf.namespace].absoluteAssetURL = json.data.absoluteAssetURL;
-      }
-    } else {
-      this.data.absoluteAssetURL = json.data && typeof json.data.absoluteAssetURL !== "undefined" && json.data.absoluteAssetURL !== "" ? json.data.absoluteAssetURL : "./";
-    }
+    this.data.autostart = json.data ? eval(json.data.autostart) : true;
+    this.setAbsoluteAssetURL(json);
   }
 }

@@ -42,7 +42,7 @@ const data = () => ({
     animatableProps: new RegExp("^(background-color|translate|scale|rotate|skew|margin|padding|top|left|right|bottom|color|font-size|width|height|opacity)$"),
   },
   sets: {
-    pxProperties: "marginTop,marginLeft,marginBottom,marginRight,paddingTop,paddingLeft,paddingBottom,paddingRight,top,left,bottom,right,translateX,translateY,translateZ,perspectiveX,perspectiveY,perspectiveZ,width,height,maxWidth,maxHeight,minWidth,minHeight,borderRadius",
+    pxProperties: "marginTop,margin-top,marginLeft,margin-left,marginBottom,margin-bottom,marginRight,margin-right,paddingTop,padding-top,paddingLeft,padding-left,paddingBottom,padding-bottom,paddingRight,padding-right,top,left,bottom,right,translateX,translateY,translateZ,perspectiveX,perspectiveY,perspectiveZ,width,height,maxWidth,maxHeight,minWidth,minHeight,borderRadius",
     degProperties: "rotate,rotateX,rotateY,rotateZ,skew,skewX,skewY,skewZ",
     transformProperties: "translate,translateX,translateY,translateZ,scale,scaleX,scaleY,scaleZ,rotate,rotateX,rotateY,rotateZ,rotateC,rotateCX,rotateCY,skew,skewX,skewY,skewZ,perspective",
     styleProperties: "opacity,z-index",

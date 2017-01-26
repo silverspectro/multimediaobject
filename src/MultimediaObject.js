@@ -43,6 +43,7 @@ class MultimediaObject {
   constructor(type = "block", name = "multimediaObject", fps = 60) {
     if (typeof type === "object") {
       this.name = name || type.name;
+      this.type = type.type || "block";
       this._style = {};
       this.style = {};
       this.events = {};
@@ -142,7 +143,7 @@ class MultimediaObject {
         this.addListener("startAfterPreload", () => this.startAnimation(), true);
       }
     }
-    if (!this.attributes.id) {
+    if (this.attributes && !this.attributes.id) {
       this.applyAttributes({
         id: this.name,
       });
@@ -1270,6 +1271,20 @@ class MultimediaObject {
     return ob;
   }
 
+  setAbsoluteAssetURL(json) {
+    if (window[conf.namespace] && json) {
+      if (typeof window[conf.namespace].absoluteAssetURL !== "undefined" && window[conf.namespace].absoluteAssetURL !== "undefined" && window[conf.namespace].absoluteAssetURL !== "") {
+        this.data.absoluteAssetURL = window[conf.namespace].absoluteAssetURL;
+      } else if (typeof json.data.absoluteAssetURL !== "undefined" && json.data.absoluteAssetURL !== "" && json.data.absoluteAssetURL !== "./") {
+        window[conf.namespace].absoluteAssetURL = json.data.absoluteAssetURL;
+      } else {
+        this.data.absoluteAssetURL = "./";
+      }
+    } else {
+      this.data.absoluteAssetURL = json.data && typeof json.data.absoluteAssetURL !== "undefined" && json.data.absoluteAssetURL !== "" ? json.data.absoluteAssetURL : "./";
+    }
+  }
+
   loadFromJSON(json) {
     for (const key in json) {
       if (key === "animations" && !json.animations.default) {
@@ -1310,16 +1325,8 @@ class MultimediaObject {
     this.data = json.data || {};
     this.type = json.type;
     this.data.absoluteAssetURL = json.data && json.data.absoluteAssetURL ? json.data.absoluteAssetURL : "";
-    this.data.autostart = json.data && json.data.autostart ? eval(json.data.autostart) : true;
-    if (window[conf.namespace]) {
-      if (window[conf.namespace].absoluteAssetURL !== "undefined" && window[conf.namespace].absoluteAssetURL !== "") {
-        this.data.absoluteAssetURL = window[conf.namespace].absoluteAssetURL;
-      } else if (typeof json.data.absoluteAssetURL !== "undefined" && json.data.absoluteAssetURL !== "" && json.data.absoluteAssetURL !== "./") {
-        window[conf.namespace].absoluteAssetURL = json.data.absoluteAssetURL;
-      }
-    } else {
-      this.data.absoluteAssetURL = json.data && typeof json.data.absoluteAssetURL !== "undefined" && json.data.absoluteAssetURL !== "" ? json.data.absoluteAssetURL : "./";
-    }
+    this.data.autostart = json.data ? eval(json.data.autostart) : true;
+    this.setAbsoluteAssetURL(json);
   }
 }
 

@@ -13,6 +13,7 @@ module.exports = {
       "guard-for-in" : 0,
       "no-param-reassign" : 1,
       "no-bitwise" : 0,
+      "no-underscore-dangle": 0,
     },
     "env": {
       "browser": true,
