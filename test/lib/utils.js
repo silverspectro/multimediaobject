@@ -275,8 +275,11 @@ const utils = {
   },
 
   getNumFromString(str) {
-    const num = str.match(/-(?=\d)|\d+|\.\d+/g);
-    return num !== null ? parseFloat(num.join("")) : str;
+    if (typeof str === "string") {
+      const num = str.match(/-(?=\d)|\d+|\.\d+/g);
+      return num !== null ? parseFloat(num.join("")) : str;
+    }
+    return "";
   },
 
   getUnitFromString(str) {
