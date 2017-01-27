@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for test\lib\raf.js</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../prettify.css" />
+    <link rel="stylesheet" href="../../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../../index.html">all files</a> / <a href="index.html">test/lib/</a> raf.js
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">35.29% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>6/17</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">50% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>4/8</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">25% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>1/4</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">35.29% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>6/17</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line low'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">"use strict";
+&nbsp;
+// http://paulirish.com/2011/requestanimationframe-for-smart-animating/
+// http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
+&nbsp;
+// requestAnimationFrame polyfill by Erik Möller. fixes from Paul Irish and Tino Zijdel
+&nbsp;
+// MIT license
+&nbsp;
+(function () {
+  var lastTime = 0;
+  var vendors = ["ms", "moz", "webkit", "o"];
+  for (var x = 0; x &lt; vendors.length &amp;&amp; !window.requestAnimationFrame; ++x) {
+<span class="cstat-no" title="statement not covered" >    window.requestAnimationFrame = window[vendors[x] + "RequestAnimationFrame"];</span>
+<span class="cstat-no" title="statement not covered" >    window.cancelAnimationFrame = window[vendors[x] + "CancelAnimationFrame"] || window[vendors[x] + "CancelRequestAnimationFrame"];</span>
+  }
+&nbsp;
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (!window.requestAnimationFrame) {
+<span class="cstat-no" title="statement not covered" >    window.requestAnimationFrame = <span class="fstat-no" title="function not covered" >function (callback, element) {</span></span>
+<span class="cstat-no" title="statement not covered" >      var currTime = new Date().getTime();</span>
+<span class="cstat-no" title="statement not covered" >      var timeToCall = Math.max(0, 16 - (currTime - lastTime));</span>
+<span class="cstat-no" title="statement not covered" >      var id = window.setTimeout(<span class="fstat-no" title="function not covered" >function () {</span></span>
+<span class="cstat-no" title="statement not covered" >        callback(currTime + timeToCall);</span>
+      }, timeToCall);
+<span class="cstat-no" title="statement not covered" >      lastTime = currTime + timeToCall;</span>
+<span class="cstat-no" title="statement not covered" >      return id;</span>
+    };
+  }
+&nbsp;
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (!window.cancelAnimationFrame) {
+<span class="cstat-no" title="statement not covered" >    window.cancelAnimationFrame = <span class="fstat-no" title="function not covered" >function (id) {</span></span>
+<span class="cstat-no" title="statement not covered" >      clearTimeout(id);</span>
+    };
+  }
+})();
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIkU6L1VzZXIvRG9jdW1lbnRzLzIwMTcvUEVSU08vbXVsdGltZWRpYW9iamVjdC90ZXN0L2xpYi9yYWYuanMiXSwibmFtZXMiOlsibGFzdFRpbWUiLCJ2ZW5kb3JzIiwieCIsImxlbmd0aCIsIndpbmRvdyIsInJlcXVlc3RBbmltYXRpb25GcmFtZSIsImNhbmNlbEFuaW1hdGlvbkZyYW1lIiwiY2FsbGJhY2siLCJlbGVtZW50IiwiY3VyclRpbWUiLCJEYXRlIiwiZ2V0VGltZSIsInRpbWVUb0NhbGwiLCJNYXRoIiwibWF4IiwiaWQiLCJzZXRUaW1lb3V0IiwiY2xlYXJUaW1lb3V0Il0sIm1hcHBpbmdzIjoiOztBQUFBO0FBQ0E7O0FBRUE7O0FBRUE7O0FBRUMsYUFBWTtBQUNYLE1BQUlBLFdBQVcsQ0FBZjtBQUNBLE1BQU1DLFVBQVUsQ0FBQyxJQUFELEVBQU8sS0FBUCxFQUFjLFFBQWQsRUFBd0IsR0FBeEIsQ0FBaEI7QUFDQSxPQUFLLElBQUlDLElBQUksQ0FBYixFQUFnQkEsSUFBSUQsUUFBUUUsTUFBWixJQUFzQixDQUFDQyxPQUFPQyxxQkFBOUMsRUFBcUUsRUFBRUgsQ0FBdkUsRUFBMEU7QUFDeEVFLFdBQU9DLHFCQUFQLEdBQStCRCxPQUFVSCxRQUFRQyxDQUFSLENBQVYsMkJBQS9CO0FBQ0FFLFdBQU9FLG9CQUFQLEdBQThCRixPQUFVSCxRQUFRQyxDQUFSLENBQVYsOEJBQ0lFLE9BQVVILFFBQVFDLENBQVIsQ0FBVixpQ0FEbEM7QUFFRDs7QUFFRCxNQUFJLENBQUNFLE9BQU9DLHFCQUFaLEVBQW1DO0FBQ2pDRCxXQUFPQyxxQkFBUCxHQUErQixVQUFVRSxRQUFWLEVBQW9CQyxPQUFwQixFQUE2QjtBQUMxRCxVQUFNQyxXQUFXLElBQUlDLElBQUosR0FBV0MsT0FBWCxFQUFqQjtBQUNBLFVBQU1DLGFBQWFDLEtBQUtDLEdBQUwsQ0FBUyxDQUFULEVBQVksTUFBTUwsV0FBV1QsUUFBakIsQ0FBWixDQUFuQjtBQUNBLFVBQU1lLEtBQUtYLE9BQU9ZLFVBQVAsQ0FBa0IsWUFBTTtBQUFFVCxpQkFBU0UsV0FBV0csVUFBcEI7QUFBa0MsT0FBNUQsRUFDSEEsVUFERyxDQUFYO0FBRUFaLGlCQUFXUyxXQUFXRyxVQUF0QjtBQUNBLGFBQU9HLEVBQVA7QUFDRCxLQVBEO0FBUUQ7O0FBRUQsTUFBSSxDQUFDWCxPQUFPRSxvQkFBWixFQUFrQztBQUNoQ0YsV0FBT0Usb0JBQVAsR0FBOEIsVUFBVVMsRUFBVixFQUFjO0FBQzFDRSxtQkFBYUYsRUFBYjtBQUNELEtBRkQ7QUFHRDtBQUNGLENBekJBLEdBQUQiLCJmaWxlIjoicmFmLmVzNS5qcyIsInNvdXJjZXNDb250ZW50IjpbIi8vIGh0dHA6Ly9wYXVsaXJpc2guY29tLzIwMTEvcmVxdWVzdGFuaW1hdGlvbmZyYW1lLWZvci1zbWFydC1hbmltYXRpbmcvXG4vLyBodHRwOi8vbXkub3BlcmEuY29tL2Vtb2xsZXIvYmxvZy8yMDExLzEyLzIwL3JlcXVlc3RhbmltYXRpb25mcmFtZS1mb3Itc21hcnQtZXItYW5pbWF0aW5nXG5cbi8vIHJlcXVlc3RBbmltYXRpb25GcmFtZSBwb2x5ZmlsbCBieSBFcmlrIE3DtmxsZXIuIGZpeGVzIGZyb20gUGF1bCBJcmlzaCBhbmQgVGlubyBaaWpkZWxcblxuLy8gTUlUIGxpY2Vuc2VcblxuKGZ1bmN0aW9uICgpIHtcbiAgbGV0IGxhc3RUaW1lID0gMDtcbiAgY29uc3QgdmVuZG9ycyA9IFtcIm1zXCIsIFwibW96XCIsIFwid2Via2l0XCIsIFwib1wiXTtcbiAgZm9yIChsZXQgeCA9IDA7IHggPCB2ZW5kb3JzLmxlbmd0aCAmJiAhd2luZG93LnJlcXVlc3RBbmltYXRpb25GcmFtZTsgKyt4KSB7XG4gICAgd2luZG93LnJlcXVlc3RBbmltYXRpb25GcmFtZSA9IHdpbmRvd1tgJHt2ZW5kb3JzW3hdfVJlcXVlc3RBbmltYXRpb25GcmFtZWBdO1xuICAgIHdpbmRvdy5jYW5jZWxBbmltYXRpb25GcmFtZSA9IHdpbmRvd1tgJHt2ZW5kb3JzW3hdfUNhbmNlbEFuaW1hdGlvbkZyYW1lYF1cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfHwgd2luZG93W2Ake3ZlbmRvcnNbeF19Q2FuY2VsUmVxdWVzdEFuaW1hdGlvbkZyYW1lYF07XG4gIH1cblxuICBpZiAoIXdpbmRvdy5yZXF1ZXN0QW5pbWF0aW9uRnJhbWUpIHtcbiAgICB3aW5kb3cucmVxdWVzdEFuaW1hdGlvbkZyYW1lID0gZnVuY3Rpb24gKGNhbGxiYWNrLCBlbGVtZW50KSB7XG4gICAgICBjb25zdCBjdXJyVGltZSA9IG5ldyBEYXRlKCkuZ2V0VGltZSgpO1xuICAgICAgY29uc3QgdGltZVRvQ2FsbCA9IE1hdGgubWF4KDAsIDE2IC0gKGN1cnJUaW1lIC0gbGFzdFRpbWUpKTtcbiAgICAgIGNvbnN0IGlkID0gd2luZG93LnNldFRpbWVvdXQoKCkgPT4geyBjYWxsYmFjayhjdXJyVGltZSArIHRpbWVUb0NhbGwpOyB9LFxuICAgICAgICAgICAgICB0aW1lVG9DYWxsKTtcbiAgICAgIGxhc3RUaW1lID0gY3VyclRpbWUgKyB0aW1lVG9DYWxsO1xuICAgICAgcmV0dXJuIGlkO1xuICAgIH07XG4gIH1cblxuICBpZiAoIXdpbmRvdy5jYW5jZWxBbmltYXRpb25GcmFtZSkge1xuICAgIHdpbmRvdy5jYW5jZWxBbmltYXRpb25GcmFtZSA9IGZ1bmN0aW9uIChpZCkge1xuICAgICAgY2xlYXJUaW1lb3V0KGlkKTtcbiAgICB9O1xuICB9XG59KCkpO1xuIl19</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Sat Jan 28 2017 14:12:15 GMT+0100 (Paris, Madrid)
+</div>
+</div>
+<script src="../../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../../sorter.js"></script>
+</body>
+</html>

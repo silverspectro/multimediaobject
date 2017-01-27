@@ -1,14 +1,15 @@
 /* globals MultimediaObject */
+import MultimediaObject from '../../src/MultimediaObject';
 
-describe("MultimediaObject removeDependencies", () => {
-  const dep1 = "http://google.com";
-  const dep2 = ["http://test.com", "https://site.random.com/js"];
+describe('MultimediaObject removeDependencies', () => {
+  const dep1 = 'http://google.com';
+  const dep2 = ['http://test.com', 'https://site.random.com/js'];
 
   const ob = new MultimediaObject();
   ob.applyDependencies(dep1);
   ob.removeDependencies(dep1);
 
-  it("should have no dependencies", () => {
+  it('should have no dependencies', () => {
     expect(ob.dependencies).toEqual([]);
   });
 

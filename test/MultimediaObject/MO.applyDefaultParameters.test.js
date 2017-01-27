@@ -1,22 +1,25 @@
 /* globals MultimediaObject config*/
+import MultimediaObject from '../../src/MultimediaObject';
+import config from '../../src/config/config';
+
 const conf = config();
 window._s4mConfig = {};
 
-describe("MultimediaObject applyDefaultParameters", () => {
+describe('MultimediaObject applyDefaultParameters', () => {
   const types = [
-    "div",
-    "input",
-    "form",
-    "img",
-    "iframe",
-    "video",
-    "audio",
+    'div',
+    'input',
+    'form',
+    'img',
+    'iframe',
+    'video',
+    'audio',
   ];
 
   types.forEach((type) => {
     const ob = new MultimediaObject(type);
     const matchAttributes = conf.defaultAttributes[type] || {};
-    matchAttributes.id = "multimediaObject";
+    matchAttributes.id = 'multimediaObject';
     it(`should contain ${matchAttributes} in .attributes`, () => {
       expect(ob.attributes).toEqual(matchAttributes);
     });
@@ -29,10 +32,10 @@ describe("MultimediaObject applyDefaultParameters", () => {
 
   const ob2 = new MultimediaObject();
 
-  it("should set data.autostart to true by default", () => {
+  it('should set data.autostart to true by default', () => {
     expect(ob2.data.autostart).toBe(true);
   });
-  it("should set data.absoluteAssetURL to undefined", () => {
+  it('should set data.absoluteAssetURL to undefined', () => {
     expect(ob2.data.absoluteAssetURL).toEqual(undefined);
   });
 
@@ -42,17 +45,17 @@ describe("MultimediaObject applyDefaultParameters", () => {
     },
   });
 
-  it("should keep data.autostart to what it was set", () => {
+  it('should keep data.autostart to what it was set', () => {
     expect(ob3.data.autostart).toBe(false);
   });
   it("should set data.absoluteAssetURL to './'", () => {
-    expect(ob3.data.absoluteAssetURL).toEqual("./");
+    expect(ob3.data.absoluteAssetURL).toEqual('./');
   });
 
   const ob4 = new MultimediaObject({
     data: {
-      autostart: "false",
-      absoluteAssetURL: "http://test.com",
+      autostart: 'false',
+      absoluteAssetURL: 'http://test.com',
     },
   });
 
@@ -60,24 +63,24 @@ describe("MultimediaObject applyDefaultParameters", () => {
     expect(ob4.data.autostart).toBe(false);
   });
   it("should set data.absoluteAssetURL to 'http://test.com'", () => {
-    expect(ob4.data.absoluteAssetURL).toEqual("http://test.com");
+    expect(ob4.data.absoluteAssetURL).toEqual('http://test.com');
   });
 
-  window._s4mConfig.absoluteAssetURL = "http://namespace.com";
+  window._s4mConfig.absoluteAssetURL = 'http://namespace.com';
   const ob5 = new MultimediaObject({
     data: {},
   });
 
-  it("should not throw an error event if autostart is not set", () => {
+  it('should not throw an error event if autostart is not set', () => {
     expect(ob5.data.autostart).toBe(true);
   });
   it("should set data.absoluteAssetURL to 'http://namespace.com'", () => {
-    expect(ob5.data.absoluteAssetURL).toEqual("http://namespace.com");
+    expect(ob5.data.absoluteAssetURL).toEqual('http://namespace.com');
   });
 
   const ob6 = new MultimediaObject({});
 
-  it("should not throw an error event if nothing i set", () => {
+  it('should not throw an error event if nothing i set', () => {
     expect(ob6.data.autostart).toBe(true);
   });
 });

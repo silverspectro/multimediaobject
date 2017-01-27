@@ -1,14 +1,15 @@
 /* globals MultimediaObject */
+import MultimediaObject from '../../src/MultimediaObject';
 
-describe("MultimediaObject init", () => {
+describe('MultimediaObject init', () => {
   const types = [
-    "div",
-    "input",
-    "form",
-    "img",
-    "iframe",
-    "video",
-    "audio",
+    'div',
+    'input',
+    'form',
+    'img',
+    'iframe',
+    'video',
+    'audio',
   ];
 
   types.forEach((type) => {
@@ -20,7 +21,7 @@ describe("MultimediaObject init", () => {
 
   const ob2 = new MultimediaObject();
 
-  it("should append the element to the body", () => {
+  it('should append the element to the body', () => {
     expect(document.getElementById(ob2.name)).toEqual(ob2.element);
   });
 });

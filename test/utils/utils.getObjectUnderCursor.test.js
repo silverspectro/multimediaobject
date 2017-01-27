@@ -1,8 +1,10 @@
-/* global utils */
-describe("utils.getObjectUnderCursor", () => {
+import utils from '../../src/utils/utils';
+
+
+describe('utils.getObjectUnderCursor', () => {
   const getBoundingClientRect = el => el.rect;
   const testingElements = [{
-    name: "box0",
+    name: 'box0',
     rect: {
       top: 100,
       left: 20,
@@ -10,7 +12,7 @@ describe("utils.getObjectUnderCursor", () => {
       bottom: 200,
     },
   }, {
-    name: "box1",
+    name: 'box1',
     rect: {
       top: 300,
       left: 170,
@@ -18,7 +20,7 @@ describe("utils.getObjectUnderCursor", () => {
       bottom: 400,
     },
   }, {
-    name: "box2",
+    name: 'box2',
     rect: {
       top: 800,
       left: 20,
@@ -26,7 +28,7 @@ describe("utils.getObjectUnderCursor", () => {
       bottom: 900,
     },
   }, {
-    name: "box3",
+    name: 'box3',
     rect: {
       top: 50,
       left: 278,
@@ -34,7 +36,7 @@ describe("utils.getObjectUnderCursor", () => {
       bottom: 200,
     },
   }, {
-    name: "box4",
+    name: 'box4',
     rect: {
       top: 70,
       left: 354,
@@ -59,7 +61,7 @@ describe("utils.getObjectUnderCursor", () => {
   const expectations = [
     false,
     {
-      name: "box1",
+      name: 'box1',
       rect: {
         top: 300,
         left: 170,
@@ -68,7 +70,7 @@ describe("utils.getObjectUnderCursor", () => {
       },
     },
     {
-      name: "box4",
+      name: 'box4',
       rect: {
         top: 70,
         left: 354,

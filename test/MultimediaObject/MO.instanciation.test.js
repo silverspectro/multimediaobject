@@ -1,26 +1,27 @@
 /* global MultimediaObject */
+import MultimediaObject from '../../src/MultimediaObject';
 
-describe("new Multimediaobject()", () => {
+describe('new Multimediaobject()', () => {
   const ob = new MultimediaObject();
-  it("should create a new MultimediaObject", () => {
+  it('should create a new MultimediaObject', () => {
     expect(ob).toBeDefined();
   });
-  it("should be an instance of MultimediaObject", () => {
+  it('should be an instance of MultimediaObject', () => {
     expect(ob instanceof MultimediaObject).toBeTruthy();
   });
 
-  describe("testing apply configuration on creation", () => {
+  describe('testing apply configuration on creation', () => {
     const testConf = {
-      name: "test",
+      name: 'test',
       attributes: {
-        "data-test": "test",
+        'data-test': 'test',
         num: 10,
       },
       style: {
-        position: "absolute",
-        top: "10px",
-        left: "25px",
-        translateX: "55px",
+        position: 'absolute',
+        top: '10px',
+        left: '25px',
+        translateX: '55px',
       },
       functions: {
         logMessage(msg) {
@@ -29,7 +30,7 @@ describe("new Multimediaobject()", () => {
       },
       events: {
         click(event) {
-          console.log("test");
+          console.log('test');
         },
       },
     };
@@ -52,49 +53,48 @@ describe("new Multimediaobject()", () => {
     });
   });
 
-  describe("testing events and functions", () => {
-    let testConf;
+  describe('testing events and functions', () => {
+    const testConf = {
+      name: 'test',
+      attributes: {
+        'data-test': 'test',
+        num: 10,
+      },
+      style: {
+        position: 'absolute',
+        top: '10px',
+        left: '25px',
+        translateX: '55px',
+      },
+      functions: {
+        logMessage(msg) {
+          console.log(msg);
+        },
+      },
+      events: {
+        click(event) {
+          console.log('test');
+        },
+      },
+    };
     let ob2;
     beforeEach(() => {
-      testConf = {
-        name: "test",
-        attributes: {
-          "data-test": "test",
-          num: 10,
-        },
-        style: {
-          position: "absolute",
-          top: "10px",
-          left: "25px",
-          translateX: "55px",
-        },
-        functions: {
-          logMessage(msg) {
-            console.log(msg);
-          },
-        },
-        events: {
-          click(event) {
-            console.log("test");
-          },
-        },
-      };
       ob2 = new MultimediaObject(testConf);
-      spyOn(ob2, "logMessage");
+      spyOn(ob2, 'logMessage');
       // spyOn(ob2._events, "click");
     });
 
 
-    it("should not have been called", () => {
+    it('should not have been called', () => {
       expect(ob2.logMessage.calls.any()).toBe(false);
     });
 
-    it("functions should have the correct context and arguments", () => {
-      ob2.logMessage("Hello");
-      expect(ob2.logMessage.calls.all()).toEqual([{ object: ob2, args: ["Hello"], returnValue: undefined }]);
+    it('functions should have the correct context and arguments', () => {
+      ob2.logMessage('Hello');
+      expect(ob2.logMessage.calls.all()).toEqual([{ object: ob2, args: ['Hello'], returnValue: undefined }]);
     });
 
-    it(`should have a style corresponding to ${testConf}`, () => {
+    it(`should have a style corresponding to ${JSON.stringify(testConf.style)}`, () => {
       expect(ob2.style).toEqual(testConf.style);
       expect(ob2._style).toEqual(testConf.style);
     });

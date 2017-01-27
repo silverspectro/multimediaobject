@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for test\MultimediaObject\MO.applyDependencies.test.js</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../prettify.css" />
+    <link rel="stylesheet" href="../../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../../index.html">all files</a> / <a href="index.html">test/MultimediaObject/</a> MO.applyDependencies.test.js
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">100% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>19/19</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">100% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>0/0</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">100% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>5/5</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">100% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>19/19</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line high'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">"use strict";
+&nbsp;
+/* globals MultimediaObject */
+&nbsp;
+describe("MultimediaObject applyDependencies", function () {
+  var ob = new MultimediaObject();
+  var dep1 = "http://google.com";
+  var dep2 = ["http://test.com", "https://site.random.com/js"];
+&nbsp;
+  it("should have no dependencies", function () {
+    expect(ob.dependencies).toEqual([]);
+  });
+&nbsp;
+  var ob2 = new MultimediaObject();
+  ob2.applyDependencies(dep1);
+&nbsp;
+  it("should have " + dep1 + " as a dependency", function () {
+    expect(ob2.dependencies).toEqual([dep1]);
+  });
+&nbsp;
+  var ob3 = new MultimediaObject();
+  ob3.applyDependencies(dep2);
+&nbsp;
+  it("should have " + dep2 + " as a dependency", function () {
+    expect(ob3.dependencies).toEqual(dep2);
+  });
+&nbsp;
+  var ob4 = new MultimediaObject();
+  ob4.dependencies = dep2;
+  ob4.applyDependencies();
+&nbsp;
+  it("should have " + dep2 + " as a dependency if called with no arguments and set before as a property", function () {
+    expect(ob4.dependencies).toEqual(dep2);
+  });
+});
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIkU6L1VzZXIvRG9jdW1lbnRzLzIwMTcvUEVSU08vbXVsdGltZWRpYW9iamVjdC90ZXN0L011bHRpbWVkaWFPYmplY3QvTU8uYXBwbHlEZXBlbmRlbmNpZXMudGVzdC5qcyJdLCJuYW1lcyI6WyJkZXNjcmliZSIsIm9iIiwiTXVsdGltZWRpYU9iamVjdCIsImRlcDEiLCJkZXAyIiwiaXQiLCJleHBlY3QiLCJkZXBlbmRlbmNpZXMiLCJ0b0VxdWFsIiwib2IyIiwiYXBwbHlEZXBlbmRlbmNpZXMiLCJvYjMiLCJvYjQiXSwibWFwcGluZ3MiOiI7O0FBQUE7O0FBRUFBLFNBQVMsb0NBQVQsRUFBK0MsWUFBTTtBQUNuRCxNQUFNQyxLQUFLLElBQUlDLGdCQUFKLEVBQVg7QUFDQSxNQUFNQyxPQUFPLG1CQUFiO0FBQ0EsTUFBTUMsT0FBTyxDQUFDLGlCQUFELEVBQW9CLDRCQUFwQixDQUFiOztBQUVBQyxLQUFHLDZCQUFILEVBQWtDLFlBQU07QUFDdENDLFdBQU9MLEdBQUdNLFlBQVYsRUFBd0JDLE9BQXhCLENBQWdDLEVBQWhDO0FBQ0QsR0FGRDs7QUFJQSxNQUFNQyxNQUFNLElBQUlQLGdCQUFKLEVBQVo7QUFDQU8sTUFBSUMsaUJBQUosQ0FBc0JQLElBQXRCOztBQUVBRSxzQkFBa0JGLElBQWxCLHVCQUEwQyxZQUFNO0FBQzlDRyxXQUFPRyxJQUFJRixZQUFYLEVBQXlCQyxPQUF6QixDQUFpQyxDQUFDTCxJQUFELENBQWpDO0FBQ0QsR0FGRDs7QUFJQSxNQUFNUSxNQUFNLElBQUlULGdCQUFKLEVBQVo7QUFDQVMsTUFBSUQsaUJBQUosQ0FBc0JOLElBQXRCOztBQUVBQyxzQkFBa0JELElBQWxCLHVCQUEwQyxZQUFNO0FBQzlDRSxXQUFPSyxJQUFJSixZQUFYLEVBQXlCQyxPQUF6QixDQUFpQ0osSUFBakM7QUFDRCxHQUZEOztBQUlBLE1BQU1RLE1BQU0sSUFBSVYsZ0JBQUosRUFBWjtBQUNBVSxNQUFJTCxZQUFKLEdBQW1CSCxJQUFuQjtBQUNBUSxNQUFJRixpQkFBSjs7QUFFQUwsc0JBQWtCRCxJQUFsQixnRkFBbUcsWUFBTTtBQUN2R0UsV0FBT00sSUFBSUwsWUFBWCxFQUF5QkMsT0FBekIsQ0FBaUNKLElBQWpDO0FBQ0QsR0FGRDtBQUdELENBOUJEIiwiZmlsZSI6Ik1PLmFwcGx5RGVwZW5kZW5jaWVzLnRlc3QuZXM1LmpzIiwic291cmNlc0NvbnRlbnQiOlsiLyogZ2xvYmFscyBNdWx0aW1lZGlhT2JqZWN0ICovXG5cbmRlc2NyaWJlKFwiTXVsdGltZWRpYU9iamVjdCBhcHBseURlcGVuZGVuY2llc1wiLCAoKSA9PiB7XG4gIGNvbnN0IG9iID0gbmV3IE11bHRpbWVkaWFPYmplY3QoKTtcbiAgY29uc3QgZGVwMSA9IFwiaHR0cDovL2dvb2dsZS5jb21cIjtcbiAgY29uc3QgZGVwMiA9IFtcImh0dHA6Ly90ZXN0LmNvbVwiLCBcImh0dHBzOi8vc2l0ZS5yYW5kb20uY29tL2pzXCJdO1xuXG4gIGl0KFwic2hvdWxkIGhhdmUgbm8gZGVwZW5kZW5jaWVzXCIsICgpID0+IHtcbiAgICBleHBlY3Qob2IuZGVwZW5kZW5jaWVzKS50b0VxdWFsKFtdKTtcbiAgfSk7XG5cbiAgY29uc3Qgb2IyID0gbmV3IE11bHRpbWVkaWFPYmplY3QoKTtcbiAgb2IyLmFwcGx5RGVwZW5kZW5jaWVzKGRlcDEpO1xuXG4gIGl0KGBzaG91bGQgaGF2ZSAke2RlcDF9IGFzIGEgZGVwZW5kZW5jeWAsICgpID0+IHtcbiAgICBleHBlY3Qob2IyLmRlcGVuZGVuY2llcykudG9FcXVhbChbZGVwMV0pO1xuICB9KTtcblxuICBjb25zdCBvYjMgPSBuZXcgTXVsdGltZWRpYU9iamVjdCgpO1xuICBvYjMuYXBwbHlEZXBlbmRlbmNpZXMoZGVwMik7XG5cbiAgaXQoYHNob3VsZCBoYXZlICR7ZGVwMn0gYXMgYSBkZXBlbmRlbmN5YCwgKCkgPT4ge1xuICAgIGV4cGVjdChvYjMuZGVwZW5kZW5jaWVzKS50b0VxdWFsKGRlcDIpO1xuICB9KTtcblxuICBjb25zdCBvYjQgPSBuZXcgTXVsdGltZWRpYU9iamVjdCgpO1xuICBvYjQuZGVwZW5kZW5jaWVzID0gZGVwMjtcbiAgb2I0LmFwcGx5RGVwZW5kZW5jaWVzKCk7XG5cbiAgaXQoYHNob3VsZCBoYXZlICR7ZGVwMn0gYXMgYSBkZXBlbmRlbmN5IGlmIGNhbGxlZCB3aXRoIG5vIGFyZ3VtZW50cyBhbmQgc2V0IGJlZm9yZSBhcyBhIHByb3BlcnR5YCwgKCkgPT4ge1xuICAgIGV4cGVjdChvYjQuZGVwZW5kZW5jaWVzKS50b0VxdWFsKGRlcDIpO1xuICB9KTtcbn0pO1xuIl19</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Sat Jan 28 2017 14:12:15 GMT+0100 (Paris, Madrid)
+</div>
+</div>
+<script src="../../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../../sorter.js"></script>
+</body>
+</html>
