@@ -1,17 +1,17 @@
-import utils from '../../src/utils/utils';
+import { getUnitFromString } from '../../src/utils/utils';
 
 
-describe('utils.getUnitFromString', () => {
+describe('getUnitFromString', () => {
   const units = ['%', 'px', 'vh', 'vw', 'em'];
   units.forEach((unit) => {
     it(`should return ${unit} from '17${unit}'`, () => {
-      expect(utils.getUnitFromString(`17${unit}`)).toEqual(unit);
+      expect(getUnitFromString(`17${unit}`)).toEqual(unit);
     });
   });
   it("should return px from '17tata'", () => {
-    expect(utils.getUnitFromString('17tata')).toEqual('px');
+    expect(getUnitFromString('17tata')).toEqual('px');
   });
   it("should return px from ''", () => {
-    expect(utils.getUnitFromString('')).toEqual('px');
+    expect(getUnitFromString('')).toEqual('px');
   });
 });

@@ -1,7 +1,7 @@
-import utils from '../../src/utils/utils';
+import { isEmpty } from '../../src/utils/utils';
 
 
-describe('utils.isEmpty', () => {
+describe('isEmpty', () => {
   const testEmptyObject = {};
   const testFullObject = {
     accessKey: '',
@@ -10,12 +10,12 @@ describe('utils.isEmpty', () => {
   const testCreatedNewObject = Object.create({});
 
   it('should return true if object is empty', () => {
-    expect(utils.isEmpty(testEmptyObject)).toBe(true);
+    expect(isEmpty(testEmptyObject)).toBe(true);
   });
   it('should return false if object is not empty', () => {
-    expect(utils.isEmpty(testFullObject)).toBe(false);
+    expect(isEmpty(testFullObject)).toBe(false);
   });
   it('should return true if object is empty and prototyped', () => {
-    expect(utils.isEmpty(testCreatedNewObject)).toBe(true);
+    expect(isEmpty(testCreatedNewObject)).toBe(true);
   });
 });

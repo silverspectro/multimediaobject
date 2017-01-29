@@ -1,7 +1,7 @@
-import utils from '../../src/utils/utils';
+import { concatObject } from '../../src/utils/utils';
 
 
-describe('utils.concatObject', () => {
+describe('concatObject', () => {
   const obj1 = {
     test: 'lol',
     test2: 'test',
@@ -30,17 +30,17 @@ describe('utils.concatObject', () => {
   };
 
   it('should concatenate 2 objects', () => {
-    const resultObj = utils.concatObject(obj1, obj2);
+    const resultObj = concatObject(obj1, obj2);
     expect(resultObj).toEqual(refObj);
   });
 
   it('should not overwrite already defined keys', () => {
-    const resultObj = utils.concatObject(obj1, obj3);
+    const resultObj = concatObject(obj1, obj3);
     expect(resultObj).toEqual(obj1);
   });
 
   it('should concatenate multiple objects and not overwrite already defined keys', () => {
-    const resultObj2 = utils.concatObject(obj1, obj2, obj3, obj4);
+    const resultObj2 = concatObject(obj1, obj2, obj3, obj4);
     expect(resultObj2).toEqual(refObj2);
   });
 });

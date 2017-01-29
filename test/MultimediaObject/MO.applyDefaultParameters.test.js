@@ -1,4 +1,4 @@
-/* globals MultimediaObject config*/
+import { toDashed } from '../../src/utils/utils';
 import MultimediaObject from '../../src/MultimediaObject';
 import config from '../../src/config/config';
 
@@ -67,9 +67,7 @@ describe('MultimediaObject applyDefaultParameters', () => {
   });
 
   window._s4mConfig.absoluteAssetURL = 'http://namespace.com';
-  const ob5 = new MultimediaObject({
-    data: {},
-  });
+  const ob5 = new MultimediaObject({ data: {} });
 
   it('should not throw an error event if autostart is not set', () => {
     expect(ob5.data.autostart).toBe(true);
@@ -80,7 +78,7 @@ describe('MultimediaObject applyDefaultParameters', () => {
 
   const ob6 = new MultimediaObject({});
 
-  it('should not throw an error event if nothing i set', () => {
+  it('should not throw an error event if nothing is set', () => {
     expect(ob6.data.autostart).toBe(true);
   });
 });

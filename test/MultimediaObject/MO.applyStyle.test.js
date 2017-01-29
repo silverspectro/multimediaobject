@@ -92,7 +92,7 @@ describe('MultimediaObject applyStyle', () => {
     translateX: '0px',
     'translate-y': '0px',
     'skew-x': '0px',
-    skewY: '10px',
+    skewY: '10deg',
     scaleY: '5vh',
     scaleX: '10',
   }, {

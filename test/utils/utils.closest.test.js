@@ -1,4 +1,4 @@
-import utils from '../../src/utils/utils';
+import { closest } from '../../src/utils/utils';
 
 
 describe('utils.closest', () => {
@@ -7,7 +7,7 @@ describe('utils.closest', () => {
   const response = [0, 4, 135.35, 7, 35.23, 1350, 0, 7, 4];
   for (let x = 0; x < refArray.length; x++) {
     it(`should return the closest (to superior) of the element in the array corresponding to the value ${refArray[x]}`, () => {
-      expect(utils.closest(refArray[x], baseArray)).toEqual(response[x]);
+      expect(closest(refArray[x], baseArray)).toEqual(response[x]);
     });
   }
 });

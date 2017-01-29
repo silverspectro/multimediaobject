@@ -1,4 +1,4 @@
-import utils from '../../src/utils/utils';
+import { applyDefaults } from '../../src/utils/utils';
 
 describe('utils.applyDefaults', () => {
   const tplObj = {
@@ -15,7 +15,7 @@ describe('utils.applyDefaults', () => {
   };
 
   it(`should apply ${JSON.stringify(tplObj)} to ${JSON.stringify(testObj)}`, () => {
-    utils.applyDefaults(testObj, tplObj);
+    applyDefaults(testObj, tplObj);
     expect(testObj).toEqual({
       test: 'Hey',
       name: 'test',
@@ -25,7 +25,7 @@ describe('utils.applyDefaults', () => {
   });
 
   it(`should apply ${JSON.stringify(tplObj)} to ${JSON.stringify(testObj2)}`, () => {
-    utils.applyDefaults(testObj2, tplObj);
+    applyDefaults(testObj2, tplObj);
     expect(testObj2).toEqual({
       name: 'test',
       hello: 'yo',

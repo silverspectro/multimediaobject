@@ -104,10 +104,10 @@ export default {
     return chosen;
   },
 
-  pxProperties: new Set(staticData.sets.pxProperties.split(',')),
-  degProperties: new Set(staticData.sets.degProperties.split(',')),
-  transformProperties: new Set(staticData.sets.transformProperties.split(',')),
-  styleProperties: new Set(staticData.sets.styleProperties.split(',')),
+  pxProperties: new Set(staticData.sets.pxProperties),
+  degProperties: new Set(staticData.sets.degProperties),
+  transformProperties: new Set(staticData.sets.transformProperties),
+  styleProperties: new Set(staticData.sets.styleProperties),
 
   isUnitProp(prop) {
     return staticData.regex.unitProp.test(prop);

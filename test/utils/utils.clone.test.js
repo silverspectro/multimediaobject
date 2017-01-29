@@ -1,7 +1,7 @@
-import utils from '../../src/utils/utils';
+import { clone } from '../../src/utils/utils';
 
 
-describe('utils.clone', () => {
+describe('clone', () => {
   const tplObj = {
     name: 'test',
     hello: 'yo',
@@ -16,10 +16,10 @@ describe('utils.clone', () => {
   };
 
   it(`should return ${JSON.stringify(tplObj)}`, () => {
-    expect(utils.clone(testObj)).toEqual(testObj);
+    expect(clone(testObj)).toEqual(testObj);
   });
 
   it(`should return ${JSON.stringify(tplObj)}`, () => {
-    expect(utils.clone(testObj2)).toEqual(testObj2);
+    expect(clone(testObj2)).toEqual(testObj2);
   });
 });

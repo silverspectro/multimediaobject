@@ -1,7 +1,7 @@
-import utils from '../../src/utils/utils';
+import { Atoms } from '../../src/utils/utils';
 
 
-describe('utils.Atoms', () => {
+describe('Atoms', () => {
   const atomArray = [
     'block',
     'div',
@@ -79,7 +79,7 @@ describe('utils.Atoms', () => {
 
   for (let x = 0; x < atomArray.length; x++) {
     it(`should return ${refObject[atomArray[x]]} for input ${atomArray[x]}`, () => {
-      expect(utils.Atoms(atomArray[x]))
+      expect(Atoms(atomArray[x]))
       .toEqual(refObject[atomArray[x]]);
     });
   }

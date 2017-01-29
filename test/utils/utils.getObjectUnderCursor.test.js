@@ -1,6 +1,3 @@
-import utils from '../../src/utils/utils';
-
-
 describe('utils.getObjectUnderCursor', () => {
   const getBoundingClientRect = el => el.rect;
   const testingElements = [{

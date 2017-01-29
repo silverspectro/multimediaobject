@@ -1,14 +1,14 @@
-import utils from '../../src/utils/utils';
+import { toDashed } from '../../src/utils/utils';
 
 
-describe('utils.toDashed', () => {
+describe('toDashed', () => {
   it('should return background-color for input backgroundColor', () => {
-    expect(utils.toDashed('backgroundColor')).toEqual('background-color');
+    expect(toDashed('backgroundColor')).toEqual('background-color');
   });
   it('should return background-color-plus for input backgroundColorPlus', () => {
-    expect(utils.toDashed('backgroundColorPlus')).toEqual('background-color-plus');
+    expect(toDashed('backgroundColorPlus')).toEqual('background-color-plus');
   });
   it('should return background for input background', () => {
-    expect(utils.toDashed('background')).toEqual('background');
+    expect(toDashed('background')).toEqual('background');
   });
 });
