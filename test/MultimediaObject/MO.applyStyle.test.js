@@ -44,7 +44,7 @@ describe('MultimediaObject applyStyle', () => {
     scaleX: '1.2',
     scaleY: '1',
     rotate: '45deg',
-    transform: 'translate3d(10%, 5em, 15px) rotate(45deg) scale(1.2, 1)',
+    transform: 'translate3d(10%, 5em, 15px) rotate(45deg) skew(0deg, 0deg) scale(1.2, 1)',
   };
 
   ob2.applyStyle(style2, true);
@@ -91,9 +91,9 @@ describe('MultimediaObject applyStyle', () => {
   const refProps = [{
     translateX: '0px',
     'translate-y': '0px',
-    'skew-x': '0px',
+    'skew-x': '0deg',
     skewY: '10deg',
-    scaleY: '5vh',
+    scaleY: '5',
     scaleX: '10',
   }, {
     position: 'absolute',

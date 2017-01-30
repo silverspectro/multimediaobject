@@ -272,18 +272,25 @@ export default class MultimediaObject {
           this._style[k] = treatedVal;
         }
         this.style[k] = treatedVal;
-      } else if (staticData.regex.styleProperties.test(k)) {
+      } else if (utils.pxProperties.contains(k)) {
+        const val = `${utils.getNumFromString(v)}${utils.unitForProperty(k, v)}`;
+        if (_style < 1 || override) {
+          this._style[k] = val;
+        }
+        this.style[k] = val;
+        this.element.style[k] = val;
+      } else if (utils.styleProperties.contains(k)) {
         if (_style < 1 || override) {
           this._style[k] = v;
         }
         this.style[k] = v;
         this.element.style[k] = v;
       } else {
-        v = `${v}${utils.unitForProperty(k, v)}`;
+        const val = `${v}${utils.unitForProperty(k, v)}`;
         // console.log(v);
-        this.style[utils.propertyWithPrefix(k)] = v;
+        this.style[utils.propertyWithPrefix(k)] = val;
         if (_style < 1 || override) {
-          this._style[utils.propertyWithPrefix(k)] = v;
+          this._style[utils.propertyWithPrefix(k)] = val;
         }
         if (v.indexOf('{{absoluteAssetURL}}') >= 0 && window[conf.namespace]) {
           v = v.replace('{{absoluteAssetURL}}', window.MultimediaObjectEditor ? this.data.absoluteAssetURL : window[conf.namespace].absoluteAssetURL);
@@ -292,7 +299,7 @@ export default class MultimediaObject {
       }
     }
 
-    let z = [0, 1, 2];
+    let z = [0, 1, 2, 3];
     const trans = {
       x: this._style.translateX ? utils.getNumFromString(this._style.translateX) : 0,
       y: this._style.translateY ? utils.getNumFromString(this._style.translateY) : 0,
@@ -305,6 +312,11 @@ export default class MultimediaObject {
       value: this._style.rotate ? utils.getNumFromString(this._style.rotate) : 0,
       u: 'deg',
     };
+    const ske = {
+      x: this._style.skewX ? utils.getNumFromString(this._style.skewX) : 0,
+      y: this._style.skewY ? utils.getNumFromString(this._style.skewY) : 0,
+      u: 'deg',
+    };
     const sca = {
       x: this._style.scaleX ? utils.getNumFromString(this._style.scaleX) : 1,
       y: this._style.scaleY ? utils.getNumFromString(this._style.scaleY) : 1,
@@ -314,32 +326,41 @@ export default class MultimediaObject {
       v = (transforms.map(transform => utils.transformValueForProperty(transform[0], transform[1]).string));
 
       v.forEach((a) => {
-        if (a.indexOf('translateX') >= 0) {
+        if (a.indexOf('translateX') >= 0 || a.indexOf('translate-x') >= 0) {
           trans.x = utils.getNumFromString(a);
           trans.xU = utils.getUnitFromString(a);
-        } else if (a.indexOf('translateY') >= 0) {
+        } else if (a.indexOf('translateY') >= 0 || a.indexOf('translate-y') >= 0) {
           trans.y = utils.getNumFromString(a);
           trans.yU = utils.getUnitFromString(a);
-        } else if (a.indexOf('translateZ') >= 0) {
+        } else if (a.indexOf('translateZ') >= 0 || a.indexOf('translate-z') >= 0) {
           trans.z = utils.getNumFromString(a);
           trans.zU = utils.getUnitFromString(a);
         }
         if (a.indexOf('rotate') >= 0) {
           rot.value = utils.getNumFromString(a);
         }
-        if (a.indexOf('scaleX') >= 0) {
+        if (a.indexOf('scaleX') >= 0 || a.indexOf('scale-x') >= 0) {
           sca.x = utils.getNumFromString(a);
-        } else if (a.indexOf('scaleY') >= 0) {
+        } else if (a.indexOf('scaleY') >= 0 || a.indexOf('scale-y') >= 0) {
           sca.y = utils.getNumFromString(a);
         } else if (a.indexOf('scale') >= 0) {
           sca.x = utils.getNumFromString(a);
           sca.y = utils.getNumFromString(a);
         }
+        if (a.indexOf('skewX') >= 0 || a.indexOf('skew-x') >= 0) {
+          ske.x = utils.getNumFromString(a);
+        } else if (a.indexOf('skewY') >= 0 || a.indexOf('skew-y') >= 0) {
+          ske.y = utils.getNumFromString(a);
+        } else if (a.indexOf('skew') >= 0) {
+          ske.x = utils.getNumFromString(a);
+          ske.y = utils.getNumFromString(a);
+        }
       });
       // console.log(z);
       z[0] = `translate3d(${trans.x}${trans.xU},${trans.y}${trans.yU},${trans.z}${trans.zU})`;
       z[1] = `rotate(${rot.value}${rot.u})`;
-      z[2] = `scale(${sca.x},${sca.y})`;
+      z[2] = `skew(${ske.x}${ske.u},${ske.y}${ske.u})`;
+      z[3] = `scale(${sca.x},${sca.y})`;
       // console.log(z);
       z = z.filter(el => !/^[0-9]/.test(el)).join(' ');
 

@@ -74,7 +74,6 @@ export default {
 
     return true;
   },
-
   generateRandomHexColor() {
     let rndColour = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
     while (rndColour.length < 7) {
@@ -82,7 +81,6 @@ export default {
     }
     return rndColour;
   },
-
   closest(num, arr) {
     const sortedArr = arr.sort((a, b) => a - b);
     let chosen;
@@ -109,14 +107,9 @@ export default {
   transformProperties: new Set(staticData.sets.transformProperties),
   styleProperties: new Set(staticData.sets.styleProperties),
 
-  isUnitProp(prop) {
-    return staticData.regex.unitProp.test(prop);
-  },
-
   isAnimatableProp(prop) {
     return staticData.regex.animatableProps.test(prop);
   },
-
   constrain(value, min, max) {
     if (min > value) {
       return min;
@@ -126,18 +119,15 @@ export default {
     }
     return value;
   },
-
   getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   },
-
   applyDefaults(options, defaults) {
     for (const k in defaults) {
       options[k] = defaults[k];
     }
     return options;
   },
-
   clone(o) {
     const newO = {};
     let k;
@@ -149,17 +139,14 @@ export default {
     }
     return newO;
   },
-
   roundf(v, decimal) {
     const tV = v.toString();
     const preDecimal = tV.match(/^(.+)!?\./) ? tV.match(/^(.+)!?\./)[0] : '0.';
     return Number(`${preDecimal}${v.toString().replace(preDecimal, '').slice(0, decimal)}`);
   },
-
   toDashed(str) {
     return str.replace(/([A-Z])/g, $1 => `-${$1.toLowerCase()}`);
   },
-
   prefixFor(property) {
     const propArray = property.split('-');
     const ref = ['Webkit', 'Moz', 'ms'];
@@ -189,7 +176,6 @@ export default {
     }
     return '';
   },
-
   propertyWithPrefix(property) {
     const prefix = this.prefixFor(property);
     if (prefix === 'Moz') {
@@ -200,50 +186,54 @@ export default {
     }
     return this.toDashed(property);
   },
-
   unitForProperty(k, v) {
-    if (typeof v !== 'number') {
-      return '';
-    }
     if (this.pxProperties.contains(k)) {
-      return this.getUnitFromString(v);
+      const unit = this.getUnitFromString(v);
+      return unit !== '' ? unit : 'px';
     } else if (this.degProperties.contains(k)) {
       return 'deg';
     } else if (this.transformProperties.contains(k)) {
       return '';
+    } else if (this.styleProperties.contains(k)) {
+      return '';
     }
-    return 'px';
+    return '';
   },
-
   getMaxOfArray(numArray) {
     /* https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/max */
-    return Math.max.apply(null, numArray);
-  },
-
-  transformValueForProperty(k, v) {
-    let unit;
-    if (v && v !== null) {
-      const match = v.toString().match(/^([0-9.-]*)([^0-9]*)$/);
-      if (match !== null) {
-        v = match[1];
-        unit = match[2];
-      }
-      v = parseFloat(v);
-      if (unit === null || unit === '') {
-        unit = this.unitForProperty(k, v);
-      }
-      return { string: `${k}(${v}${unit})`, unit, value: v };
+    let result;
+    if (numArray instanceof Array && numArray.length > 0) {
+      result = Math.max.apply(null, numArray);
     }
+    if (!isNaN(result)) {
+      return result;
+    }
+    throw new Error('getMaxOfArray only works on an array');
+  },
+  transformValueForProperty(k, v) {
+    if (!this.transformProperties.contains(k)) {
+      throw new Error(`${k} is not a transform property`);
+    }
+    let value = 0;
+    let unit;
+    value = typeof v === 'string' && v.indexOf(',') >= 0 ? v.split(',') : this.getNumFromString(v);
+    unit = this.unitForProperty(k, v);
     if (k.indexOf('scale') >= 0) {
       unit = '';
-    } else if (k.indexOf('rotate') >= 0) {
+    } else if (this.degProperties.contains(k)) {
       unit = 'deg';
-    } else {
-      unit = 'px';
     }
-    return { string: `${k}(0${unit})`, unit, value: 0 };
+    let string = `${k}(${value}${unit})`;
+    if (value instanceof Array) {
+      value = value.map(val => this.getNumFromString(val));
+      let res = '';
+      value.forEach((val, index) => {
+        res += index > 0 ? `, ${val}${unit}` : `${val}${unit}`;
+      });
+      string = `${k}(${res})`;
+    }
+    return { string, unit, value };
   },
-
   generateUUID() {
     let d = new Date().getTime();
     if (window.performance && typeof window.performance.now === 'function') {
@@ -256,21 +246,21 @@ export default {
     });
     return uuid;
   },
-
   getNumFromString(str) {
     if (typeof str === 'string') {
       const num = str.match(/-(?=\d)|\d+|\.\d+/g);
       return num !== null ? parseFloat(num.join('')) : 0;
     }
-    return 0;
+    return typeof parseFloat(str) === 'number' && !isNaN(parseFloat(str)) ? parseFloat(str) : 0;
   },
-
   getUnitFromString(str) {
-    const u = str.match ? str.match(/%|px|vh|vw|em/g) : null;
-    const unit = u !== null ? u[0] : 'px';
+    let unit = '';
+    if (typeof str === 'string') {
+      const u = str.match ? str.match(/%|px|vh|vw|em|deg/g) : null;
+      unit = u !== null ? u[0] : '';
+    }
     return unit;
   },
-
   hexToR(h) { return parseInt((this.cutHex(h)).substring(0, 2), 16); },
   hexToG(h) { return parseInt((this.cutHex(h)).substring(2, 4), 16); },
   hexToB(h) { return parseInt((this.cutHex(h)).substring(4, 6), 16); },
@@ -279,7 +269,6 @@ export default {
     const rgb = blue | (green << 8) | (red << 16);
     return `#${(0x1000000 + rgb).toString(16).slice(1)}`;
   },
-
   transformToColor(propertie) {
     let colorObj;
     if (propertie[0] === '#') {
@@ -306,7 +295,7 @@ export default {
   },
   toCamelCase(str) {
     return str
-        .replace(/\s(.)/g, $1 => $1.toUpperCase())
+        .replace(/(-.)/g, $1 => $1.substr(1, 1).toUpperCase())
         .replace(/\s/g, '')
         .replace(/^(.)/, $1 => $1.toLowerCase());
   },
