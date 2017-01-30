@@ -1,4 +1,5 @@
-import { toDashed } from '../../src/utils/utils';
+/* globals MultimediaObject */
+import { toDashed, prefixFor } from '../../src/utils/utils';
 
 export default describe('MultimediaObject applyStyle', () => {
   const style = {
@@ -49,7 +50,8 @@ export default describe('MultimediaObject applyStyle', () => {
   ob2.applyStyle(style2, true);
 
   it('should have processed transform properties in element.style', () => {
-    expect(ob2.element.style.transform).toEqual(refStyle2.transform);
+    const prefix = prefixFor('transform');
+    expect(ob2.element.style[`${prefix}${prefix === '' ? 'transform' : 'Transform'}`]).toEqual(refStyle2.transform);
   });
 
   it('should have processed transform properties in _style and style but not applied transform string', () => {

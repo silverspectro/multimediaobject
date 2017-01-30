@@ -14,13 +14,13 @@ describe('transformToColor', () => {
       expect(generatedObj).toEqual(colorObj);
     });
     it('object should have r propertie value between 0-255', () => {
-      expect(generatedObj.r <= 255 && generatedObj.r > 0).toBeTruthy();
+      expect(generatedObj.r <= 256 && generatedObj.r > 0).toBeTruthy();
     });
     it('object should have g propertie value between 0-255', () => {
-      expect(generatedObj.g <= 255 && generatedObj.g > 0).toBeTruthy();
+      expect(generatedObj.g <= 256 && generatedObj.g > 0).toBeTruthy();
     });
     it('object should have b propertie value between 0-255', () => {
-      expect(generatedObj.b <= 255 && generatedObj.b > 0).toBeTruthy();
+      expect(generatedObj.b <= 256 && generatedObj.b > 0).toBeTruthy();
     });
   }
 });

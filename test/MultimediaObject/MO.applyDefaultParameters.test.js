@@ -17,14 +17,14 @@ export default describe('MultimediaObject applyDefaultParameters', () => {
     const ob = new MultimediaObject(type);
     const matchAttributes = conf.defaultAttributes[type] || {};
     matchAttributes.id = 'multimediaObject';
-    it(`should contain ${matchAttributes} in .attributes`, () => {
+    it(`should contain ${JSON.stringify(matchAttributes)} in .attributes`, () => {
       expect(ob.attributes).toEqual(matchAttributes);
     });
-    it(`should contain ${matchAttributes} in .element.attributes`, () => {
-      for (const key in matchAttributes) {
+    for (const key in matchAttributes) {
+      it(`should contain ${key} in .element.attributes`, () => {
         expect(ob.element.getAttribute(key)).toEqual(matchAttributes[key]);
-      }
-    });
+      });
+    }
   });
 
   const ob2 = new MultimediaObject();
