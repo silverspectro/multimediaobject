@@ -1,15 +1,15 @@
-import utils from '../../src/utils/utils';
+import { transformToColor, generateRandomHexColor, hexToR, hexToG, hexToB } from '../../src/utils/utils';
 
-describe('utils.transformToColor', () => {
-  const rndHexColor = utils.generateRandomHexColor();
+describe('transformToColor', () => {
+  const rndHexColor = generateRandomHexColor();
   for (let x = 0; x < 10; x++) {
     const colorObj = {
-      r: utils.hexToR(rndHexColor),
-      g: utils.hexToG(rndHexColor),
-      b: utils.hexToB(rndHexColor),
+      r: hexToR(rndHexColor),
+      g: hexToG(rndHexColor),
+      b: hexToB(rndHexColor),
       a: 1,
     };
-    const generatedObj = utils.transformToColor(rndHexColor);
+    const generatedObj = transformToColor(rndHexColor);
     it(`should return ${colorObj} from ${rndHexColor}`, () => {
       expect(generatedObj).toEqual(colorObj);
     });

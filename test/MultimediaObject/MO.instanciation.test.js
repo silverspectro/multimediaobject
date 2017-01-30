@@ -1,5 +1,4 @@
 /* global MultimediaObject */
-import MultimediaObject from '../../src/MultimediaObject';
 
 describe('new Multimediaobject()', () => {
   const ob = new MultimediaObject();

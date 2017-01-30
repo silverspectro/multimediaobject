@@ -1,11 +1,8 @@
-import { toDashed } from '../../src/utils/utils';
-import MultimediaObject from '../../src/MultimediaObject';
-import config from '../../src/config/config';
+/* globals MultimediaObject */
+import conf from '../../src/config/config';
 
-const conf = config();
-window._s4mConfig = {};
-
-describe('MultimediaObject applyDefaultParameters', () => {
+export default describe('MultimediaObject applyDefaultParameters', () => {
+  window._s4mConfig = {};
   const types = [
     'div',
     'input',

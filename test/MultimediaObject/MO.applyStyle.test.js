@@ -1,7 +1,6 @@
-import utils from '../../src/utils/utils';
-import MultimediaObject from '../../src/MultimediaObject';
+import { toDashed } from '../../src/utils/utils';
 
-describe('MultimediaObject applyStyle', () => {
+export default describe('MultimediaObject applyStyle', () => {
   const style = {
     position: 'absolute',
     width: '15%',
@@ -129,9 +128,9 @@ describe('MultimediaObject applyStyle', () => {
           expect(ob3.style[prop]).toEqual(refProps[index][prop]);
         });
       } else {
-        it(`should keep the right units if ${utils.toDashed(prop)} = ${propStyle[prop]}`, () => {
-          expect(ob3._style[utils.toDashed(prop)]).toEqual(refProps[index][prop]);
-          expect(ob3.style[utils.toDashed(prop)]).toEqual(refProps[index][prop]);
+        it(`should keep the right units if ${toDashed(prop)} = ${propStyle[prop]}`, () => {
+          expect(ob3._style[toDashed(prop)]).toEqual(refProps[index][prop]);
+          expect(ob3.style[toDashed(prop)]).toEqual(refProps[index][prop]);
         });
       }
     }

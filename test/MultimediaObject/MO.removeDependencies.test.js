@@ -1,7 +1,6 @@
 /* globals MultimediaObject */
-import MultimediaObject from '../../src/MultimediaObject';
 
-describe('MultimediaObject removeDependencies', () => {
+export default describe('MultimediaObject removeDependencies', () => {
   const dep1 = 'http://google.com';
   const dep2 = ['http://test.com', 'https://site.random.com/js'];
 

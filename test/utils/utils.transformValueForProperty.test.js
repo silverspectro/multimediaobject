@@ -1,6 +1,6 @@
-import utils from '../../src/utils/utils';
+import { transformValueForProperty } from '../../src/utils/utils';
 
-describe('utils.transformValueForProperty', () => {
+describe('transformValueForProperty', () => {
   const transformArray = [
     {
       translateX: 10,
@@ -147,7 +147,7 @@ describe('utils.transformValueForProperty', () => {
   transformArray.forEach((style, index) => {
     for (const property in style) {
       it(`should return ${refArray[index][property]} from ${property} and ${style[property]}`, () => {
-        expect(utils.transformValueForProperty(property, style[property])).toEqual(refArray[index][property]);
+        expect(transformValueForProperty(property, style[property])).toEqual(refArray[index][property]);
       });
     }
   });

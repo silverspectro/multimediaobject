@@ -1,7 +1,7 @@
+const buble = require('rollup-plugin-buble');
 // Karma configuration
 // Generated on Tue Jan 17 2017 19:19:58 GMT+0100 (Romance Standard Time)
 const dirname = './';
-const webpackConfig = require('./webpack.test.js');
 
 module.exports = function (config) {
   config.set({
@@ -17,7 +17,8 @@ module.exports = function (config) {
 
     // list of files / patterns to load in the browser
     files: [
-      './node_modules/babel-polyfill/dist/polyfill.js',
+      'build/MultimediaObject.js',
+      { pattern: 'src/**/*.js', included: false, serve: false },
       { pattern: 'test/**/*.test.js', watched: true },
     ],
 
@@ -25,8 +26,6 @@ module.exports = function (config) {
     // list of files to exclude
     exclude: [
     ],
-
-    webpack: webpackConfig,
 
     webpackMiddleware: {
       // webpack-dev-middleware configuration
@@ -39,11 +38,28 @@ module.exports = function (config) {
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     // optionally, configure the reporter
     coverageReporter: {
-      type: 'html',
-      dir: 'coverage/',
+      reporters: [
+        {
+          type: 'text-summary',
+        },
+        {
+          type: 'html',
+          dir: 'coverage/',
+        },
+      ],
     },
     preprocessors: {
-      'test/**/*.test.js': ['webpack', 'sourcemap', 'coverage'],
+      'src/**/*.js': ['rollup'],
+      'test/**/*.test.js': ['rollup', 'coverage'],
+    },
+
+    rollupPreprocessor: {
+      plugins: [
+        buble(),
+      ],
+      format: 'iife',               // helps prevent naming collisions
+      moduleName: 'multimediaObject', // required for 'iife' format
+      sourceMap: 'inline',          // sensible for testing
     },
 
     // test results reporter to use

@@ -18,15 +18,13 @@ limitations under the License.
 
 
 import raf from './lib/raf';
-import utils from './utils/utils';
+import * as utils from './utils/utils';
 import Easings from './utils/easings';
-import staticData from './config/data.static';
 import eventManager from './lib/customEventManager';
 import requireScript from './lib/requireScript';
-import config from './config/config';
+import conf from './config/config';
 
 raf();
-const conf = config();
 /**
 * Represents a MultimediaObject
 * @constructor
@@ -1370,5 +1368,3 @@ export default class MultimediaObject {
     this.setAbsoluteAssetURL(json);
   }
 }
-
-module.exports = MultimediaObject;

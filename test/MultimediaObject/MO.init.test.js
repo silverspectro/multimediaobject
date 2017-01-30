@@ -1,7 +1,6 @@
 /* globals MultimediaObject */
-import MultimediaObject from '../../src/MultimediaObject';
 
-describe('MultimediaObject init', () => {
+export default describe('MultimediaObject init', () => {
   const types = [
     'div',
     'input',
