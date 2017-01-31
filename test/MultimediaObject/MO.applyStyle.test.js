@@ -1,7 +1,7 @@
 /* globals MultimediaObject */
 import { toDashed, prefixFor } from '../../src/utils/utils';
 
-export default describe('MultimediaObject applyStyle', () => {
+describe('MultimediaObject applyStyle', () => {
   const style = {
     position: 'absolute',
     width: '15%',

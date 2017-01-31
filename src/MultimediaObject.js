@@ -150,6 +150,7 @@ export default class MultimediaObject {
         id: this.name,
       });
     }
+    this.addGlobalStyle();
   }
 
   addDefaultParameters() {
@@ -160,7 +161,7 @@ export default class MultimediaObject {
         }
       }
     }
-    this.data.autostart = typeof this.data.autostart === 'undefined' ? true : this.data.autostart;
+    this.data.autostart = typeof this.data.autostart === 'undefined' ? true : utils.parseBoolean(this.data.autostart);
     if (this.element) {
       this.applyAttributes();
     }
@@ -189,8 +190,7 @@ export default class MultimediaObject {
   * @return {object} MultimediaObject
   */
 
-  applyDependencies(dependencies) {
-    dependencies = dependencies || this.dependencies;
+  applyDependencies(dependencies = this.dependencies) {
     if (dependencies instanceof Array) {
       dependencies.forEach((dep) => {
         this.checkDep(dep);
@@ -201,8 +201,7 @@ export default class MultimediaObject {
     return this;
   }
 
-  removeDependencies(dependencies) {
-    dependencies = dependencies || this.dependencies;
+  removeDependencies(dependencies = this.dependencies) {
     if (dependencies instanceof Array) {
       dependencies.forEach((dep) => {
         this.checkDep(dep, 'splice');
@@ -231,6 +230,9 @@ export default class MultimediaObject {
   */
 
   addGlobalStyle(style, callback) {
+    if (typeof style !== 'string') {
+      throw new Error('addGlobalStyle: style is not a string');
+    }
     const styleMarkup = document.createElement('style');
     const styleText = style;
 
@@ -1352,7 +1354,7 @@ export default class MultimediaObject {
         if (json.data) {
           child.data = child.data || {};
           // child.data.absoluteAssetURL = json.data.absoluteAssetURL || "";
-          child.data.autostart = eval(child.data.autostart);
+          child.data.autostart = utils.parseBoolean(child.data.autostart);
           child.data.absoluteAssetURL = child.data.absoluteAssetURL || '';
         }
         child.DOMParent = this;
@@ -1364,7 +1366,7 @@ export default class MultimediaObject {
     this.data = json.data || {};
     this.type = json.type;
     this.data.absoluteAssetURL = json.data && json.data.absoluteAssetURL ? json.data.absoluteAssetURL : '';
-    this.data.autostart = json.data ? eval(json.data.autostart) : true;
+    this.data.autostart = json.data ? utils.parseBoolean(json.data.autostart) : true;
     this.setAbsoluteAssetURL(json);
   }
 }

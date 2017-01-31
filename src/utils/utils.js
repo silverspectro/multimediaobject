@@ -27,6 +27,15 @@ export const concatObject = (...objects) => {
   }
   return ret;
 };
+export const parseBoolean = function (string) {
+  if (typeof string === 'undefined' || string === '') {
+    return true;
+  }
+  if (string === 'false' || Boolean(string) === false) {
+    return false;
+  }
+  return Boolean(string);
+};
 export const checkEvent = evt => staticData.regex.DOMEvent.test(evt);
 export const getElementsWithAttribute = (attribute, value, element) => {
   const matchingElements = [];

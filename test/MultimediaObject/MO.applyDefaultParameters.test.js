@@ -1,7 +1,7 @@
 /* globals MultimediaObject */
 import conf from '../../src/config/config';
 
-export default describe('MultimediaObject applyDefaultParameters', () => {
+describe('MultimediaObject applyDefaultParameters', () => {
   window._s4mConfig = {};
   const types = [
     'div',
@@ -66,7 +66,7 @@ export default describe('MultimediaObject applyDefaultParameters', () => {
   window._s4mConfig.absoluteAssetURL = 'http://namespace.com';
   const ob5 = new MultimediaObject({ data: {} });
 
-  it('should not throw an error event if autostart is not set', () => {
+  it('should set autostart to true if autostart is not set', () => {
     expect(ob5.data.autostart).toBe(true);
   });
   it("should set data.absoluteAssetURL to 'http://namespace.com'", () => {

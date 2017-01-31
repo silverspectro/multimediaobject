@@ -138,6 +138,15 @@ var Atoms = function Atoms() {
 };
 
 
+var parseBoolean = function parseBoolean(string) {
+  if (typeof string === 'undefined' || string === '') {
+    return true;
+  }
+  if (string === 'false' || Boolean(string) === false) {
+    return false;
+  }
+  return Boolean(string);
+};
 var checkEvent = function checkEvent(evt) {
   return staticData.regex.DOMEvent.test(evt);
 };
@@ -833,6 +842,7 @@ var MultimediaObject = function () {
         id: this.name
       });
     }
+    this.addGlobalStyle();
   };
 
   MultimediaObject.prototype.addDefaultParameters = function addDefaultParameters() {
@@ -843,7 +853,7 @@ var MultimediaObject = function () {
         }
       }
     }
-    this.data.autostart = typeof this.data.autostart === 'undefined' ? true : this.data.autostart;
+    this.data.autostart = typeof this.data.autostart === 'undefined' ? true : parseBoolean(this.data.autostart);
     if (this.element) {
       this.applyAttributes();
     }
@@ -874,10 +884,11 @@ var MultimediaObject = function () {
   * @return {object} MultimediaObject
   */
 
-  MultimediaObject.prototype.applyDependencies = function applyDependencies(dependencies) {
+  MultimediaObject.prototype.applyDependencies = function applyDependencies() {
     var _this2 = this;
 
-    dependencies = dependencies || this.dependencies;
+    var dependencies = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.dependencies;
+
     if (dependencies instanceof Array) {
       dependencies.forEach(function (dep) {
         _this2.checkDep(dep);
@@ -888,10 +899,11 @@ var MultimediaObject = function () {
     return this;
   };
 
-  MultimediaObject.prototype.removeDependencies = function removeDependencies(dependencies) {
+  MultimediaObject.prototype.removeDependencies = function removeDependencies() {
     var _this3 = this;
 
-    dependencies = dependencies || this.dependencies;
+    var dependencies = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.dependencies;
+
     if (dependencies instanceof Array) {
       dependencies.forEach(function (dep) {
         _this3.checkDep(dep, 'splice');
@@ -920,6 +932,9 @@ var MultimediaObject = function () {
   */
 
   MultimediaObject.prototype.addGlobalStyle = function addGlobalStyle(style, callback) {
+    if (typeof style !== 'string') {
+      throw new Error('addGlobalStyle: style is not a string');
+    }
     var styleMarkup = document.createElement('style');
     var styleText = style;
 
@@ -2099,7 +2114,7 @@ var MultimediaObject = function () {
         if (json.data) {
           child.data = child.data || {};
           // child.data.absoluteAssetURL = json.data.absoluteAssetURL || "";
-          child.data.autostart = eval(child.data.autostart);
+          child.data.autostart = parseBoolean(child.data.autostart);
           child.data.absoluteAssetURL = child.data.absoluteAssetURL || '';
         }
         child.DOMParent = _this14;
@@ -2111,7 +2126,7 @@ var MultimediaObject = function () {
     this.data = json.data || {};
     this.type = json.type;
     this.data.absoluteAssetURL = json.data && json.data.absoluteAssetURL ? json.data.absoluteAssetURL : '';
-    this.data.autostart = json.data ? eval(json.data.autostart) : true;
+    this.data.autostart = json.data ? parseBoolean(json.data.autostart) : true;
     this.setAbsoluteAssetURL(json);
   };
 
