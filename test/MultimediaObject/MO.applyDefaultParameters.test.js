@@ -22,7 +22,12 @@ describe('MultimediaObject applyDefaultParameters', () => {
     });
     for (const key in matchAttributes) {
       it(`should contain ${key} in .element.attributes`, () => {
-        expect(ob.element.getAttribute(key)).toEqual(matchAttributes[key]);
+        // muted key on IE because muted can only be defined or not
+        if (key === 'muted') {
+          expect(ob.element.getAttribute(key)).toBeDefined();
+        } else {
+          expect(ob.element.getAttribute(key)).toEqual(matchAttributes[key]);
+        }
       });
     }
   });

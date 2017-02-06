@@ -47,6 +47,7 @@ export default class MultimediaObject {
       this.type = type.type || 'block';
       this._style = {};
       this.style = {};
+      this.attributes = {};
       this.events = {};
       this._events = {};
       this.functions = {};
@@ -145,7 +146,7 @@ export default class MultimediaObject {
         this.addListener('startAfterPreload', () => this.startAnimation(), true);
       }
     }
-    if (this.attributes && !this.attributes.id) {
+    if (!this.attributes.id) {
       this.applyAttributes({
         id: this.name,
       });
@@ -224,12 +225,15 @@ export default class MultimediaObject {
   /**
   * @function
   * Add a global style object to the page
-  * @param {string} id - the id or class to which bind the style
   * @param {object} style - the CSS style properties to apply
+  * @param {function} callback - the callback to execute
   * @return {object} MultimediaObject
   */
 
-  addGlobalStyle(style, callback) {
+  addGlobalStyle(style = this.data.globalStyle, callback) {
+    if (!style) {
+      return this;
+    }
     if (typeof style !== 'string') {
       throw new Error('addGlobalStyle: style is not a string');
     }
@@ -255,12 +259,12 @@ export default class MultimediaObject {
   * @return {object} MultimediaObject
   */
 
-  applyStyle(properties = this.style, override) {
+  applyStyle(properties = this.style, override = false) {
+    utils.checkIfObject(properties, () => Object.keys(properties), 'style must be an object');
     let k;
     const transforms = [];
     let v;
     const _style = Object.keys(this._style).length;
-    override = override || false;
 
     for (k in properties) {
       v = properties[k];
@@ -378,15 +382,12 @@ export default class MultimediaObject {
   * @return {object} MultimediaObject
   */
 
-  applyFunctions(functions) {
-    if (functions) {
-      for (const func in functions) {
+  applyFunctions(functions = this.functions) {
+    utils.checkIfObject(functions, () => Object.keys(functions), 'functions must be an object');
+    for (const func in functions) {
+      if (!Object.prototype.hasOwnProperty.call(Object.getPrototypeOf(this), func)) {
         this[func] = functions[func];
         this.functions[func] = functions[func];
-      }
-    } else {
-      for (const func in this.functions) {
-        this[func] = this.functions[func];
       }
     }
     return this;
@@ -399,23 +400,16 @@ export default class MultimediaObject {
   * @return {object} MultimediaObject
   */
 
-  applyAttributes(attributes) {
-    if (attributes) {
+  applyAttributes(attributes = this.attributes) {
+    utils.checkIfObject(attributes, () => Object.keys(attributes), 'attributes must be an object');
+    if (Object.keys(attributes).length > 0) {
       for (const attr in attributes) {
         let replaced = attributes[attr];
         if (typeof attributes[attr] === 'string' && attributes[attr].indexOf('{{absoluteAssetURL}}') >= 0 && window[conf.namespace]) {
           replaced = attributes[attr].replace('{{absoluteAssetURL}}', window.MultimediaObjectEditor ? this.data.absoluteAssetURL : window[conf.namespace].absoluteAssetURL);
         }
         this.attributes[attr] = attributes[attr];
-        this.element.setAttribute(attr, (replaced || attributes[attr]));
-      }
-    } else {
-      for (const attr in this.attributes) {
-        let replaced = this.attributes[attr];
-        if (typeof this.attributes[attr] === 'string' && this.attributes[attr].indexOf('{{absoluteAssetURL}}') >= 0 && window[conf.namespace]) {
-          replaced = this.attributes[attr].replace('{{absoluteAssetURL}}', window.MultimediaObjectEditor ? this.data.absoluteAssetURL : window[conf.namespace].absoluteAssetURL);
-        }
-        this.element.setAttribute(attr, (replaced || this.attributes[attr]));
+        this.element.setAttribute(attr, replaced);
       }
     }
     return this;
@@ -430,7 +424,7 @@ export default class MultimediaObject {
 
   applyBreakpoints(breakpoints = []) {
     if (this.breakpoints.length > 0 || breakpoints.length > 0) {
-      breakpoints.forEach((breakpoint, index) => {
+      breakpoints.forEach((breakpoint) => {
         if (this.breakpoints.indexOf(breakpoint) === -1) {
           this.breakpoints.push(breakpoint);
         }
@@ -449,8 +443,8 @@ export default class MultimediaObject {
 
   applyEvents(events) {
     const applySwipeEvent = (evt) => {
-      let detecttouch = !!('ontouchstart' in window) || !!('ontouchstart' in document.documentElement) || !!window.ontouchstart || !!window.onmsgesturechange || (window.DocumentTouch && window.document instanceof window.DocumentTouch),
-        ob = this;
+      const detecttouch = !!('ontouchstart' in window) || !!('ontouchstart' in document.documentElement) || !!window.ontouchstart || !!window.onmsgesturechange || (window.DocumentTouch && window.document instanceof window.DocumentTouch);
+      const ob = this;
       let userData = {};
       ob.evtStarted = false;
       this.evtStart = function (e) {
@@ -631,8 +625,8 @@ export default class MultimediaObject {
           delete this.style[propertieName];
           delete this._style[propertieName];
           const containsTransformProps = (() => {
-            let keys = Object.keys(this._style),
-              hasTransform = false;
+            const keys = Object.keys(this._style);
+            let hasTransform = false;
             for (let key = 0; key < keys.length; key++) {
               if (utils.transformProperties.contains(keys[key])) {
                 hasTransform = true;
@@ -677,20 +671,20 @@ export default class MultimediaObject {
   }
 
   checkBreakpoints() {
-    let winW = window.MultimediaObjectEditor ? `parseInt(getComputedStyle(document.getElementById('${conf.container}')).width)` : 'window.innerWidth',
-      winH = window.MultimediaObjectEditor ? `parseInt(getComputedStyle(document.getElementById('${conf.container}')).height)` : 'window.innerHeight';
+    const winW = window.MultimediaObjectEditor ? `parseInt(getComputedStyle(document.getElementById('${conf.container}')).width)` : 'window.innerWidth';
+    const winH = window.MultimediaObjectEditor ? `parseInt(getComputedStyle(document.getElementById('${conf.container}')).height)` : 'window.innerHeight';
     if (this.breakpoints.length > 0) {
       const style = {};
       for (const w in this._style) {
         style[w] = this._style[w];
       }
-      this.breakpoints.forEach((breakpoint, index) => {
+      this.breakpoints.forEach((breakpoint) => {
         const conditions = [];
         for (const breaks in breakpoint.querie) {
           if (breaks === 'orientation') {
             conditions.push(`${breakpoint.querie[breaks] === 'landscape' ? `${winW} > ${winH}` : `${winH} > ${winW}`}`);
           } else {
-            conditions.push(`${/height/.test(breaks) ? winH : winW} ${/min/.test(breaks) ? '>=' : '<='} ${parseInt(breakpoint.querie[breaks])}`);
+            conditions.push(`${/height/.test(breaks) ? winH : winW} ${/min/.test(breaks) ? '>=' : '<='} ${parseInt(breakpoint.querie[breaks], 10)}`);
           }
         }
         let evaluatedRule = '';
@@ -1313,7 +1307,7 @@ export default class MultimediaObject {
   }
 
   setAbsoluteAssetURL(json) {
-    if (window[conf.namespace] && json) {
+    if (window[conf.namespace] && json && json.data) {
       if (typeof window[conf.namespace].absoluteAssetURL !== 'undefined' && window[conf.namespace].absoluteAssetURL !== 'undefined' && window[conf.namespace].absoluteAssetURL !== '') {
         this.data.absoluteAssetURL = window[conf.namespace].absoluteAssetURL;
       } else if (typeof json.data.absoluteAssetURL !== 'undefined' && json.data.absoluteAssetURL !== '' && json.data.absoluteAssetURL !== './') {
@@ -1321,8 +1315,10 @@ export default class MultimediaObject {
       } else {
         this.data.absoluteAssetURL = './';
       }
-    } else {
+    } else if (json) {
       this.data.absoluteAssetURL = json.data && typeof json.data.absoluteAssetURL !== 'undefined' && json.data.absoluteAssetURL !== '' ? json.data.absoluteAssetURL : './';
+    } else {
+      this.data.absoluteAssetURL = './';
     }
   }
 

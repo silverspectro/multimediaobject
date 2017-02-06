@@ -14,6 +14,7 @@ module.exports = {
       "no-param-reassign" : 1,
       "no-bitwise" : 0,
       "no-underscore-dangle": 0,
+      "no-continue": 0,
     },
     "env": {
       "browser": true,

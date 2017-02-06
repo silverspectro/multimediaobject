@@ -27,12 +27,6 @@ module.exports = function (config) {
     exclude: [
     ],
 
-    webpackMiddleware: {
-      // webpack-dev-middleware configuration
-      // i. e.
-      stats: 'errors-only',
-    },
-
 
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
@@ -65,7 +59,7 @@ module.exports = function (config) {
     // test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: ['dots', 'coverage'],
+    reporters: ['progress', 'coverage'],
 
 
     // web server port
@@ -87,7 +81,7 @@ module.exports = function (config) {
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ['Chrome', ],
+    browsers: ['Chrome', 'Firefox', 'IE', 'PhantomJS'],
 
 
     // Continuous Integration mode

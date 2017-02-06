@@ -138,6 +138,19 @@ var Atoms = function Atoms() {
 };
 
 
+var checkIfObject = function checkIfObject(toCheck, tryStatement, errorMessage) {
+  var error = function error() {
+    throw new Error(errorMessage);
+  };
+  try {
+    tryStatement();
+  } catch (err) {
+    error();
+  }
+  if (typeof toCheck === 'string' || typeof toCheck === 'number' || toCheck instanceof Array) {
+    error();
+  }
+};
 var parseBoolean = function parseBoolean(string) {
   if (typeof string === 'undefined' || string === '') {
     return true;
@@ -735,6 +748,7 @@ var MultimediaObject = function () {
       this.type = type.type || 'block';
       this._style = {};
       this.style = {};
+      this.attributes = {};
       this.events = {};
       this._events = {};
       this.functions = {};
@@ -837,7 +851,7 @@ var MultimediaObject = function () {
         }, true);
       }
     }
-    if (this.attributes && !this.attributes.id) {
+    if (!this.attributes.id) {
       this.applyAttributes({
         id: this.name
       });
@@ -926,12 +940,18 @@ var MultimediaObject = function () {
   /**
   * @function
   * Add a global style object to the page
-  * @param {string} id - the id or class to which bind the style
   * @param {object} style - the CSS style properties to apply
+  * @param {function} callback - the callback to execute
   * @return {object} MultimediaObject
   */
 
-  MultimediaObject.prototype.addGlobalStyle = function addGlobalStyle(style, callback) {
+  MultimediaObject.prototype.addGlobalStyle = function addGlobalStyle() {
+    var style = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.data.globalStyle;
+    var callback = arguments[1];
+
+    if (!style) {
+      return this;
+    }
     if (typeof style !== 'string') {
       throw new Error('addGlobalStyle: style is not a string');
     }
@@ -959,13 +979,15 @@ var MultimediaObject = function () {
 
   MultimediaObject.prototype.applyStyle = function applyStyle() {
     var properties = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.style;
-    var override = arguments[1];
+    var override = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
 
+    checkIfObject(properties, function () {
+      return Object.keys(properties);
+    }, 'style must be an object');
     var k = void 0;
     var transforms = [];
     var v = void 0;
     var _style = Object.keys(this._style).length;
-    override = override || false;
 
     for (k in properties) {
       v = properties[k];
@@ -1087,15 +1109,16 @@ var MultimediaObject = function () {
   * @return {object} MultimediaObject
   */
 
-  MultimediaObject.prototype.applyFunctions = function applyFunctions(functions) {
-    if (functions) {
-      for (var func in functions) {
+  MultimediaObject.prototype.applyFunctions = function applyFunctions() {
+    var functions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.functions;
+
+    checkIfObject(functions, function () {
+      return Object.keys(functions);
+    }, 'functions must be an object');
+    for (var func in functions) {
+      if (!Object.prototype.hasOwnProperty.call(Object.getPrototypeOf(this), func)) {
         this[func] = functions[func];
         this.functions[func] = functions[func];
-      }
-    } else {
-      for (var _func in this.functions) {
-        this[_func] = this.functions[_func];
       }
     }
     return this;
@@ -1108,23 +1131,20 @@ var MultimediaObject = function () {
   * @return {object} MultimediaObject
   */
 
-  MultimediaObject.prototype.applyAttributes = function applyAttributes(attributes) {
-    if (attributes) {
+  MultimediaObject.prototype.applyAttributes = function applyAttributes() {
+    var attributes = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.attributes;
+
+    checkIfObject(attributes, function () {
+      return Object.keys(attributes);
+    }, 'attributes must be an object');
+    if (Object.keys(attributes).length > 0) {
       for (var attr in attributes) {
         var replaced = attributes[attr];
         if (typeof attributes[attr] === 'string' && attributes[attr].indexOf('{{absoluteAssetURL}}') >= 0 && window[conf.namespace]) {
           replaced = attributes[attr].replace('{{absoluteAssetURL}}', window.MultimediaObjectEditor ? this.data.absoluteAssetURL : window[conf.namespace].absoluteAssetURL);
         }
         this.attributes[attr] = attributes[attr];
-        this.element.setAttribute(attr, replaced || attributes[attr]);
-      }
-    } else {
-      for (var _attr in this.attributes) {
-        var _replaced = this.attributes[_attr];
-        if (typeof this.attributes[_attr] === 'string' && this.attributes[_attr].indexOf('{{absoluteAssetURL}}') >= 0 && window[conf.namespace]) {
-          _replaced = this.attributes[_attr].replace('{{absoluteAssetURL}}', window.MultimediaObjectEditor ? this.data.absoluteAssetURL : window[conf.namespace].absoluteAssetURL);
-        }
-        this.element.setAttribute(_attr, _replaced || this.attributes[_attr]);
+        this.element.setAttribute(attr, replaced);
       }
     }
     return this;
@@ -1143,7 +1163,7 @@ var MultimediaObject = function () {
     var breakpoints = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
 
     if (this.breakpoints.length > 0 || breakpoints.length > 0) {
-      breakpoints.forEach(function (breakpoint, index) {
+      breakpoints.forEach(function (breakpoint) {
         if (_this4.breakpoints.indexOf(breakpoint) === -1) {
           _this4.breakpoints.push(breakpoint);
         }
@@ -1164,8 +1184,8 @@ var MultimediaObject = function () {
     var _this5 = this;
 
     var applySwipeEvent = function applySwipeEvent(evt) {
-      var detecttouch = !!('ontouchstart' in window) || !!('ontouchstart' in document.documentElement) || !!window.ontouchstart || !!window.onmsgesturechange || window.DocumentTouch && window.document instanceof window.DocumentTouch,
-          ob = _this5;
+      var detecttouch = !!('ontouchstart' in window) || !!('ontouchstart' in document.documentElement) || !!window.ontouchstart || !!window.onmsgesturechange || window.DocumentTouch && window.document instanceof window.DocumentTouch;
+      var ob = _this5;
       var userData = {};
       ob.evtStarted = false;
       _this5.evtStart = function (e) {
@@ -1348,8 +1368,8 @@ var MultimediaObject = function () {
           delete this.style[propertieName];
           delete this._style[propertieName];
           var containsTransformProps = function () {
-            var keys = Object.keys(_this6._style),
-                hasTransform = false;
+            var keys = Object.keys(_this6._style);
+            var hasTransform = false;
             for (var key = 0; key < keys.length; key++) {
               if (transformProperties.contains(keys[key])) {
                 hasTransform = true;
@@ -1397,21 +1417,21 @@ var MultimediaObject = function () {
   MultimediaObject.prototype.checkBreakpoints = function checkBreakpoints() {
     var _this7 = this;
 
-    var winW = window.MultimediaObjectEditor ? 'parseInt(getComputedStyle(document.getElementById(\'' + conf.container + '\')).width)' : 'window.innerWidth',
-        winH = window.MultimediaObjectEditor ? 'parseInt(getComputedStyle(document.getElementById(\'' + conf.container + '\')).height)' : 'window.innerHeight';
+    var winW = window.MultimediaObjectEditor ? 'parseInt(getComputedStyle(document.getElementById(\'' + conf.container + '\')).width)' : 'window.innerWidth';
+    var winH = window.MultimediaObjectEditor ? 'parseInt(getComputedStyle(document.getElementById(\'' + conf.container + '\')).height)' : 'window.innerHeight';
     if (this.breakpoints.length > 0) {
       (function () {
         var style = {};
         for (var w in _this7._style) {
           style[w] = _this7._style[w];
         }
-        _this7.breakpoints.forEach(function (breakpoint, index) {
+        _this7.breakpoints.forEach(function (breakpoint) {
           var conditions = [];
           for (var breaks in breakpoint.querie) {
             if (breaks === 'orientation') {
               conditions.push('' + (breakpoint.querie[breaks] === 'landscape' ? winW + ' > ' + winH : winH + ' > ' + winW));
             } else {
-              conditions.push((/height/.test(breaks) ? winH : winW) + ' ' + (/min/.test(breaks) ? '>=' : '<=') + ' ' + parseInt(breakpoint.querie[breaks]));
+              conditions.push((/height/.test(breaks) ? winH : winW) + ' ' + (/min/.test(breaks) ? '>=' : '<=') + ' ' + parseInt(breakpoint.querie[breaks], 10));
             }
           }
           var evaluatedRule = '';
@@ -2067,7 +2087,7 @@ var MultimediaObject = function () {
   };
 
   MultimediaObject.prototype.setAbsoluteAssetURL = function setAbsoluteAssetURL(json) {
-    if (window[conf.namespace] && json) {
+    if (window[conf.namespace] && json && json.data) {
       if (typeof window[conf.namespace].absoluteAssetURL !== 'undefined' && window[conf.namespace].absoluteAssetURL !== 'undefined' && window[conf.namespace].absoluteAssetURL !== '') {
         this.data.absoluteAssetURL = window[conf.namespace].absoluteAssetURL;
       } else if (typeof json.data.absoluteAssetURL !== 'undefined' && json.data.absoluteAssetURL !== '' && json.data.absoluteAssetURL !== './') {
@@ -2075,8 +2095,10 @@ var MultimediaObject = function () {
       } else {
         this.data.absoluteAssetURL = './';
       }
-    } else {
+    } else if (json) {
       this.data.absoluteAssetURL = json.data && typeof json.data.absoluteAssetURL !== 'undefined' && json.data.absoluteAssetURL !== '' ? json.data.absoluteAssetURL : './';
+    } else {
+      this.data.absoluteAssetURL = './';
     }
   };
 

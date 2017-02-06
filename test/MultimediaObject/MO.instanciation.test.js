@@ -28,7 +28,7 @@ describe('new Multimediaobject()', () => {
         },
       },
       events: {
-        click(event) {
+        click() {
           console.log('test');
         },
       },
@@ -71,7 +71,7 @@ describe('new Multimediaobject()', () => {
         },
       },
       events: {
-        click(event) {
+        click() {
           console.log('test');
         },
       },

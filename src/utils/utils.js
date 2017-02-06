@@ -27,6 +27,19 @@ export const concatObject = (...objects) => {
   }
   return ret;
 };
+export const checkIfObject = function (toCheck, tryStatement, errorMessage) {
+  const error = () => {
+    throw new Error(errorMessage);
+  };
+  try {
+    tryStatement();
+  } catch (err) {
+    error();
+  }
+  if (typeof toCheck === 'string' || typeof toCheck === 'number' || toCheck instanceof Array) {
+    error();
+  }
+};
 export const parseBoolean = function (string) {
   if (typeof string === 'undefined' || string === '') {
     return true;

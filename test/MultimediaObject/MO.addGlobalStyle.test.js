@@ -25,11 +25,20 @@ describe('MO.addGlobaStyle', () => {
   });
 
   const ob3 = new MultimediaObject();
-  const wrongArgs = [{}, [], undefined, null];
+  const wrongArgs = [{}, []];
 
   wrongArgs.forEach((arg) => {
     it(`should throw an error if globalStyle is ${arg}`, () => {
       expect(() => ob3.addGlobalStyle(arg)).toThrow();
     });
+  });
+
+  it('should return the MO if globalStyle is undefined', () => {
+    expect(ob3.addGlobalStyle(undefined)).toEqual(ob3);
+    expect(document.getElementById(`style-${ob3.uuid}`)).toBe(null);
+  });
+  it('should return the MO if globalStyle is null', () => {
+    expect(ob3.addGlobalStyle(null)).toEqual(ob3);
+    expect(document.getElementById(`style-${ob3.uuid}`)).toBe(null);
   });
 });
