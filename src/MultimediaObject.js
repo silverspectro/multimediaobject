@@ -422,14 +422,18 @@ export default class MultimediaObject {
   * @return {object} MultimediaObject
   */
 
-  applyBreakpoints(breakpoints = []) {
-    if (this.breakpoints.length > 0 || breakpoints.length > 0) {
-      breakpoints.forEach((breakpoint) => {
-        if (this.breakpoints.indexOf(breakpoint) === -1) {
-          this.breakpoints.push(breakpoint);
-        }
-      });
-      this.checkBreakpoints();
+  applyBreakpoints(breakpoints = this.breakpoints) {
+    if (breakpoints instanceof Array) {
+      if (breakpoints.length > 0) {
+        breakpoints.forEach((breakpoint) => {
+          if (this.breakpoints.indexOf(breakpoint) === -1) {
+            this.breakpoints.push(breakpoint);
+          }
+        });
+        this.checkBreakpoints();
+      }
+    } else {
+      throw new Error('breakpoints must be an array');
     }
     return this;
   }
@@ -441,7 +445,7 @@ export default class MultimediaObject {
   * @return {object} MultimediaObject
   */
 
-  applyEvents(events) {
+  applyEvents(events = this.events) {
     const applySwipeEvent = (evt) => {
       const detecttouch = !!('ontouchstart' in window) || !!('ontouchstart' in document.documentElement) || !!window.ontouchstart || !!window.onmsgesturechange || (window.DocumentTouch && window.document instanceof window.DocumentTouch);
       const ob = this;
@@ -489,29 +493,16 @@ export default class MultimediaObject {
         this.element.addEventListener('mouseup', this.evtEnd, false);
       }
     };
-    if (events) {
+    if (Object.keys(events).length > 0) {
       for (const evt in events) {
         this.events[evt] = events[evt];
         this._events[evt] = this.transformEvent(events[evt]);
-        if (utils.checkEvent(evt) && evt !== 'swipe') {
-          this.element.addEventListener(evt, this._events[evt]);
-        } else if (evt === 'swipe') {
-          applySwipeEvent(evt);
-        } else {
-          this.addListener(evt, this.events[evt]);
-        }
-      }
-    } else if (Object.keys(this.events).length > 0) {
-      for (const evt in this.events) {
         if (evt === 'swipe') {
           applySwipeEvent(evt);
+        } else if (utils.checkEvent(evt)) {
+          this.element.addEventListener(evt, this._events[evt]);
         } else {
-          this._events[evt] = this.transformEvent(this.events[evt]);
-          if (utils.checkEvent(evt)) {
-            this.element.addEventListener(evt, this._events[evt]);
-          } else {
-            this.addListener(evt, this.events[evt]);
-          }
+          this.addListener(evt, this.events[evt]);
         }
       }
     }
