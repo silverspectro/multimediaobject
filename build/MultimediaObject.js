@@ -146,9 +146,10 @@ var checkIfObject = function checkIfObject(toCheck, tryStatement, errorMessage) 
     tryStatement();
   } catch (err) {
     error();
-  }
-  if (typeof toCheck === 'string' || typeof toCheck === 'number' || toCheck instanceof Array) {
-    error();
+  } finally {
+    if (typeof toCheck === 'string' || typeof toCheck === 'number' || toCheck instanceof Array) {
+      error();
+    }
   }
 };
 var parseBoolean = function parseBoolean(string) {
@@ -1160,15 +1161,19 @@ var MultimediaObject = function () {
   MultimediaObject.prototype.applyBreakpoints = function applyBreakpoints() {
     var _this4 = this;
 
-    var breakpoints = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+    var breakpoints = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.breakpoints;
 
-    if (this.breakpoints.length > 0 || breakpoints.length > 0) {
-      breakpoints.forEach(function (breakpoint) {
-        if (_this4.breakpoints.indexOf(breakpoint) === -1) {
-          _this4.breakpoints.push(breakpoint);
-        }
-      });
-      this.checkBreakpoints();
+    if (breakpoints instanceof Array) {
+      if (breakpoints.length > 0) {
+        breakpoints.forEach(function (breakpoint) {
+          if (_this4.breakpoints.indexOf(breakpoint) === -1) {
+            _this4.breakpoints.push(breakpoint);
+          }
+        });
+        this.checkBreakpoints();
+      }
+    } else {
+      throw new Error('breakpoints must be an array');
     }
     return this;
   };
@@ -1180,8 +1185,10 @@ var MultimediaObject = function () {
   * @return {object} MultimediaObject
   */
 
-  MultimediaObject.prototype.applyEvents = function applyEvents(events) {
+  MultimediaObject.prototype.applyEvents = function applyEvents() {
     var _this5 = this;
+
+    var events = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.events;
 
     var applySwipeEvent = function applySwipeEvent(evt) {
       var detecttouch = !!('ontouchstart' in window) || !!('ontouchstart' in document.documentElement) || !!window.ontouchstart || !!window.onmsgesturechange || window.DocumentTouch && window.document instanceof window.DocumentTouch;
@@ -1230,29 +1237,16 @@ var MultimediaObject = function () {
         _this5.element.addEventListener('mouseup', _this5.evtEnd, false);
       }
     };
-    if (events) {
+    if (Object.keys(events).length > 0) {
       for (var evt in events) {
         this.events[evt] = events[evt];
         this._events[evt] = this.transformEvent(events[evt]);
-        if (checkEvent(evt) && evt !== 'swipe') {
-          this.element.addEventListener(evt, this._events[evt]);
-        } else if (evt === 'swipe') {
+        if (evt === 'swipe') {
           applySwipeEvent(evt);
+        } else if (checkEvent(evt)) {
+          this.element.addEventListener(evt, this._events[evt]);
         } else {
           this.addListener(evt, this.events[evt]);
-        }
-      }
-    } else if (Object.keys(this.events).length > 0) {
-      for (var _evt in this.events) {
-        if (_evt === 'swipe') {
-          applySwipeEvent(_evt);
-        } else {
-          this._events[_evt] = this.transformEvent(this.events[_evt]);
-          if (checkEvent(_evt)) {
-            this.element.addEventListener(_evt, this._events[_evt]);
-          } else {
-            this.addListener(_evt, this.events[_evt]);
-          }
         }
       }
     }

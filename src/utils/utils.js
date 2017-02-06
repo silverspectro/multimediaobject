@@ -35,9 +35,10 @@ export const checkIfObject = function (toCheck, tryStatement, errorMessage) {
     tryStatement();
   } catch (err) {
     error();
-  }
-  if (typeof toCheck === 'string' || typeof toCheck === 'number' || toCheck instanceof Array) {
-    error();
+  } finally {
+    if (typeof toCheck === 'string' || typeof toCheck === 'number' || toCheck instanceof Array) {
+      error();
+    }
   }
 };
 export const parseBoolean = function (string) {
