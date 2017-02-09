@@ -7,6 +7,8 @@ describe('utils.getMaxOfArray', () => {
     [10, 23.4, 12.6, 23.3, 0.25, -5],
     [-1, -2, -3, -4, -5],
     [null, 0, false, 10, ''],
+    ['10', '1', undefined, ''],
+    [null, false, undefined, ''],
   ];
   const responseArray = [
     12,
@@ -14,15 +16,14 @@ describe('utils.getMaxOfArray', () => {
     23.4,
     -1,
     10,
+    10,
+    0,
   ];
   const wrongArray = [
     {},
-    [],
     false,
     undefined,
     null,
-    [null, false, undefined, ''],
-    ['10', '1', undefined, ''],
   ];
 
 

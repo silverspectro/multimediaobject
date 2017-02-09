@@ -256,11 +256,13 @@ export const unitForProperty = (k, v) => {
 };
 export const getMaxOfArray = (numArray) => {
     /* https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/max */
-  let result;
-  if (numArray instanceof Array && numArray.length > 0) {
-    result = Math.max.apply(null, numArray);
-  }
-  if (!isNaN(result)) {
+  if (numArray instanceof Array) {
+    let result;
+    const arrayOfNumber = numArray.filter(el => !isNaN(parseFloat(el)));
+    if (arrayOfNumber.length > 0) {
+      result = Math.max.apply(null, arrayOfNumber);
+    }
+    result = isNaN(result) ? 0 : result;
     return result;
   }
   throw new Error('getMaxOfArray only works on an array');

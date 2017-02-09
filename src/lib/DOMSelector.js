@@ -28,7 +28,7 @@ if (!Element.prototype.getElementsByClassName) {
 }
 let DOMSel;
 
-export const _ = function (selector) {
+const _ = function (selector) {
   return new DOMSelector(selector);
 };
 
@@ -53,7 +53,7 @@ var DOMSelector = function (selector) {
     sel = document.getElementsByTagName(selector);
   }
 
-  for (var i = 0; i < sel.length; i++) {
+  for (let i = 0; i < sel.length; i++) {
     this[i] = sel[i];
   }
 
@@ -64,7 +64,7 @@ var DOMSelector = function (selector) {
 DOMSel.fn = DOMSelector.prototype = {};
 
 DOMSel.fn.getStyle = function (elem) {
-  for (var i = 0; i < this.length; i++) {
+  for (let i = 0; i < this.length; i++) {
     return getComputedStyle(this[i])[elem];
   }
 };
@@ -73,7 +73,7 @@ DOMSel.fn.css = function (style, callback) {
   if (typeof style !== 'object') {
     throw 'You must pass in an object';
   }
-  for (var i = 0; i < this.length; i++) {
+  for (let i = 0; i < this.length; i++) {
     for (const property in style) {
       this[i].style[property] = style[property];
       if (property == 'transform') {
@@ -102,7 +102,7 @@ DOMSel.fn.transition = function (params, callback) {
   };
   let tempDelay = params.delay;
 
-  for (var i = 0; i < this.length; i++) {
+  for (let i = 0; i < this.length; i++) {
     if (params.stagger && i > 0)tempDelay += params.delay;
     this[i].style.transition = `all ${params.duration}s ${tempDelay}s ${params.easing}`;
     this[i].style.WebkitTransition = `all ${params.duration}s ${tempDelay}s ${params.easing}`;
@@ -121,7 +121,7 @@ DOMSel.fn.transition = function (params, callback) {
 DOMSel.fn.on = function (evt, callback) {
   let isSlide = evt == 'slide',
     detecttouch = !!('ontouchstart' in window) || !!('ontouchstart' in document.documentElement) || !!window.ontouchstart || !!window.onmsgesturechange || (window.DocumentTouch && window.document instanceof window.DocumentTouch);
-  for (var i = 0; i < this.length; i++) {
+  for (let i = 0; i < this.length; i++) {
     if (isSlide) {
       var userData = {},
         evtStarted = false,
@@ -182,9 +182,9 @@ DOMSel.fn.on = function (evt, callback) {
  * @return {Boolean}           returns true on the first child of the given type found, will return false if nothing found
  */
 DOMSel.fn.hasChildOfType = function (nodeName) {
-  for (var i = 0; i < this.length; i++) {
+  for (let i = 0; i < this.length; i++) {
     if (this[i].hasChildNodes()) {
-      for (var j = 0; j < this[i].childNodes.length; j++) {
+      for (let j = 0; j < this[i].childNodes.length; j++) {
         if (nodeName == this[i].childNodes[j].nodeName) {
           return true;
         }
@@ -200,9 +200,9 @@ DOMSel.fn.hasChildOfType = function (nodeName) {
  * @return {Boolean}           returns true on the first child of the given type found, will return false if nothing found
  */
 DOMSel.fn.getChildOfType = function (nodeName) {
-  for (var i = 0; i < this.length; i++) {
+  for (let i = 0; i < this.length; i++) {
     if (this[i].hasChildNodes()) {
-      for (var j = 0; j < this[i].childNodes.length; j++) {
+      for (let j = 0; j < this[i].childNodes.length; j++) {
         if (nodeName == this[i].childNodes[j].nodeName) {
           return this[i].childNodes[j];
         }
@@ -232,3 +232,5 @@ DOMSel.constrain = function (variable, constraint) {
   }
   return constraint;
 };
+
+export default _;

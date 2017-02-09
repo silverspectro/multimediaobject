@@ -19,7 +19,7 @@ limitations under the License.
 
 import raf from './lib/raf';
 import * as utils from './utils/utils';
-import Easings from './utils/easings';
+import * as Easings from './utils/easings';
 import eventManager from './lib/customEventManager';
 import requireScript from './lib/requireScript';
 import conf from './config/config';
@@ -288,6 +288,9 @@ export default class MultimediaObject {
           this._style[k] = v;
         }
         this.style[k] = v;
+        if (typeof v === 'string' && v.indexOf('{{absoluteAssetURL}}') >= 0 && window[conf.namespace]) {
+          v = v.replace('{{absoluteAssetURL}}', window.MultimediaObjectEditor ? this.data.absoluteAssetURL : window[conf.namespace].absoluteAssetURL);
+        }
         this.element.style[k] = v;
       } else {
         const val = `${v}${utils.unitForProperty(k, v)}`;
@@ -966,7 +969,7 @@ export default class MultimediaObject {
       }
     }
 
-    // console.log(this.computedAnimations);
+    // console.log(this.animatedProps);
     return this;
   }
 

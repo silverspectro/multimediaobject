@@ -92,6 +92,7 @@ const pxPropertiesArray = [
   'webkitTextStroke',
   'webkitTextStrokeWidth',
   'width',
+  'height',
   'wordSpacing',
   'x',
   'y',
