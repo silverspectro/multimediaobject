@@ -148,7 +148,7 @@ export default class MultimediaObject {
     }
     if (!this.attributes.id) {
       this.applyAttributes({
-        id: this.name,
+        id: this.name === 'multimediaObject' ? this.uuid : this.name,
       });
     }
     this.addGlobalStyle();
@@ -911,7 +911,7 @@ export default class MultimediaObject {
           let propNumericSteps = Object.keys(this.animatedProps[prop].steps),
             iterationSeconds = (iteration / totalAnimationIteration) * totalAnimationTime,
             secondsElapsed = isFinite(iterationSeconds) ? Number(iterationSeconds).toFixed(2) : 0,
-            stepSecond = utils.closest(secondsElapsed, propNumericSteps);
+            stepSecond = utils.closestSuperior(secondsElapsed, propNumericSteps);
 
           if (!this.computedAnimations[iteration]) {
             this.computedAnimations[iteration] = {};
@@ -969,7 +969,7 @@ export default class MultimediaObject {
       }
     }
 
-    // console.log(this.animatedProps);
+    // console.log(this.animatedProps, this.computedAnimations);
     return this;
   }
 
