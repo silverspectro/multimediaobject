@@ -1141,9 +1141,6 @@ export default class MultimediaObject {
       this.timeline.computeSteps();
       this.timeline.stop();
     }
-    if (this.timeline && this.timeline.UI) {
-      this.timeline.UI.insertInterface();
-    }
   }
 
   addAnimationProperties(propertieArray) {
@@ -1168,9 +1165,6 @@ export default class MultimediaObject {
     if (this.timeline) {
       this.timeline.computeSteps();
     }
-    if (this.timeline && this.timeline.UI) {
-      this.timeline.UI.insertInterface();
-    }
     return this;
   }
 
@@ -1189,7 +1183,7 @@ export default class MultimediaObject {
     if (this.timeline) {
       this.timeline.computeSteps();
     }
-    this.dispatchEvent('actualize-timeline-elements', {}, true);
+    // this.dispatchEvent('actualize-timeline-elements', {}, true);
     return this;
   }
 
@@ -1205,10 +1199,7 @@ export default class MultimediaObject {
       }
       this.animations[this.selectedAnimation] = this.currentAnimation;
       this.preInterpolateStep(this.timeline.fps || this.fps);
-      if (this.timeline) {
-        this.timeline.computeSteps();
-      }
-      this.dispatchEvent('actualize-timeline-elements', {}, true);
+      // this.dispatchEvent('actualize-timeline-elements', {}, true);
     } else {
       console.log(`animation at ${time} don't exist`);
     }
@@ -1216,19 +1207,17 @@ export default class MultimediaObject {
     return this;
   }
 
-  addAnimationKeyframe(time, prop, value) {
+  addAnimationKeyframe(time, prop, value, easing) {
     if (!this.currentAnimation[time]) {
       this.currentAnimation[time] = {};
     }
     this.currentAnimation[time][prop] = value;
+    if (easing) this.currentAnimation[time].easing = easing;
     this.animations[this.selectedAnimation] = this.currentAnimation;
     // console.log(time, prop, value);
     // console.log(this.currentAnimation, this.animations);
     this.preInterpolateStep(this.timeline.fps || this.fps);
-    if (this.timeline) {
-      this.timeline.computeSteps();
-    }
-    this.dispatchEvent('actualize-timeline-elements', {}, true);
+    // this.dispatchEvent('actualize-timeline-elements', {}, true);
     return this;
   }
 
