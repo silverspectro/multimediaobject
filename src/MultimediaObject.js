@@ -58,9 +58,7 @@ export default class MultimediaObject {
       this.computedAnimations = [];
       this.childs = [];
       this.dependencies = [];
-      this.animatedProps = {
-        0.02: {},
-      };
+      this.animatedProps = {};
       this.innerHTML = '';
 
       this.fps = fps;
@@ -100,9 +98,7 @@ export default class MultimediaObject {
       this.computedAnimations = [];
       this.childs = [];
       this.dependencies = [];
-      this.animatedProps = {
-        0.02: {},
-      };
+      this.animatedProps = {};
       this.innerHTML = '';
 
       this.DOMParent = null;
@@ -1033,27 +1029,17 @@ export default class MultimediaObject {
   }
 
   startAnimation() {
-    this.animationStarted = true;
     this.runAnimation();
-    // this.childs.forEach(function(child){
-    //   if(child.data.autostart){
-    //     child.startAnimation();
-    //   }
-    // });
   }
 
   stopAnimation() {
     this.animationStarted = false;
     this.animated = false;
-    // this.counter = 0;
     window.cancelAnimationFrame(this.rafID);
-    // this.childs.forEach(function(child){
-    //   child.stopAnimation();
-    // });
   }
 
-  runAnimation() {
-    this.rafID = window.requestAnimationFrame((time) => { this.runAnimation(); });
+  runAnimation(time) {
+    this.rafID = window.requestAnimationFrame(time => this.runAnimation(time));
     if (Object.keys(this.currentAnimation).length > 0) {
       this.now = performance.now() || Date.now();
       this.delta = this.now - this.then;
@@ -1080,7 +1066,7 @@ export default class MultimediaObject {
 
         this.secondsElapsed = isFinite(iterationSeconds) ? Number(iterationSeconds).toFixed(2) : 0;
 
-          // console.log(this.secondsElapsed, this.totalIteration);
+        // console.log(this.counter, this.totalIteration);
 
         this.interpolateStep(this.counter, this.secondsElapsed, this.fps);
 
@@ -1097,6 +1083,8 @@ export default class MultimediaObject {
         }
         // console.log(this.secondsElapsed);
       }
+    } else {
+      this.stopAnimation();
     }
   }
 
