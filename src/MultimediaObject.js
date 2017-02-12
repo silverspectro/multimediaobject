@@ -1129,8 +1129,7 @@ export default class MultimediaObject {
     return eventManager.dispatchEvent(`${this.uuid}-${eventName}`, params, this);
   }
 
-  changeAnimation(animationName) {
-    this.animations[this.selectedAnimation] = this.currentAnimation;
+  changeAnimation(animationName = 'default') {
     this.selectedAnimation = animationName;
     this.computedSteps = [];
     this.currentAnimation = this.animations[this.selectedAnimation] || {};
