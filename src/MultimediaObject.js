@@ -1000,6 +1000,8 @@ export default class MultimediaObject {
       this.currentIteration = currentIteration;
       this.applyIteration();
       this.checkBreakpoints();
+    } else if (currentIteration > animationsLength && animationsLength > 0) {
+      this.applyIteration(this.computedAnimations[animationsLength - 1]);
     }
     if (animationsLength === currentIteration) {
       this.stopAnimation();
@@ -1011,12 +1013,12 @@ export default class MultimediaObject {
     return this;
   }
 
-  applyIteration() {
-    if (this.computedAnimations[this.currentIteration]) {
-      const style = Object.create(this.computedAnimations[this.currentIteration]);
-      for (const key in this.computedAnimations[this.currentIteration]) {
+  applyIteration(iteration = this.computedAnimations[this.currentIteration]) {
+    if (iteration) {
+      const style = Object.create(iteration);
+      for (const key in iteration) {
         if (!utils.isAnimatableProp(key)) {
-          this.dispatchEvent(key, { value: this.computedAnimations[this.currentIteration][key] });
+          this.dispatchEvent(key, { value: iteration[key] });
           delete style[key];
         }
       }
