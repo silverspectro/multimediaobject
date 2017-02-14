@@ -704,7 +704,7 @@ export default {
   },
   regex: {
     DOMEvent: new RegExp('^(click|mousedown|mouseup|mousemove|change|touchstart|touchmove|touchend|input|focus|dlclick|mouseenter|mouseleave|mouseover|mouseout|blur|search|submit|play|pause|canplay|progress)$'),
-    animatableProps: new RegExp('^(background-color|translate|scale|rotate|skew|margin|padding|top|left|right|bottom|color|font-size|width|height|opacity)$'),
+    animatableProps: new RegExp('^(background-color|translate|scale|rotate|skew|margin-top|margin.+|padding.+|top|left|right|bottom|color|font-size|width|height|opacity)$'),
   },
   sets: {
     pxProperties: pxPropertiesArray,

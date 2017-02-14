@@ -168,28 +168,18 @@ var checkEvent = function checkEvent(evt) {
 
 
 
-var closest = function closest(num, arr) {
+var closestSuperior = function closestSuperior(num, arr) {
   var sortedArr = arr.sort(function (a, b) {
     return a - b;
   });
-  var chosen = void 0;
   for (var i = 0; i < sortedArr.length; i++) {
-    var prevInd = i;
-    chosen = sortedArr[i];
-    if (i > 0) {
-      prevInd = i - 1;
-    }
     if (num < sortedArr[i]) {
-      if (num - sortedArr[prevInd] < sortedArr[i] - num) {
-        chosen = sortedArr[prevInd];
-      } else {
-        chosen = sortedArr[i];
-      }
-      break;
+      return sortedArr[i];
     }
   }
-  return chosen;
+  return sortedArr[sortedArr.length - 1];
 };
+
 
 var pxProperties = new Set(staticData.sets.pxProperties);
 var degProperties = new Set(staticData.sets.degProperties);
@@ -890,7 +880,7 @@ var MultimediaObject = function () {
     }
     if (!this.attributes.id) {
       this.applyAttributes({
-        id: this.name
+        id: this.name === 'multimediaObject' ? this.uuid : this.name
       });
     }
     this.addGlobalStyle();
@@ -1714,7 +1704,7 @@ var MultimediaObject = function () {
           var propNumericSteps = Object.keys(this.animatedProps[_prop].steps),
               iterationSeconds = iteration / totalAnimationIteration * totalAnimationTime,
               secondsElapsed = isFinite(iterationSeconds) ? Number(iterationSeconds).toFixed(2) : 0,
-              stepSecond = closest(secondsElapsed, propNumericSteps);
+              stepSecond = closestSuperior(secondsElapsed, propNumericSteps);
 
           if (!this.computedAnimations[iteration]) {
             this.computedAnimations[iteration] = {};
@@ -1772,7 +1762,11 @@ var MultimediaObject = function () {
       }
     }
 
+<<<<<<< HEAD
     // console.log(this.animatedProps);
+=======
+    // console.log(this.animatedProps, this.computedAnimations);
+>>>>>>> 941c37e98bcef541b689f17fa6e0790f7270a139
     return this;
   };
 

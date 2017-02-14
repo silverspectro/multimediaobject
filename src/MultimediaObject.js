@@ -58,9 +58,7 @@ export default class MultimediaObject {
       this.computedAnimations = [];
       this.childs = [];
       this.dependencies = [];
-      this.animatedProps = {
-        0.02: {},
-      };
+      this.animatedProps = {};
       this.innerHTML = '';
 
       this.fps = fps;
@@ -100,9 +98,7 @@ export default class MultimediaObject {
       this.computedAnimations = [];
       this.childs = [];
       this.dependencies = [];
-      this.animatedProps = {
-        0.02: {},
-      };
+      this.animatedProps = {};
       this.innerHTML = '';
 
       this.DOMParent = null;
@@ -148,7 +144,7 @@ export default class MultimediaObject {
     }
     if (!this.attributes.id) {
       this.applyAttributes({
-        id: this.name,
+        id: this.name === 'multimediaObject' ? this.uuid : this.name,
       });
     }
     this.addGlobalStyle();
@@ -911,7 +907,7 @@ export default class MultimediaObject {
           let propNumericSteps = Object.keys(this.animatedProps[prop].steps),
             iterationSeconds = (iteration / totalAnimationIteration) * totalAnimationTime,
             secondsElapsed = isFinite(iterationSeconds) ? Number(iterationSeconds).toFixed(2) : 0,
-            stepSecond = utils.closest(secondsElapsed, propNumericSteps);
+            stepSecond = utils.closestSuperior(secondsElapsed, propNumericSteps);
 
           if (!this.computedAnimations[iteration]) {
             this.computedAnimations[iteration] = {};
@@ -969,7 +965,7 @@ export default class MultimediaObject {
       }
     }
 
-    // console.log(this.animatedProps);
+    // console.log(this.animatedProps, this.computedAnimations);
     return this;
   }
 
@@ -1000,6 +996,8 @@ export default class MultimediaObject {
       this.currentIteration = currentIteration;
       this.applyIteration();
       this.checkBreakpoints();
+    } else if (currentIteration > animationsLength && animationsLength > 0) {
+      this.applyIteration(this.computedAnimations[animationsLength - 1]);
     }
     if (animationsLength === currentIteration) {
       this.stopAnimation();
@@ -1011,12 +1009,12 @@ export default class MultimediaObject {
     return this;
   }
 
-  applyIteration() {
-    if (this.computedAnimations[this.currentIteration]) {
-      const style = Object.create(this.computedAnimations[this.currentIteration]);
-      for (const key in this.computedAnimations[this.currentIteration]) {
+  applyIteration(iteration = this.computedAnimations[this.currentIteration]) {
+    if (iteration) {
+      const style = Object.create(iteration);
+      for (const key in iteration) {
         if (!utils.isAnimatableProp(key)) {
-          this.dispatchEvent(key, { value: this.computedAnimations[this.currentIteration][key] });
+          this.dispatchEvent(key, { value: iteration[key] });
           delete style[key];
         }
       }
@@ -1031,27 +1029,17 @@ export default class MultimediaObject {
   }
 
   startAnimation() {
-    this.animationStarted = true;
     this.runAnimation();
-    // this.childs.forEach(function(child){
-    //   if(child.data.autostart){
-    //     child.startAnimation();
-    //   }
-    // });
   }
 
   stopAnimation() {
     this.animationStarted = false;
     this.animated = false;
-    // this.counter = 0;
     window.cancelAnimationFrame(this.rafID);
-    // this.childs.forEach(function(child){
-    //   child.stopAnimation();
-    // });
   }
 
-  runAnimation() {
-    this.rafID = window.requestAnimationFrame((time) => { this.runAnimation(); });
+  runAnimation(time) {
+    this.rafID = window.requestAnimationFrame(time => this.runAnimation(time));
     if (Object.keys(this.currentAnimation).length > 0) {
       this.now = performance.now() || Date.now();
       this.delta = this.now - this.then;
@@ -1078,7 +1066,7 @@ export default class MultimediaObject {
 
         this.secondsElapsed = isFinite(iterationSeconds) ? Number(iterationSeconds).toFixed(2) : 0;
 
-          // console.log(this.secondsElapsed, this.totalIteration);
+        // console.log(this.counter, this.totalIteration);
 
         this.interpolateStep(this.counter, this.secondsElapsed, this.fps);
 
@@ -1095,6 +1083,8 @@ export default class MultimediaObject {
         }
         // console.log(this.secondsElapsed);
       }
+    } else {
+      this.stopAnimation();
     }
   }
 
@@ -1127,8 +1117,7 @@ export default class MultimediaObject {
     return eventManager.dispatchEvent(`${this.uuid}-${eventName}`, params, this);
   }
 
-  changeAnimation(animationName) {
-    this.animations[this.selectedAnimation] = this.currentAnimation;
+  changeAnimation(animationName = 'default') {
     this.selectedAnimation = animationName;
     this.computedSteps = [];
     this.currentAnimation = this.animations[this.selectedAnimation] || {};
@@ -1140,9 +1129,6 @@ export default class MultimediaObject {
     if (this.timeline) {
       this.timeline.computeSteps();
       this.timeline.stop();
-    }
-    if (this.timeline && this.timeline.UI) {
-      this.timeline.UI.insertInterface();
     }
   }
 
@@ -1168,9 +1154,6 @@ export default class MultimediaObject {
     if (this.timeline) {
       this.timeline.computeSteps();
     }
-    if (this.timeline && this.timeline.UI) {
-      this.timeline.UI.insertInterface();
-    }
     return this;
   }
 
@@ -1189,7 +1172,7 @@ export default class MultimediaObject {
     if (this.timeline) {
       this.timeline.computeSteps();
     }
-    this.dispatchEvent('actualize-timeline-elements', {}, true);
+    // this.dispatchEvent('actualize-timeline-elements', {}, true);
     return this;
   }
 
@@ -1205,10 +1188,7 @@ export default class MultimediaObject {
       }
       this.animations[this.selectedAnimation] = this.currentAnimation;
       this.preInterpolateStep(this.timeline.fps || this.fps);
-      if (this.timeline) {
-        this.timeline.computeSteps();
-      }
-      this.dispatchEvent('actualize-timeline-elements', {}, true);
+      // this.dispatchEvent('actualize-timeline-elements', {}, true);
     } else {
       console.log(`animation at ${time} don't exist`);
     }
@@ -1216,19 +1196,17 @@ export default class MultimediaObject {
     return this;
   }
 
-  addAnimationKeyframe(time, prop, value) {
+  addAnimationKeyframe(time, prop, value, easing) {
     if (!this.currentAnimation[time]) {
       this.currentAnimation[time] = {};
     }
     this.currentAnimation[time][prop] = value;
+    if (easing) this.currentAnimation[time].easing = easing;
     this.animations[this.selectedAnimation] = this.currentAnimation;
     // console.log(time, prop, value);
     // console.log(this.currentAnimation, this.animations);
     this.preInterpolateStep(this.timeline.fps || this.fps);
-    if (this.timeline) {
-      this.timeline.computeSteps();
-    }
-    this.dispatchEvent('actualize-timeline-elements', {}, true);
+    // this.dispatchEvent('actualize-timeline-elements', {}, true);
     return this;
   }
 
