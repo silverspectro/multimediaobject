@@ -1,5 +1,6 @@
 /* globals MultimediaObject */
-import { toDashed, prefixFor } from '../../src/utils/utils';
+import { toDashed, prefixFor, getRandomInt } from '../../src/utils/utils';
+import staticData from '../../src/config/data.static';
 
 describe('MultimediaObject applyStyle', () => {
   const style = {
@@ -136,5 +137,68 @@ describe('MultimediaObject applyStyle', () => {
         });
       }
     }
+  });
+
+  const pxPropertiesArray = staticData.sets.pxProperties;
+  const degProperties = staticData.sets.degProperties;
+  const styleProperties = staticData.sets.styleProperties;
+  const globalObj = new MultimediaObject();
+  const globalStyle = {};
+  const globalUnitRefStyle = {};
+
+  pxPropertiesArray.forEach((prop) => {
+    const units = ['px', '%', 'em', 'vh', 'vw', '', ' auto'];
+    const styleObj = {};
+    units.forEach((unit, index) => {
+      const ob4 = new MultimediaObject();
+      const obValue = `10${unit}`;
+      const refValue = `10${index <= 4 ? unit : 'px'}`;
+      styleObj[prop] = obValue;
+      ob4.applyStyle(styleObj, true);
+
+      it(`should applyStyle with unit for propertie ${prop} and value ${obValue}`, () => {
+        expect(ob4._style[prop]).toEqual(refValue);
+      });
+    });
+    const refUnit = units[getRandomInt(0, 4)];
+    globalStyle[prop] = `10${refUnit}`;
+    globalUnitRefStyle[prop] = refUnit;
+  });
+
+  it('should have applied all properties correctly from a large object', () => {
+    globalObj.applyStyle(globalStyle);
+    it('should have have a _style propertie equal to what is passed', () => {
+      expect(globalObj._style).toEqual(globalStyle);
+    });
+  });
+
+  degProperties.forEach((prop) => {
+    const units = ['deg', 'px', '%', 'em', 'vh', 'vw', '', ' auto'];
+    const styleObj = {};
+    units.forEach((unit) => {
+      const ob4 = new MultimediaObject();
+      const obValue = `10${unit}`;
+      styleObj[prop] = obValue;
+      ob4.applyStyle(styleObj, true);
+
+      it(`should applyStyle with correct unit 'deg' for propertie ${prop} and value ${obValue}`, () => {
+        expect(ob4._style[prop]).toEqual('10deg');
+      });
+    });
+  });
+
+  styleProperties.forEach((prop) => {
+    const units = ['deg', 'px', '%', 'em', 'vh', 'vw', '', ' auto', 'contain', 'test', 'cover'];
+    const styleObj = {};
+    units.forEach((unit) => {
+      const ob4 = new MultimediaObject();
+      const obValue = `10${unit}`;
+      styleObj[prop] = obValue;
+      ob4.applyStyle(styleObj, true);
+
+      it(`should applyStyle with what is set for propertie ${prop} and value ${obValue}`, () => {
+        expect(ob4._style[prop]).toEqual(obValue);
+      });
+    });
   });
 });

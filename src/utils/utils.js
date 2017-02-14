@@ -36,7 +36,7 @@ export const checkIfObject = function (toCheck, tryStatement, errorMessage) {
   } catch (err) {
     error();
   } finally {
-    if (typeof toCheck === 'string' || typeof toCheck === 'number' || toCheck instanceof Array) {
+    if (!toCheck || toCheck === null || typeof toCheck === 'string' || typeof toCheck === 'number' || toCheck instanceof Array) {
       error();
     }
   }
