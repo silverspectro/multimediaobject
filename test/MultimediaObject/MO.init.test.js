@@ -21,6 +21,6 @@ describe('MultimediaObject init', () => {
   const ob2 = new MultimediaObject();
 
   it('should append the element to the body', () => {
-    expect(document.getElementById(ob2.name)).toEqual(ob2.element);
+    expect(document.getElementById(ob2.uuid)).toEqual(ob2.element);
   });
 });

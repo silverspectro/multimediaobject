@@ -45,7 +45,7 @@ describe('MO.applyAttributes', () => {
     },
   });
   const refArgs = {
-    id: 'multimediaObject',
+    id: ob2.uuid,
     class: '.test',
     'data-test': 'test',
     src: 'testURL/url',

@@ -16,7 +16,7 @@ describe('MultimediaObject applyDefaultParameters', () => {
   types.forEach((type) => {
     const ob = new MultimediaObject(type);
     const matchAttributes = conf.defaultAttributes[type] || {};
-    matchAttributes.id = 'multimediaObject';
+    matchAttributes.id = ob.uuid;
     it(`should contain ${JSON.stringify(matchAttributes)} in .attributes`, () => {
       expect(ob.attributes).toEqual(matchAttributes);
     });

@@ -76,7 +76,7 @@ var Set = function () {
   return Set;
 }();
 
-var pxPropertiesArray = ['baselineShift', 'border', 'borderBottom', 'borderBottomLeftRadius', 'borderBottomRightRadius', 'borderBottomWidth', 'borderImageOutset', 'borderImageWidth', 'borderLeft', 'borderLeftWidth', 'borderRadius', 'borderRight', 'borderRightWidth', 'borderSpacing', 'borderTop', 'borderTopLeftRadius', 'borderTopRightRadius', 'borderTopWidth', 'borderWidth', 'bottom', 'columnGap', 'columnRule', 'columnRuleWidth', 'columnWidth', 'cx', 'cy', 'flexBasis', 'fontSize', 'left', 'letterSpacing', 'lineHeight', 'marginBottom', 'marginLeft', 'marginRight', 'marginTop', 'maxHeight', 'maxWidth', 'minHeight', 'minWidth', 'motion', 'offset', 'offsetDistance', 'outlineOffset', 'outlineWidth', 'paddingBottom', 'paddingLeft', 'paddingRight', 'paddingTop', 'perspective', 'r', 'right', 'rx', 'ry', 'shapeMargin', 'size', 'strokeDasharray', 'strokeDashoffset', 'strokeWidth', 'tabSize', 'textIndent', 'top', 'webkitBorderAfterWidth', 'webkitBorderBeforeWidth', 'webkitBorderEndWidth', 'webkitBorderHorizontalSpacing', 'webkitBorderStartWidth', 'webkitBorderVerticalSpacing', 'webkitFontSizeDelta', 'webkitLogicalHeight', 'webkitLogicalWidth', 'webkitMarginAfter', 'webkitMarginBefore', 'webkitMarginEnd', 'webkitMarginStart', 'webkitMaskBoxImageOutset', 'webkitMaskBoxImageWidth', 'webkitMaskPosition', 'webkitMaskPositionX', 'webkitMaskPositionY', 'webkitMaskSize', 'webkitMaxLogicalHeight', 'webkitMaxLogicalWidth', 'webkitMinLogicalHeight', 'webkitMinLogicalWidth', 'webkitPaddingAfter', 'webkitPaddingBefore', 'webkitPaddingEnd', 'webkitPaddingStart', 'webkitPerspectiveOriginX', 'webkitPerspectiveOriginY', 'webkitTextStroke', 'webkitTextStrokeWidth', 'width', 'height', 'wordSpacing', 'x', 'y', 'baseline-shift', 'border-bottom', 'border-bottom-left-radius', 'border-bottom-right-radius', 'border-bottom-width', 'border-image-outset', 'border-image-width', 'border-left', 'border-left-width', 'border-radius', 'border-right', 'border-right-width', 'border-spacing', 'border-top', 'border-top-left-radius', 'border-top-right-radius', 'border-top-width', 'border-width', 'column-gap', 'column-rule', 'column-rule-width', 'column-width', 'flex-basis', 'font-size', 'letter-spacing', 'line-height', 'margin-bottom', 'margin-left', 'margin-right', 'margin-top', 'max-height', 'max-width', 'min-height', 'min-width', 'offset-distance', 'outline-offset', 'outline-width', 'padding-bottom', 'padding-left', 'padding-right', 'padding-top', 'shape-margin', 'stroke-dasharray', 'stroke-dashoffset', 'stroke-width', 'tab-size', 'text-indent', 'webkit-border-after-width', 'webkit-border-before-width', 'webkit-border-end-width', 'webkit-border-horizontal-spacing', 'webkit-border-start-width', 'webkit-border-vertical-spacing', 'webkit-font-size-delta', 'webkit-logical-height', 'webkit-logical-width', 'webkit-margin-after', 'webkit-margin-before', 'webkit-margin-end', 'webkit-margin-start', 'webkit-mask-box-image-outset', 'webkit-mask-box-image-width', 'webkit-mask-position', 'webkit-mask-position-x', 'webkit-mask-position-y', 'webkit-mask-size', 'webkit-max-logical-height', 'webkit-max-logical-width', 'webkit-min-logical-height', 'webkit-min-logical-width', 'webkit-padding-after', 'webkit-padding-before', 'webkit-padding-end', 'webkit-padding-start', 'webkit-text-stroke', 'webkit-text-stroke-width', 'webkit-transform-origin-x', 'webkit-transform-origin-y', 'webkit-transform-origin-z', 'word-spacing', 'translateX', 'translateY', 'translateZ', 'translate-x', 'translate-y', 'translate-z', 'translate'];
+var pxPropertiesArray = ['baselineShift', 'border', 'borderBottom', 'borderBottomLeftRadius', 'borderBottomRightRadius', 'borderBottomWidth', 'borderImageOutset', 'borderImageWidth', 'borderLeft', 'borderLeftWidth', 'borderRadius', 'borderRight', 'borderRightWidth', 'borderSpacing', 'borderTop', 'borderTopLeftRadius', 'borderTopRightRadius', 'borderTopWidth', 'borderWidth', 'bottom', 'columnGap', 'columnRule', 'columnRuleWidth', 'columnWidth', 'cx', 'cy', 'flexBasis', 'fontSize', 'left', 'letterSpacing', 'lineHeight', 'marginBottom', 'marginLeft', 'marginRight', 'marginTop', 'maxHeight', 'maxWidth', 'minHeight', 'minWidth', 'motion', 'offset', 'offsetDistance', 'outlineOffset', 'outlineWidth', 'paddingBottom', 'paddingLeft', 'paddingRight', 'paddingTop', 'perspective', 'r', 'right', 'rx', 'ry', 'shapeMargin', 'size', 'strokeDasharray', 'strokeDashoffset', 'strokeWidth', 'tabSize', 'textIndent', 'top', 'width', 'height', 'wordSpacing', 'x', 'y', 'baseline-shift', 'border-bottom', 'border-bottom-left-radius', 'border-bottom-right-radius', 'border-bottom-width', 'border-image-outset', 'border-image-width', 'border-left', 'border-left-width', 'border-radius', 'border-right', 'border-right-width', 'border-spacing', 'border-top', 'border-top-left-radius', 'border-top-right-radius', 'border-top-width', 'border-width', 'column-gap', 'column-rule', 'column-rule-width', 'column-width', 'flex-basis', 'font-size', 'letter-spacing', 'line-height', 'margin-bottom', 'margin-left', 'margin-right', 'margin-top', 'max-height', 'max-width', 'min-height', 'min-width', 'offset-distance', 'padding-bottom', 'padding-left', 'padding-right', 'padding-top', 'stroke-dasharray', 'stroke-dashoffset', 'stroke-width', 'tab-size', 'text-indent', 'word-spacing', 'translateX', 'translateY', 'translateZ', 'translate-x', 'translate-y', 'translate-z', 'translate'];
 
 var stylePropertiesArray = ['background', 'flex', 'flexGrow', 'flexShrink', 'objectPosition', 'transformOrigin', 'alignContent', 'alignItems', 'alignSelf', 'alignmentBaseline', 'all', 'animation', 'animationDelay', 'animationDirection', 'animationDuration', 'animationFillMode', 'animationIterationCount', 'animationName', 'animationPlayState', 'animationTimingFunction', 'backfaceVisibility', 'background', 'backgroundAttachment', 'backgroundBlendMode', 'backgroundClip', 'backgroundColor', 'backgroundImage', 'backgroundOrigin', 'backgroundPosition', 'backgroundRepeat', 'backgroundRepeatX', 'backgroundRepeatY', 'borderBottomColor', 'borderBottomStyle', 'borderCollapse', 'borderColor', 'borderImage', 'borderImageRepeat', 'borderImageSlice', 'borderImageSource', 'borderLeftColor', 'borderLeftStyle', 'borderRightColor', 'borderRightStyle', 'borderStyle', 'borderTopColor', 'borderTopStyle', 'boxShadow', 'boxSizing', 'breakAfter', 'breakBefore', 'breakInside', 'bufferedRendering', 'captionSide', 'clear', 'clip', 'clipPath', 'clipRule', 'color', 'colorInterpolation', 'colorInterpolationFilters', 'colorRendering', 'columnCount', 'columnFill', 'columnRuleColor', 'columnRuleStyle', 'columnSpan', 'columns', 'contain', 'content', 'counterIncrement', 'counterReset', 'cursor', 'd', 'direction', 'display', 'dominantBaseline', 'emptyCells', 'fill', 'fillOpacity', 'fillRule', 'filter', 'flexDirection', 'flexFlow', 'flexWrap', 'float', 'floodColor', 'floodOpacity', 'font', 'fontFamily', 'fontFeatureSettings', 'fontKerning', 'fontStretch', 'fontStyle', 'fontVariant', 'fontVariantCaps', 'fontVariantLigatures', 'fontVariantNumeric', 'fontWeight', 'hyphens', 'imageRendering', 'isolation', 'justifyContent', 'lightingColor', 'listStyle', 'listStyleImage', 'listStylePosition', 'listStyleType', 'marker', 'markerEnd', 'markerMid', 'markerStart', 'mask', 'maskType', 'maxZoom', 'minZoom', 'mixBlendMode', 'objectFit', 'offsetPath', 'offsetRotation', 'opacity', 'order', 'orientation', 'orphans', 'outline', 'outlineColor', 'outlineStyle', 'overflow', 'overflowWrap', 'overflowX', 'overflowY', 'page', 'pageBreakAfter', 'pageBreakBefore', 'pageBreakInside', 'paintOrder', 'perspectiveOrigin', 'pointerEvents', 'position', 'quotes', 'resize', 'shapeImageThreshold', 'shapeOutside', 'shapeRendering', 'speak', 'src', 'stopColor', 'stopOpacity', 'stroke', 'strokeLinecap', 'strokeLinejoin', 'strokeMiterlimit', 'strokeOpacity', 'tableLayout', 'textAlign', 'textAlignLast', 'textAnchor', 'textCombineUpright', 'textDecoration', 'textOrientation', 'textOverflow', 'textRendering', 'textShadow', 'textSizeAdjust', 'textTransform', 'touchAction', 'transform', 'transformStyle', 'transition', 'transitionDelay', 'transitionDuration', 'transitionProperty', 'transitionTimingFunction', 'unicodeBidi', 'unicodeRange', 'userSelect', 'userZoom', 'vectorEffect', 'visibility', 'vertical-align', 'verticalAlign', 'webkitAppRegion', 'webkitAppearance', 'webkitBackgroundClip', 'webkitBackgroundOrigin', 'webkitBorderAfter', 'webkitBorderAfterColor', 'webkitBorderAfterStyle', 'webkitBorderBefore', 'webkitBorderBeforeColor', 'webkitBorderBeforeStyle', 'webkitBorderEnd', 'webkitBorderEndColor', 'webkitBorderEndStyle', 'webkitBorderImage', 'webkitBorderStart', 'webkitBorderStartColor', 'webkitBorderStartStyle', 'webkitBoxAlign', 'webkitBoxDecorationBreak', 'webkitBoxDirection', 'webkitBoxFlex', 'webkitBoxFlexGroup', 'webkitBoxLines', 'webkitBoxOrdinalGroup', 'webkitBoxOrient', 'webkitBoxPack', 'webkitBoxReflect', 'webkitColumnBreakAfter', 'webkitColumnBreakBefore', 'webkitColumnBreakInside', 'webkitFontSmoothing', 'webkitHighlight', 'webkitHyphenateCharacter', 'webkitLineBreak', 'webkitLineClamp', 'webkitLocale', 'webkitMarginAfterCollapse', 'webkitMarginBeforeCollapse', 'webkitMarginBottomCollapse', 'webkitMarginCollapse', 'webkitMarginTopCollapse', 'webkitMask', 'webkitMaskBoxImage', 'webkitMaskBoxImageRepeat', 'webkitMaskBoxImageSlice', 'webkitMaskBoxImageSource', 'webkitMaskClip', 'webkitMaskComposite', 'webkitMaskImage', 'webkitMaskOrigin', 'webkitMaskRepeat', 'webkitMaskRepeatX', 'webkitMaskRepeatY', 'webkitPrintColorAdjust', 'webkitRtlOrdering', 'webkitRubyPosition', 'webkitTapHighlightColor', 'webkitTextCombine', 'webkitTextDecorationsInEffect', 'webkitTextEmphasis', 'webkitTextEmphasisColor', 'webkitTextEmphasisPosition', 'webkitTextEmphasisStyle', 'webkitTextFillColor', 'webkitTextOrientation', 'webkitTextSecurity', 'webkitTextStrokeColor', 'webkitUserDrag', 'webkitUserModify', 'webkitWritingMode', 'whiteSpace', 'widows', 'willChange', 'wordBreak', 'wordWrap', 'writingMode', 'zIndex', 'zoom', 'flex-grow', 'flex-shrink', 'object-position', 'transform-origin', 'align-content', 'align-items', 'align-self', 'alignment-baseline', 'animation-delay', 'animation-direction', 'animation-duration', 'animation-fill-mode', 'animation-iteration-count', 'animation-name', 'animation-play-state', 'animation-timing-function', 'backface-visibility', 'background-attachment', 'background-blend-mode', 'background-clip', 'background-color', 'background-image', 'background-origin', 'background-position', 'background-repeat', 'background-repeat-x', 'background-repeat-y', 'border-bottom-color', 'border-bottom-style', 'border-collapse', 'border-color', 'border-image', 'border-image-repeat', 'border-image-slice', 'border-image-source', 'border-left-color', 'border-left-style', 'border-right-color', 'border-right-style', 'border-style', 'border-top-color', 'border-top-style', 'box-shadow', 'box-sizing', 'break-after', 'break-before', 'break-inside', 'buffered-rendering', 'caption-side', 'clip-path', 'clip-rule', 'color-interpolation', 'color-interpolation-filters', 'color-rendering', 'column-count', 'column-fill', 'column-rule-color', 'column-rule-style', 'column-span', 'counter-increment', 'counter-reset', 'dominant-baseline', 'empty-cells', 'fill-opacity', 'fill-rule', 'flex-direction', 'flex-flow', 'flex-wrap', 'flood-color', 'flood-opacity', 'font-family', 'font-feature-settings', 'font-kerning', 'font-stretch', 'font-style', 'font-variant', 'font-variant-caps', 'font-variant-ligatures', 'font-variant-numeric', 'font-weight', 'image-rendering', 'justify-content', 'lighting-color', 'list-style', 'list-style-image', 'list-style-position', 'list-style-type', 'marker-end', 'marker-mid', 'marker-start', 'mask-type', 'max-zoom', 'min-zoom', 'mix-blend-mode', 'object-fit', 'offset-path', 'offset-rotation', 'outline-color', 'outline-style', 'overflow-wrap', 'overflow-x', 'overflow-y', 'page-break-after', 'page-break-before', 'page-break-inside', 'paint-order', 'perspective-origin', 'pointer-events', 'shape-image-threshold', 'shape-outside', 'shape-rendering', 'stop-color', 'stop-opacity', 'stroke-linecap', 'stroke-linejoin', 'stroke-miterlimit', 'stroke-opacity', 'table-layout', 'text-align', 'text-align-last', 'text-anchor', 'text-combine-upright', 'text-decoration', 'text-orientation', 'text-overflow', 'text-rendering', 'text-shadow', 'text-size-adjust', 'text-transform', 'touch-action', 'transform-style', 'transition-delay', 'transition-duration', 'transition-property', 'transition-timing-function', 'unicode-bidi', 'unicode-range', 'user-select', 'user-zoom', 'vector-effect', 'webkit-app-region', 'webkit-appearance', 'webkit-background-clip', 'webkit-background-origin', 'webkit-border-after', 'webkit-border-after-color', 'webkit-border-after-style', 'webkit-border-before', 'webkit-border-before-color', 'webkit-border-before-style', 'webkit-border-end', 'webkit-border-end-color', 'webkit-border-end-style', 'webkit-border-image', 'webkit-border-start', 'webkit-border-start-color', 'webkit-border-start-style', 'webkit-box-align', 'webkit-box-decoration-break', 'webkit-box-direction', 'webkit-box-flex', 'webkit-box-flex-group', 'webkit-box-lines', 'webkit-box-ordinal-group', 'webkit-box-orient', 'webkit-box-pack', 'webkit-box-reflect', 'webkit-column-break-after', 'webkit-column-break-before', 'webkit-column-break-inside', 'webkit-font-smoothing', 'webkit-highlight', 'webkit-hyphenate-character', 'webkit-line-break', 'webkit-line-clamp', 'webkit-locale', 'webkit-margin-after-collapse', 'webkit-margin-before-collapse', 'webkit-margin-bottom-collapse', 'webkit-margin-collapse', 'webkit-margin-top-collapse', 'webkit-mask', 'webkit-mask-box-image', 'webkit-mask-box-image-repeat', 'webkit-mask-box-image-slice', 'webkit-mask-box-image-source', 'webkit-mask-clip', 'webkit-mask-composite', 'webkit-mask-image', 'webkit-mask-origin', 'webkit-mask-repeat', 'webkit-mask-repeat-x', 'webkit-mask-repeat-y', 'webkit-print-color-adjust', 'webkit-rtl-ordering', 'webkit-ruby-position', 'webkit-tap-highlight-color', 'webkit-text-combine', 'webkit-text-decorations-in-effect', 'webkit-text-emphasis', 'webkit-text-emphasis-color', 'webkit-text-emphasis-position', 'webkit-text-emphasis-style', 'webkit-text-fill-color', 'webkit-text-orientation', 'webkit-text-security', 'webkit-text-stroke-color', 'webkit-user-drag', 'webkit-user-modify', 'webkit-writing-mode', 'white-space', 'will-change', 'word-break', 'word-wrap', 'writing-mode', 'z-index', 'zoom'];
 
@@ -120,7 +120,7 @@ var staticData = {
   },
   regex: {
     DOMEvent: new RegExp('^(click|mousedown|mouseup|mousemove|change|touchstart|touchmove|touchend|input|focus|dlclick|mouseenter|mouseleave|mouseover|mouseout|blur|search|submit|play|pause|canplay|progress)$'),
-    animatableProps: new RegExp('^(background-color|translate|scale|rotate|skew|margin|padding|top|left|right|bottom|color|font-size|width|height|opacity)$')
+    animatableProps: new RegExp('^(background-color|translate|scale|rotate|skew|margin-top|margin.+|padding.+|top|left|right|bottom|color|font-size|width|height|opacity)$')
   },
   sets: {
     pxProperties: pxPropertiesArray,
@@ -786,9 +786,7 @@ var MultimediaObject = function () {
       this.computedAnimations = [];
       this.childs = [];
       this.dependencies = [];
-      this.animatedProps = {
-        0.02: {}
-      };
+      this.animatedProps = {};
       this.innerHTML = '';
 
       this.fps = fps;
@@ -828,9 +826,7 @@ var MultimediaObject = function () {
       this.computedAnimations = [];
       this.childs = [];
       this.dependencies = [];
-      this.animatedProps = {
-        0.02: {}
-      };
+      this.animatedProps = {};
       this.innerHTML = '';
 
       this.DOMParent = null;
@@ -1762,11 +1758,7 @@ var MultimediaObject = function () {
       }
     }
 
-<<<<<<< HEAD
-    // console.log(this.animatedProps);
-=======
     // console.log(this.animatedProps, this.computedAnimations);
->>>>>>> 941c37e98bcef541b689f17fa6e0790f7270a139
     return this;
   };
 
@@ -1797,6 +1789,8 @@ var MultimediaObject = function () {
       this.currentIteration = currentIteration;
       this.applyIteration();
       this.checkBreakpoints();
+    } else if (currentIteration > animationsLength && animationsLength > 0) {
+      this.applyIteration(this.computedAnimations[animationsLength - 1]);
     }
     if (animationsLength === currentIteration) {
       this.stopAnimation();
@@ -1809,11 +1803,13 @@ var MultimediaObject = function () {
   };
 
   MultimediaObject.prototype.applyIteration = function applyIteration() {
-    if (this.computedAnimations[this.currentIteration]) {
-      var style = Object.create(this.computedAnimations[this.currentIteration]);
-      for (var key in this.computedAnimations[this.currentIteration]) {
+    var iteration = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.computedAnimations[this.currentIteration];
+
+    if (iteration) {
+      var style = Object.create(iteration);
+      for (var key in iteration) {
         if (!isAnimatableProp(key)) {
-          this.dispatchEvent(key, { value: this.computedAnimations[this.currentIteration][key] });
+          this.dispatchEvent(key, { value: iteration[key] });
           delete style[key];
         }
       }
@@ -1828,30 +1824,20 @@ var MultimediaObject = function () {
   };
 
   MultimediaObject.prototype.startAnimation = function startAnimation() {
-    this.animationStarted = true;
     this.runAnimation();
-    // this.childs.forEach(function(child){
-    //   if(child.data.autostart){
-    //     child.startAnimation();
-    //   }
-    // });
   };
 
   MultimediaObject.prototype.stopAnimation = function stopAnimation() {
     this.animationStarted = false;
     this.animated = false;
-    // this.counter = 0;
     window.cancelAnimationFrame(this.rafID);
-    // this.childs.forEach(function(child){
-    //   child.stopAnimation();
-    // });
   };
 
-  MultimediaObject.prototype.runAnimation = function runAnimation() {
+  MultimediaObject.prototype.runAnimation = function runAnimation(time) {
     var _this11 = this;
 
     this.rafID = window.requestAnimationFrame(function (time) {
-      _this11.runAnimation();
+      return _this11.runAnimation(time);
     });
     if (Object.keys(this.currentAnimation).length > 0) {
       this.now = performance.now() || Date.now();
@@ -1879,7 +1865,7 @@ var MultimediaObject = function () {
 
         this.secondsElapsed = isFinite(iterationSeconds) ? Number(iterationSeconds).toFixed(2) : 0;
 
-        // console.log(this.secondsElapsed, this.totalIteration);
+        // console.log(this.counter, this.totalIteration);
 
         this.interpolateStep(this.counter, this.secondsElapsed, this.fps);
 
@@ -1896,6 +1882,8 @@ var MultimediaObject = function () {
         }
         // console.log(this.secondsElapsed);
       }
+    } else {
+      this.stopAnimation();
     }
   };
 
@@ -1928,8 +1916,9 @@ var MultimediaObject = function () {
     return eventManager.dispatchEvent(this.uuid + '-' + eventName, params, this);
   };
 
-  MultimediaObject.prototype.changeAnimation = function changeAnimation(animationName) {
-    this.animations[this.selectedAnimation] = this.currentAnimation;
+  MultimediaObject.prototype.changeAnimation = function changeAnimation() {
+    var animationName = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'default';
+
     this.selectedAnimation = animationName;
     this.computedSteps = [];
     this.currentAnimation = this.animations[this.selectedAnimation] || {};
@@ -1941,9 +1930,6 @@ var MultimediaObject = function () {
     if (this.timeline) {
       this.timeline.computeSteps();
       this.timeline.stop();
-    }
-    if (this.timeline && this.timeline.UI) {
-      this.timeline.UI.insertInterface();
     }
   };
 
@@ -1971,9 +1957,6 @@ var MultimediaObject = function () {
     if (this.timeline) {
       this.timeline.computeSteps();
     }
-    if (this.timeline && this.timeline.UI) {
-      this.timeline.UI.insertInterface();
-    }
     return this;
   };
 
@@ -1994,7 +1977,7 @@ var MultimediaObject = function () {
     if (this.timeline) {
       this.timeline.computeSteps();
     }
-    this.dispatchEvent('actualize-timeline-elements', {}, true);
+    // this.dispatchEvent('actualize-timeline-elements', {}, true);
     return this;
   };
 
@@ -2010,10 +1993,7 @@ var MultimediaObject = function () {
       }
       this.animations[this.selectedAnimation] = this.currentAnimation;
       this.preInterpolateStep(this.timeline.fps || this.fps);
-      if (this.timeline) {
-        this.timeline.computeSteps();
-      }
-      this.dispatchEvent('actualize-timeline-elements', {}, true);
+      // this.dispatchEvent('actualize-timeline-elements', {}, true);
     } else {
       console.log('animation at ' + time + ' don\'t exist');
     }
@@ -2021,19 +2001,17 @@ var MultimediaObject = function () {
     return this;
   };
 
-  MultimediaObject.prototype.addAnimationKeyframe = function addAnimationKeyframe(time, prop, value) {
+  MultimediaObject.prototype.addAnimationKeyframe = function addAnimationKeyframe(time, prop, value, easing) {
     if (!this.currentAnimation[time]) {
       this.currentAnimation[time] = {};
     }
     this.currentAnimation[time][prop] = value;
+    if (easing) this.currentAnimation[time].easing = easing;
     this.animations[this.selectedAnimation] = this.currentAnimation;
     // console.log(time, prop, value);
     // console.log(this.currentAnimation, this.animations);
     this.preInterpolateStep(this.timeline.fps || this.fps);
-    if (this.timeline) {
-      this.timeline.computeSteps();
-    }
-    this.dispatchEvent('actualize-timeline-elements', {}, true);
+    // this.dispatchEvent('actualize-timeline-elements', {}, true);
     return this;
   };
 

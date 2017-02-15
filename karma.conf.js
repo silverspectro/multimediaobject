@@ -17,7 +17,7 @@ module.exports = function (config) {
 
     // list of files / patterns to load in the browser
     files: [
-      'build/MultimediaObject.js',
+      'build/MultimediaObject.build.js',
       { pattern: 'src/**/*.js', included: false, serve: false },
       { pattern: 'test/**/*.test.js', watched: true },
     ],
@@ -43,7 +43,6 @@ module.exports = function (config) {
       ],
     },
     preprocessors: {
-      'src/**/*.js': ['rollup'],
       'test/**/*.test.js': ['rollup', 'coverage'],
     },
 

@@ -1,5 +1,5 @@
 /* globals MultimediaObject */
-import { toDashed, prefixFor, getRandomInt } from '../../src/utils/utils';
+import { prefixFor, getRandomInt } from '../../src/utils/utils';
 import staticData from '../../src/config/data.static';
 
 describe('MultimediaObject applyStyle', () => {
@@ -125,17 +125,10 @@ describe('MultimediaObject applyStyle', () => {
     const ob3 = new MultimediaObject();
     ob3.applyStyle(propStyle);
     for (const prop in propStyle) {
-      if (ob3.style[prop] && ob3._style[prop]) {
-        it(`should keep the right units if ${prop} = ${propStyle[prop]}`, () => {
-          expect(ob3._style[prop]).toEqual(refProps[index][prop]);
-          expect(ob3.style[prop]).toEqual(refProps[index][prop]);
-        });
-      } else {
-        it(`should keep the right units if ${toDashed(prop)} = ${propStyle[prop]}`, () => {
-          expect(ob3._style[toDashed(prop)]).toEqual(refProps[index][prop]);
-          expect(ob3.style[toDashed(prop)]).toEqual(refProps[index][prop]);
-        });
-      }
+      it(`should keep the right units if ${prop} = ${propStyle[prop]}`, () => {
+        expect(ob3._style[prop]).toEqual(refProps[index][prop]);
+        expect(ob3.style[prop]).toEqual(refProps[index][prop]);
+      });
     }
   });
 
@@ -167,9 +160,7 @@ describe('MultimediaObject applyStyle', () => {
 
   it('should have applied all properties correctly from a large object', () => {
     globalObj.applyStyle(globalStyle);
-    it('should have have a _style propertie equal to what is passed', () => {
-      expect(globalObj._style).toEqual(globalStyle);
-    });
+    expect(globalObj._style).toEqual(globalStyle);
   });
 
   degProperties.forEach((prop) => {
