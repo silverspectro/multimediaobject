@@ -1,6 +1,6 @@
 /* globals MultimediaObject */
 
-describe('MO.applyEvents', () => {
+describe('MO.removeEvent', () => {
   const normalEvents = {
     click: () => {},
     mousedown: () => {},
@@ -36,19 +36,23 @@ describe('MO.applyEvents', () => {
       ob = new MultimediaObject({
         type: 'video',
         attributes: {
-          src: 'test',
           autoplay: true,
         },
       });
       ob.applyEvents(normalEvents);
-      spyOn(ob.element, 'addEventListener');
+      spyOn(ob.element, 'removeEventListener');
     });
-    it('should have applied events', () => {
-      ob.applyEvents(normalEvents);
+    it('should have removed events', () => {
+      const oldFunc = [];
+      for (const eventName in ob.events) {
+        oldFunc.push(ob._events[eventName]);
+        ob.removeEvent(eventName);
+      }
       let ind = 0;
       for (const event in normalEvents) {
-        expect(ob.events[event]).toBeDefined();
-        expect(ob.element.addEventListener.calls.all()[ind]).toEqual({ object: ob.element, args: [event, ob._events[event]], returnValue: undefined });
+        expect(ob.events[event]).toBeUndefined();
+        expect(ob._events[event]).toBeUndefined();
+        expect(ob.element.removeEventListener.calls.all()[ind]).toEqual({ object: ob.element, args: [event, oldFunc[ind]], returnValue: undefined });
         ind++;
       }
     });
@@ -60,22 +64,17 @@ describe('MO.applyEvents', () => {
       ob = new MultimediaObject({
         type: 'video',
         attributes: {
-          src: 'test',
           autoplay: true,
         },
       });
       ob.applyEvents(customEvents);
-      const testFunction = (arg) => {
-        expect(arg).toEqual('test');
-      };
-      for (const event in customEvents) {
-        ob.addListener(event, testFunction);
+      for (const eventName in ob.events) {
+        ob.removeEvent(eventName);
       }
     });
     for (const event in customEvents) {
-      it('should have applied custom events', () => {
-        expect(ob.events[event]).toBeDefined();
-        ob.dispatchEvent([event], 'test');
+      it('should have removed custom events', () => {
+        expect(ob.events[event]).toBeUndefined();
       });
     }
   });

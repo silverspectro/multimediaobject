@@ -42,7 +42,7 @@
     "webpack-dev-server": "^1.14.1"
   },
   "scripts": {
-    "start": "webpack-dev-server --progress --colors --inline --port 8000",
+    "start": "rollup -c rollup.config.test.js -w",
     "build": "SET NODE_ENV=production && rollup -c",
     "build-dev": "rollup -c rollup.config.test.js",
     "build-tpl": "rollup -c -i src/javascript/main.prod.js -o public/main.prod.js",

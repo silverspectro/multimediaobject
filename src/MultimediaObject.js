@@ -1,4 +1,8 @@
 /*
+  eslint-disable no-new-func
+*/
+
+/*
 
 Copyright 2016 Ciro André DE CARO
 
@@ -35,41 +39,50 @@ OR
 * @param {object} data - an object representing the datas which can be internally used by the MultimediaObject
 * @param {object} style - an object representing the CSS style of the MultimediaObject, applied at creation
 * @param {object} attributes - an object representing the DOM attributes of the MultimediaObject, applied at creation to the DOM Element
-* @param {object} events - an object representing the Events provided by the object. Supporting only DOM events for the moment. TODO -> add custom events
+* @param {object} events - an object representing the Events provided by the object. Supporting only DOM events for the moment.
 * @param {object} animations - a second separated Object representing the MultimediaObject state over time. Each step contain an object with style values wich will be precompiled and applied over time.
 */
 
 
 export default class MultimediaObject {
   constructor(type = 'block', name = 'multimediaObject', fps = 60) {
+    this.uuid = utils.generateUUID();
+
+    this.data = {};
+    this._style = {};
+    this.style = {};
+    this.attributes = {};
+    this.events = {};
+    this._events = {};
+    this.functions = {};
+    this.selectedAnimation = 'default';
+    this.currentAnimation = {};
+    this.breakpoints = [];
+    this.animated = false;
+    this.computedAnimations = [];
+    this.childs = [];
+    this.dependencies = [];
+    this.animatedProps = {};
+    this.innerHTML = '';
+
+    this.DOMParent = null;
+
+    this.fps = fps;
+    this.then = performance.now() || Date.now();
+    this.interval = 1000 / this.fps;
+    this.totalIteration = 0;
+    this.counter = 0;
+
+    this.reverse = false;
+    this.repeat = 0;
+    this.animationStarted = false;
+
     if (typeof type === 'object') {
       this.name = name || type.name;
       this.type = type.type || 'block';
-      this._style = {};
-      this.style = {};
-      this.attributes = {};
-      this.events = {};
-      this._events = {};
-      this.functions = {};
-      this.breakpoints = [];
-      this.selectedAnimation = 'default';
-      this.currentAnimation = {};
-      this.animated = false;
-      this.computedAnimations = [];
-      this.childs = [];
-      this.dependencies = [];
-      this.animatedProps = {};
-      this.innerHTML = '';
 
-      this.fps = fps;
-      this.then = performance.now() || Date.now();
-      this.interval = 1000 / this.fps;
-      this.totalIteration = 0;
-      this.counter = 0;
+      this.load = true;
 
-      this.reverse = false;
-      this.repeat = 0;
-      this.animationStarted = false;
       this.loadFromJSON(type);
       this.applyFunctions();
 
@@ -81,37 +94,8 @@ export default class MultimediaObject {
       this.applyBreakpoints();
       this.applyDependencies();
     } else {
-      this.uuid = utils.generateUUID();
       this.name = name;
       this.type = type;
-      this.data = {};
-      this._style = {};
-      this.style = {};
-      this.attributes = {};
-      this.events = {};
-      this._events = {};
-      this.functions = {};
-      this.selectedAnimation = 'default';
-      this.currentAnimation = {};
-      this.breakpoints = [];
-      this.animated = false;
-      this.computedAnimations = [];
-      this.childs = [];
-      this.dependencies = [];
-      this.animatedProps = {};
-      this.innerHTML = '';
-
-      this.DOMParent = null;
-
-      this.fps = fps;
-      this.then = performance.now() || Date.now();
-      this.interval = 1000 / this.fps;
-      this.totalIteration = 0;
-      this.counter = 0;
-
-      this.reverse = false;
-      this.repeat = 0;
-      this.animationStarted = false;
 
       this.init();
       this.addDefaultParameters();
