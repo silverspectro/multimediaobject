@@ -644,9 +644,16 @@ export default class MultimediaObject {
     return function (event) { callback.apply(parent, [event]); };
   }
 
+  /**
+  * @function
+  * check each breakpoints on container or window, and applyStyle
+  * if needed
+  */
+
   checkBreakpoints() {
     const winW = window.MultimediaObjectEditor ? `parseInt(getComputedStyle(document.getElementById('${conf.container}')).width)` : 'window.innerWidth';
     const winH = window.MultimediaObjectEditor ? `parseInt(getComputedStyle(document.getElementById('${conf.container}')).height)` : 'window.innerHeight';
+    let evaluatedRule;
     if (this.breakpoints.length > 0) {
       const style = {};
       for (const w in this._style) {
@@ -661,7 +668,7 @@ export default class MultimediaObject {
             conditions.push(`${/height/.test(breaks) ? winH : winW} ${/min/.test(breaks) ? '>=' : '<='} ${parseInt(breakpoint.querie[breaks], 10)}`);
           }
         }
-        let evaluatedRule = '';
+        evaluatedRule = '';
 
         conditions.forEach((rule, index) => {
           if (index >= 1) {
@@ -683,6 +690,7 @@ export default class MultimediaObject {
         }
       }
       this.applyStyle(style);
+      return evaluatedRule() || false;
     }
   }
 

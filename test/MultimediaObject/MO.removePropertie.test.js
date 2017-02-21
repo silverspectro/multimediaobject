@@ -1,6 +1,6 @@
 /* globals MultimediaObject */
 
-fdescribe('MO.removePropertie', () => {
+describe('MO.removePropertie', () => {
   const attributes = {
     'data-test': 'test',
     class: '.test .me',
