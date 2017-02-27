@@ -692,6 +692,7 @@ export default class MultimediaObject {
       this.applyStyle(style);
       return evaluatedRule() || false;
     }
+    return false;
   }
 
   /**
@@ -702,8 +703,8 @@ export default class MultimediaObject {
   */
 
   generate(type) {
-    this.element = document.createElement(type);
-    this.type = type;
+    this.element = document.createElement(utils.Atoms(type));
+    this.type = utils.Atoms(type);
     window.addEventListener('resize', () => {
       this.checkBreakpoints();
     });
@@ -728,8 +729,7 @@ export default class MultimediaObject {
         container.appendChild(this.element);
       }
       this.DOMParent = container;
-      let childsLength = this.childs.length,
-        i = 0;
+      const childsLength = this.childs.length;
 
       if (childsLength > 0) {
         this.childs.forEach((child, index) => {
@@ -740,8 +740,7 @@ export default class MultimediaObject {
     } else {
       document.body.appendChild(this.element);
       this.DOMParent = document.body;
-      let childsLength = this.childs.length,
-        i = 0;
+      const childsLength = this.childs.length;
 
       if (childsLength > 0) {
         this.childs.forEach((child, index) => {

@@ -47,10 +47,4 @@ describe('MO.removePropertie', () => {
       expect(ob3.element.getAttribute('style').indexOf(prop)).toEqual(-1);
     });
   }
-
-  it('should throw an error if wrong parameter', () => {
-    expect(() => {
-      ob3.removePropertie('test', {});
-    }).toThrow();
-  });
 });
