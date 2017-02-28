@@ -58,6 +58,27 @@ describe('MO.removeEvent', () => {
     });
   });
 
+  describe('spy on swipe events', () => {
+    let ob;
+    const swipeFunction = () => {};
+    beforeEach(() => {
+      ob = new MultimediaObject({
+        type: 'video',
+        attributes: {
+          autoplay: true,
+        },
+      });
+      ob.applyEvents({
+        swipe: swipeFunction,
+      });
+      spyOn(ob.element, 'removeEventListener');
+    });
+    it('should have removed events', () => {
+      ob.removeEvent('swipe');
+      expect(ob.element.removeEventListener.calls.any()).toBeTruthy();
+    });
+  });
+
   describe('spy on custom events', () => {
     let ob;
     beforeEach(() => {

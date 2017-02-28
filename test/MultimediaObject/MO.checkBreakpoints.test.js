@@ -115,4 +115,58 @@ describe('MO.applyBreakpoints', () => {
       ob.applyBreakpoints();
     });
   });
+
+  describe('check if animation', () => {
+    const queries = [
+      {
+        querie: {
+          'max-width': '500px',
+        },
+        style: {
+          width: '100%',
+          'background-color': 'rgb(209, 146, 5)',
+        },
+      },
+      {
+        querie: {
+          'max-height': '200px',
+        },
+        style: {
+          top: '0%',
+        },
+      },
+    ];
+    const ob = new MultimediaObject({
+      type: 'div',
+      style: {
+        position: 'absolute',
+        width: '50%',
+        height: '50%',
+        left: '50%',
+        top: '50%',
+        translateX: '-50%',
+        translateY: '-50%',
+        'background-color': 'rgb(46, 161, 45)',
+      },
+      animations: {
+        1: {
+          left: '100%',
+          translateX: '-100%',
+        },
+      },
+    });
+    ob.appendElementTo(container);
+
+    it('should apply the breakpoints', () => {
+      window.MultimediaObjectEditor = true;
+      container.style.width = '400px';
+      container.style.height = '200px';
+      ob.currentIteration = 25;
+
+      ob.applyBreakpoints(queries);
+
+      expect(ob.style.left).toEqual('70.83333333333333%');
+      expect(ob.style.translateX).toEqual('-70.83333333333333%');
+    });
+  });
 });
