@@ -192,4 +192,17 @@ describe('MultimediaObject applyStyle', () => {
       });
     });
   });
+
+  describe('with absoluteAssetURL', () => {
+    it('should replace {{absoluteAssetURL}}', () => {
+      const testob = new MultimediaObject();
+      window._s4mConfig = {};
+      window._s4mConfig.absoluteAssetURL = 'testURL';
+      testob.applyStyle({
+        'background-image': 'url({{absoluteAssetURL}}/test/images.jpg)',
+      });
+      expect(testob.element.style.backgroundImage).toContain('testURL/test/images.jpg');
+      expect(testob.style['background-image']).toEqual('url({{absoluteAssetURL}}/test/images.jpg)');
+    });
+  });
 });

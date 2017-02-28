@@ -28,7 +28,7 @@ describe('MO.removePropertie', () => {
   for (const prop in data) {
     it(`should remove propertie ${prop} from data`, () => {
       ob2.removePropertie('data', prop);
-      expect(ob2.data[prop]).toBeUndefined();
+      expect(ob2.data[prop]).toBeFalsy();
     });
   }
 
@@ -43,7 +43,7 @@ describe('MO.removePropertie', () => {
   for (const prop in style) {
     it(`should remove propertie ${prop} from style`, () => {
       ob3.removePropertie('style', prop);
-      expect(ob3.attributes[prop]).toBeUndefined();
+      expect(ob3.attributes[prop]).toBeFalsy();
       expect(ob3.element.getAttribute('style').indexOf(prop)).toEqual(-1);
     });
   }

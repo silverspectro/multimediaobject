@@ -330,16 +330,10 @@ export default class MultimediaObject {
           sca.x = utils.getNumFromString(a);
         } else if (a.indexOf('scaleY') >= 0 || a.indexOf('scale-y') >= 0) {
           sca.y = utils.getNumFromString(a);
-        } else if (a.indexOf('scale') >= 0) {
-          sca.x = utils.getNumFromString(a);
-          sca.y = utils.getNumFromString(a);
         }
         if (a.indexOf('skewX') >= 0 || a.indexOf('skew-x') >= 0) {
           ske.x = utils.getNumFromString(a);
         } else if (a.indexOf('skewY') >= 0 || a.indexOf('skew-y') >= 0) {
-          ske.y = utils.getNumFromString(a);
-        } else if (a.indexOf('skew') >= 0) {
-          ske.x = utils.getNumFromString(a);
           ske.y = utils.getNumFromString(a);
         }
       });

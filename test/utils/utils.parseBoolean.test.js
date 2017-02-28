@@ -1,6 +1,6 @@
 describe('utils.parseBoolean', () => {
-  const booleans = [true, 'true', '', 'l', [], [10], ['10'], {}, { test: 'test' }];
-  const notBooleans = [false, 'false', null, undefined];
+  const booleans = [true, 'true', '', 'l', [], [10], ['10'], {}, { test: 'test' }, undefined];
+  const notBooleans = [false, 'false', null];
 
   booleans.forEach((bool) => {
     it('should return true', () => {
@@ -10,7 +10,6 @@ describe('utils.parseBoolean', () => {
 
   notBooleans.forEach((bool) => {
     it('should return false', () => {
-      console.log(bool);
       expect(parseBoolean(bool)).toBe(false);
     });
   });
