@@ -54,6 +54,47 @@ describe('MO.applyEvents', () => {
     });
   });
 
+  describe('spy on swipe event with mousedown', () => {
+    let ob;
+    beforeEach(() => {
+      ob = new MultimediaObject({
+        type: 'video',
+        attributes: {
+          src: 'test',
+          autoplay: true,
+        },
+      });
+      ob.applyEvents({
+        swipe: (userdata) => {},
+      });
+      spyOn(ob.element, 'addEventListener');
+    });
+    it('should apply a swipe event', () => {
+      expect(ob.element.addEventListener.calls.all()).toEqual([]);
+    });
+  });
+
+  describe('spy on swipe event with touch', () => {
+    let ob;
+    window.ontouchstart = true;
+    beforeEach(() => {
+      ob = new MultimediaObject({
+        type: 'video',
+        attributes: {
+          src: 'test',
+          autoplay: true,
+        },
+      });
+      ob.applyEvents({
+        swipe: (userdata) => {},
+      });
+      spyOn(ob.element, 'addEventListener');
+    });
+    it('should apply a swipe event', () => {
+      expect(ob.element.addEventListener.calls.all()).toEqual([]);
+    });
+  });
+
   describe('spy on custom events', () => {
     let ob;
     beforeEach(() => {
