@@ -42,10 +42,10 @@ export const checkIfObject = function (toCheck, tryStatement, errorMessage) {
   }
 };
 export const parseBoolean = function (string) {
-  if (typeof string === 'undefined' || string === '') {
+  if (string === '') {
     return true;
   }
-  if (string === 'false' || Boolean(string) === false) {
+  if (typeof string === 'undefined' || string === 'false' || Boolean(string) === false) {
     return false;
   }
   return Boolean(string);
