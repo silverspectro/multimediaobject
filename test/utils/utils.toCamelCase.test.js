@@ -1,6 +1,3 @@
-import { toCamelCase } from '../../src/utils/utils';
-
-
 describe('toCamelCase', () => {
   it('should return backgroundColor for input background-color', () => {
     expect(toCamelCase('background-color')).toEqual('backgroundColor');

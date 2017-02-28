@@ -30,6 +30,7 @@
     "karma-phantomjs-launcher": "^1.0.2",
     "karma-rollup-preprocessor": "^3.0.3",
     "karma-sourcemap-loader": "^0.3.7",
+    "karma-spec-reporter": "0.0.30",
     "karma-verbose-reporter": "0.0.4",
     "karma-webpack": "^2.0.2",
     "raw-loader": "^0.5.1",
@@ -46,7 +47,8 @@
     "build": "SET NODE_ENV=production && rollup -c",
     "build-dev": "rollup -c rollup.config.test.js",
     "build-tpl": "rollup -c -i src/javascript/main.prod.js -o public/main.prod.js",
-    "test": "npm run build && npm run build-dev && karma start"
+    "test": "karma start",
+    "build-test": "bash bin/buildTest.sh"
   },
   "keywords": [
     "MultimediaObject",

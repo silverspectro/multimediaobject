@@ -1,6 +1,3 @@
-import { getNumFromString } from '../../src/utils/utils';
-
-
 describe('getNumFromString', () => {
   it("should return -34 from 'reatesa-34eafd'", () => {
     expect(getNumFromString('reatesa-34eafd')).toEqual(-34);

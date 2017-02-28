@@ -17,9 +17,11 @@ module.exports = function (config) {
 
     // list of files / patterns to load in the browser
     files: [
-      'build/MultimediaObject.build.js',
-      { pattern: 'src/**/*.js', included: false, serve: false },
-      { pattern: 'test/**/*.test.js', watched: true },
+      'build/MultimediaObject.js',
+      'src/utils/utils.js',
+      'test/utils/*.test.js',
+      'test/lib/*.test.js',
+      'test/MultimediaObject/*.test.js',
     ],
 
 
@@ -43,7 +45,11 @@ module.exports = function (config) {
       ],
     },
     preprocessors: {
-      'test/**/*.test.js': ['rollup', 'coverage'],
+      'build/MultimediaObject.js': ['coverage'],
+      'src/utils/utils.js': ['rollup', 'coverage'],
+      'test/lib/*.test.js': ['rollup', 'coverage'],
+      'test/MultimediaObject/*.test.js': ['rollup'],
+      'test/utils/*.test.js': ['rollup'],
     },
 
     rollupPreprocessor: {
@@ -51,7 +57,7 @@ module.exports = function (config) {
         buble(),
       ],
       format: 'iife',               // helps prevent naming collisions
-      moduleName: 'multimediaObject', // required for 'iife' format
+      moduleName: 'window',         // required for 'iife' format
       sourceMap: 'inline',          // sensible for testing
     },
 
@@ -80,7 +86,7 @@ module.exports = function (config) {
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ['Chrome', 'PhantomJS', 'IE', 'Firefox'],
+    browsers: ['Chrome', 'PhantomJS', 'Firefox'],
 
 
     // Continuous Integration mode

@@ -1,6 +1,3 @@
-import { concatObject } from '../../src/utils/utils';
-
-
 describe('concatObject', () => {
   const obj1 = {
     test: 'lol',

@@ -1,5 +1,3 @@
-/* globals MultimediaObject */
-
 describe('MO.addGlobaStyle', () => {
   const ob = new MultimediaObject({
     data: {

@@ -1,6 +1,3 @@
-import { convertLeftToTime } from '../../src/utils/utils';
-
-
 describe('convertLeftToTime', () => {
   const baseWidth = 100;
   const childrenLeftPosition = 32.7;

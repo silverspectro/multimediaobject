@@ -1,5 +1,3 @@
-import { getMaxOfArray } from '../../src/utils/utils';
-
 describe('utils.getMaxOfArray', () => {
   const testArrays = [
     [0, -5, 6, 10, 12, 5.5],

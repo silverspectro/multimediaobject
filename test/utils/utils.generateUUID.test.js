@@ -1,4 +1,3 @@
-import { generateUUID } from '../../src/utils/utils';
 import Set from '../../src/lib/Set';
 
 describe('utils.generateUUID', () => {

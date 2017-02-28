@@ -1,5 +1,3 @@
-import { applyDefaults } from '../../src/utils/utils';
-
 describe('utils.applyDefaults', () => {
   const tplObj = {
     name: 'test',

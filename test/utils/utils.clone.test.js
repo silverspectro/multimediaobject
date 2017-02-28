@@ -1,6 +1,3 @@
-import { clone } from '../../src/utils/utils';
-
-
 describe('clone', () => {
   const tplObj = {
     name: 'test',

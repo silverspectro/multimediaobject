@@ -1,6 +1,3 @@
-import { toDashed } from '../../src/utils/utils';
-
-
 describe('toDashed', () => {
   it('should return background-color for input backgroundColor', () => {
     expect(toDashed('backgroundColor')).toEqual('background-color');

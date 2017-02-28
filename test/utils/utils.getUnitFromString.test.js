@@ -1,6 +1,3 @@
-import { getUnitFromString } from '../../src/utils/utils';
-
-
 describe('getUnitFromString', () => {
   const units = ['%', 'px', 'vh', 'vw', 'em', 'deg'];
   units.forEach((unit) => {

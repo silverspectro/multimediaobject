@@ -1,5 +1,3 @@
-import { transformValueForProperty } from '../../src/utils/utils';
-
 describe('transformValueForProperty', () => {
   const transformArray = [
     {

@@ -1,4 +1,3 @@
-import { unitForProperty } from '../../src/utils/utils';
 import staticData from '../../src/config/data.static';
 
 describe('unitForProperty', () => {

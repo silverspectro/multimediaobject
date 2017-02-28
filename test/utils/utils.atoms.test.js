@@ -1,6 +1,3 @@
-import { Atoms } from '../../src/utils/utils';
-
-
 describe('Atoms', () => {
   const atomArray = [
     'block',

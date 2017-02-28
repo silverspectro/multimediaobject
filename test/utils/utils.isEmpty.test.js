@@ -1,6 +1,3 @@
-import { isEmpty } from '../../src/utils/utils';
-
-
 describe('isEmpty', () => {
   const testEmptyObject = {};
   const testFullObject = {

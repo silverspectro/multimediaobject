@@ -1,6 +1,3 @@
-import { constrain } from '../../src/utils/utils';
-
-
 describe('constrain', () => {
   it('should constrain 0.54235 between 0 and 1', () => {
     expect(constrain(0.54235, 0, 1)).toEqual(0.54235);

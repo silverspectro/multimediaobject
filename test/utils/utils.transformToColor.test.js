@@ -1,5 +1,3 @@
-import { transformToColor, generateRandomHexColor, hexToR, hexToG, hexToB, getRandomInt } from '../../src/utils/utils';
-
 describe('transformToColor', () => {
   for (let x = 0; x < 12; x++) {
     const rndHexColor = generateRandomHexColor();

@@ -1,6 +1,3 @@
-import { closest } from '../../src/utils/utils';
-
-
 describe('utils.closest', () => {
   const baseArray = [0, 4, 7, 67, 14, 145, 35.23, 14.5, 1350, 135.35];
   const refArray = [-5, 3, 123, 8.2, 26, 2500, 0, 5.5, 2];
