@@ -48,7 +48,8 @@
     "build-dev": "rollup -c rollup.config.test.js",
     "build-tpl": "rollup -c -i src/javascript/main.prod.js -o public/main.prod.js",
     "test": "karma start",
-    "build-test": "bash bin/buildTest.sh"
+    "build-test": "bash bin/buildTest.sh",
+    "generate-docs": "jsdoc --configure .jsdoc.json --verbose src/MultimediaObject.js"
   },
   "keywords": [
     "MultimediaObject",

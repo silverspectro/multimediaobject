@@ -1,4 +1,44 @@
-/*
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>MultimediaObject.js - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="MultimediaObject.html">MultimediaObject</a></li></ul><h3>Global</h3><ul><li><a href="global.html#add">add</a></li><li><a href="global.html#addAnimationKeyframe">addAnimationKeyframe</a></li><li><a href="global.html#addAnimationProperties">addAnimationProperties</a></li><li><a href="global.html#addDefaultParameters">addDefaultParameters</a></li><li><a href="global.html#addGlobalStyle">addGlobalStyle</a></li><li><a href="global.html#addListener">addListener</a></li><li><a href="global.html#appendElementTo">appendElementTo</a></li><li><a href="global.html#applyAttributes">applyAttributes</a></li><li><a href="global.html#applyBreakpoints">applyBreakpoints</a></li><li><a href="global.html#applyDependencies">applyDependencies</a></li><li><a href="global.html#applyEvents">applyEvents</a></li><li><a href="global.html#applyFunctions">applyFunctions</a></li><li><a href="global.html#applyIteration">applyIteration</a></li><li><a href="global.html#applyStyle">applyStyle</a></li><li><a href="global.html#changeAnimation">changeAnimation</a></li><li><a href="global.html#checkBreakpoints">checkBreakpoints</a></li><li><a href="global.html#checkDep">checkDep</a></li><li><a href="global.html#deactivateEvent">deactivateEvent</a></li><li><a href="global.html#deleteAnimationKeyframe">deleteAnimationKeyframe</a></li><li><a href="global.html#deleteAnimationProperties">deleteAnimationProperties</a></li><li><a href="global.html#dispatchEvent">dispatchEvent</a></li><li><a href="global.html#exportToJSON">exportToJSON</a></li><li><a href="global.html#generate">generate</a></li><li><a href="global.html#getComputedStyle">getComputedStyle</a></li><li><a href="global.html#getSortedSteps">getSortedSteps</a></li><li><a href="global.html#getTotalAnimationTime">getTotalAnimationTime</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#interpolateStep">interpolateStep</a></li><li><a href="global.html#loadFromJSON">loadFromJSON</a></li><li><a href="global.html#preInterpolateStep">preInterpolateStep</a></li><li><a href="global.html#remove">remove</a></li><li><a href="global.html#removeDependencies">removeDependencies</a></li><li><a href="global.html#removeEvent">removeEvent</a></li><li><a href="global.html#removeFunction">removeFunction</a></li><li><a href="global.html#removeListener">removeListener</a></li><li><a href="global.html#removePropertie">removePropertie</a></li><li><a href="global.html#requireDependencies">requireDependencies</a></li><li><a href="global.html#restartAnimation">restartAnimation</a></li><li><a href="global.html#runAnimation">runAnimation</a></li><li><a href="global.html#setAbsoluteAssetURL">setAbsoluteAssetURL</a></li><li><a href="global.html#startAnimation">startAnimation</a></li><li><a href="global.html#stopAnimation">stopAnimation</a></li><li><a href="global.html#transformEvent">transformEvent</a></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">MultimediaObject.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/*
   eslint-disable no-new-func
 */
 
@@ -41,7 +81,7 @@ raf();
 * @param {object} animations - a second separated Object representing the MultimediaObject state over time. Each step contain an object with style values wich will be precompiled and applied over time.
 
 * @example
-* <caption>Instanciation</caption>
+* &lt;caption>Instanciation&lt;/caption>
 * new MultimediaObject({
 *  type: 'div',
 *  style: {
@@ -156,7 +196,7 @@ export default class MultimediaObject {
   */
 
   addDefaultParameters() {
-    if (conf.defaultAttributes[this.type] && !this.load) {
+    if (conf.defaultAttributes[this.type] &amp;&amp; !this.load) {
       for (const key in conf.defaultAttributes[this.type]) {
         if (!this.attributes[key]) {
           this.attributes[key] = conf.defaultAttributes[this.type][key];
@@ -185,7 +225,7 @@ export default class MultimediaObject {
         break;
       case 'push' :
       default :
-        if (depIndex < 0) {
+        if (depIndex &lt; 0) {
           this.dependencies.push(dependency);
         }
     }
@@ -286,23 +326,23 @@ export default class MultimediaObject {
         transforms.push([k, v]);
         const val = utils.transformValueForProperty(k, v);
         const treatedVal = `${val.value}${val.unit}`;
-        if (_style < 1 || override) {
+        if (_style &lt; 1 || override) {
           this._style[k] = treatedVal;
         }
         this.style[k] = treatedVal;
       } else if (utils.pxProperties.contains(k)) {
         const val = `${utils.getNumFromString(v)}${utils.unitForProperty(k, v)}`;
-        if (_style < 1 || override) {
+        if (_style &lt; 1 || override) {
           this._style[k] = val;
         }
         this.style[k] = val;
         this.element.style[k] = val;
       } else if (utils.styleProperties.contains(k)) {
-        if (_style < 1 || override) {
+        if (_style &lt; 1 || override) {
           this._style[k] = v;
         }
         this.style[k] = v;
-        if (typeof v === 'string' && v.indexOf('{{absoluteAssetURL}}') >= 0 && window[conf.namespace]) {
+        if (typeof v === 'string' &amp;&amp; v.indexOf('{{absoluteAssetURL}}') >= 0 &amp;&amp; window[conf.namespace]) {
           v = v.replace('{{absoluteAssetURL}}', window.MultimediaObjectEditor ? this.data.absoluteAssetURL : window[conf.namespace].absoluteAssetURL);
         }
         this.element.style[k] = v;
@@ -310,10 +350,10 @@ export default class MultimediaObject {
         const val = `${v}${utils.unitForProperty(k, v)}`;
         // console.log(v);
         this.style[utils.propertyWithPrefix(k)] = val;
-        if (_style < 1 || override) {
+        if (_style &lt; 1 || override) {
           this._style[utils.propertyWithPrefix(k)] = val;
         }
-        if (v.indexOf('{{absoluteAssetURL}}') >= 0 && window[conf.namespace]) {
+        if (v.indexOf('{{absoluteAssetURL}}') >= 0 &amp;&amp; window[conf.namespace]) {
           v = v.replace('{{absoluteAssetURL}}', window.MultimediaObjectEditor ? this.data.absoluteAssetURL : window[conf.namespace].absoluteAssetURL);
         }
         this.element.style[utils.propertyWithPrefix(k)] = v;
@@ -414,7 +454,7 @@ export default class MultimediaObject {
     if (Object.keys(attributes).length > 0) {
       for (const attr in attributes) {
         let replaced = attributes[attr];
-        if (typeof attributes[attr] === 'string' && attributes[attr].indexOf('{{absoluteAssetURL}}') >= 0 && window[conf.namespace]) {
+        if (typeof attributes[attr] === 'string' &amp;&amp; attributes[attr].indexOf('{{absoluteAssetURL}}') >= 0 &amp;&amp; window[conf.namespace]) {
           replaced = attributes[attr].replace('{{absoluteAssetURL}}', window.MultimediaObjectEditor ? this.data.absoluteAssetURL : window[conf.namespace].absoluteAssetURL);
         }
         this.attributes[attr] = attributes[attr];
@@ -454,7 +494,7 @@ export default class MultimediaObject {
 
   applyEvents(events = this.events) {
     const applySwipeEvent = (evt) => {
-      const detecttouch = !!('ontouchstart' in window) || !!('ontouchstart' in document.documentElement) || !!window.ontouchstart || !!window.onmsgesturechange || (window.DocumentTouch && window.document instanceof window.DocumentTouch);
+      const detecttouch = !!('ontouchstart' in window) || !!('ontouchstart' in document.documentElement) || !!window.ontouchstart || !!window.onmsgesturechange || (window.DocumentTouch &amp;&amp; window.document instanceof window.DocumentTouch);
       const ob = this;
       let userData = {};
       ob.evtStarted = false;
@@ -627,7 +667,7 @@ export default class MultimediaObject {
           const containsTransformProps = (() => {
             const keys = Object.keys(this._style);
             let hasTransform = false;
-            for (let key = 0; key < keys.length; key++) {
+            for (let key = 0; key &lt; keys.length; key++) {
               if (utils.transformProperties.contains(keys[key])) {
                 hasTransform = true;
                 break;
@@ -689,14 +729,14 @@ export default class MultimediaObject {
           if (breaks === 'orientation') {
             conditions.push(`${breakpoint.querie[breaks] === 'landscape' ? `${winW} > ${winH}` : `${winH} > ${winW}`}`);
           } else {
-            conditions.push(`${/height/.test(breaks) ? winH : winW} ${/min/.test(breaks) ? '>=' : '<='} ${parseInt(breakpoint.querie[breaks], 10)}`);
+            conditions.push(`${/height/.test(breaks) ? winH : winW} ${/min/.test(breaks) ? '>=' : '&lt;='} ${parseInt(breakpoint.querie[breaks], 10)}`);
           }
         }
         evaluatedRule = '';
 
         conditions.forEach((rule, index) => {
           if (index >= 1) {
-            evaluatedRule += ` && ${rule}`;
+            evaluatedRule += ` &amp;&amp; ${rule}`;
           } else {
             evaluatedRule += rule;
           }
@@ -846,7 +886,7 @@ export default class MultimediaObject {
     this.animatedProps = {};
     let lastStep;
 
-    for (let secIndex = 0; secIndex < this.numericSteps.length; secIndex++) {
+    for (let secIndex = 0; secIndex &lt; this.numericSteps.length; secIndex++) {
       const second = this.numericSteps[secIndex].toFixed(2);
       let easing;
       // console.log("animations : ", this.currentAnimation);
@@ -893,7 +933,7 @@ export default class MultimediaObject {
             this.animatedProps[prop].steps[second].currentIteration = 0;
           } else {
             this.animatedProps[prop].steps[second].startValue = parseFloat(lastStep ? lastStep.endValue : (this._style[prop] ? (parseFloat(this._style[prop])) : 0));
-            this.animatedProps[prop].steps[second].unit = typeof this.currentAnimation[second][prop] === 'string' && /px|%/g.test(this.currentAnimation[second][prop]) ? utils.getUnitFromString(this.currentAnimation[second][prop] || '') : '';
+            this.animatedProps[prop].steps[second].unit = typeof this.currentAnimation[second][prop] === 'string' &amp;&amp; /px|%/g.test(this.currentAnimation[second][prop]) ? utils.getUnitFromString(this.currentAnimation[second][prop] || '') : '';
             this.animatedProps[prop].steps[second].endValue = parseFloat(this.currentAnimation[second][prop]);
             this.animatedProps[prop].steps[second].changeInValue = parseFloat(this.animatedProps[prop].steps[second].endValue - this.animatedProps[prop].steps[second].startValue);
             this.animatedProps[prop].steps[second].initIteration = lastStepProp ? Math.floor(lastStepProp * fps) : 0;
@@ -912,7 +952,7 @@ export default class MultimediaObject {
 
     for (const prop in this.animatedProps) {
       if (!isAnimatedEvent(prop)) {
-        for (let iteration = 0; iteration <= totalAnimationIteration; iteration++) {
+        for (let iteration = 0; iteration &lt;= totalAnimationIteration; iteration++) {
           let propNumericSteps = Object.keys(this.animatedProps[prop].steps),
             iterationSeconds = (iteration / totalAnimationIteration) * totalAnimationTime,
             secondsElapsed = isFinite(iterationSeconds) ? Number(iterationSeconds).toFixed(2) : 0,
@@ -928,10 +968,10 @@ export default class MultimediaObject {
               endValue = this.animatedProps[prop].steps[stepSecond].endValue,
               changeInValue = this.animatedProps[prop].steps[stepSecond].changeInValue,
               totalIterationValue = this.animatedProps[prop].steps[stepSecond].totalStepIteration,
-              r = actualIteration < totalIterationValue ? parseInt(Easings[easing](actualIteration, startValue.r, changeInValue.r, totalIterationValue)) : endValue.r,
-              g = actualIteration < totalIterationValue ? parseInt(Easings[easing](actualIteration, startValue.g, changeInValue.g, totalIterationValue)) : endValue.g,
-              b = actualIteration < totalIterationValue ? parseInt(Easings[easing](actualIteration, startValue.b, changeInValue.b, totalIterationValue)) : endValue.b,
-              a = actualIteration < totalIterationValue ? Number(Easings[easing](actualIteration, startValue.a, changeInValue.a, totalIterationValue).toFixed(2)) : endValue.a;
+              r = actualIteration &lt; totalIterationValue ? parseInt(Easings[easing](actualIteration, startValue.r, changeInValue.r, totalIterationValue)) : endValue.r,
+              g = actualIteration &lt; totalIterationValue ? parseInt(Easings[easing](actualIteration, startValue.g, changeInValue.g, totalIterationValue)) : endValue.g,
+              b = actualIteration &lt; totalIterationValue ? parseInt(Easings[easing](actualIteration, startValue.b, changeInValue.b, totalIterationValue)) : endValue.b,
+              a = actualIteration &lt; totalIterationValue ? Number(Easings[easing](actualIteration, startValue.a, changeInValue.a, totalIterationValue).toFixed(2)) : endValue.a;
 
             this.computedAnimations[iteration][prop] = `rgba(${r},${g},${b},${a})`;
             // console.log(this.computedAnimations[iteration][prop]);
@@ -942,7 +982,7 @@ export default class MultimediaObject {
               endValue = this.animatedProps[prop].steps[stepSecond].endValue,
               changeInValue = this.animatedProps[prop].steps[stepSecond].changeInValue,
               totalIterationValue = this.animatedProps[prop].steps[stepSecond].totalStepIteration,
-              value = actualIteration < totalIterationValue - 1 ? startValue : endValue;
+              value = actualIteration &lt; totalIterationValue - 1 ? startValue : endValue;
                 // console.log(prop,this.animatedProps[prop].steps[stepSecond].initIteration,iteration,actualIteration,totalIterationValue,totalAnimationIteration);
 
             this.computedAnimations[iteration][prop] = value + this.animatedProps[prop].steps[stepSecond].unit;
@@ -953,13 +993,13 @@ export default class MultimediaObject {
               endValue = this.animatedProps[prop].steps[stepSecond].endValue,
               changeInValue = this.animatedProps[prop].steps[stepSecond].changeInValue,
               totalIterationValue = this.animatedProps[prop].steps[stepSecond].totalStepIteration,
-              value = actualIteration < totalIterationValue - 1 ? Easings[easing](actualIteration, startValue, changeInValue, totalIterationValue) : endValue;
+              value = actualIteration &lt; totalIterationValue - 1 ? Easings[easing](actualIteration, startValue, changeInValue, totalIterationValue) : endValue;
                 // console.log(prop,this.animatedProps[prop].steps[stepSecond].initIteration,iteration,actualIteration,totalIterationValue,totalAnimationIteration);
 
             this.computedAnimations[iteration][prop] = value + this.animatedProps[prop].steps[stepSecond].unit;
           }
 
-          if (iteration >= this.animatedProps[prop].steps[stepSecond].initIteration && this.animatedProps[prop].steps[stepSecond].currentIteration <= this.animatedProps[prop].steps[stepSecond].totalStepIteration) {
+          if (iteration >= this.animatedProps[prop].steps[stepSecond].initIteration &amp;&amp; this.animatedProps[prop].steps[stepSecond].currentIteration &lt;= this.animatedProps[prop].steps[stepSecond].totalStepIteration) {
             this.animatedProps[prop].steps[stepSecond].currentIteration++;
           }
         }
@@ -990,11 +1030,11 @@ export default class MultimediaObject {
   interpolateStep(currentIteration, seconds, fps) {
     const animationsLength = this.computedAnimations.length;
     // console.log(animationsLength,currentIteration);
-    if (animationsLength <= 0) {
+    if (animationsLength &lt;= 0) {
       this.preInterpolateStep(fps);
     }
     // console.log(this.computedAnimations[currentIteration]);
-    if (currentIteration <= 1 && !this.animationStarted) {
+    if (currentIteration &lt;= 1 &amp;&amp; !this.animationStarted) {
       eventManager.dispatchEvent(`${this.uuid}-animationStart`);
       this.currentIteration = currentIteration;
       this.applyIteration();
@@ -1004,7 +1044,7 @@ export default class MultimediaObject {
       this.currentIteration = currentIteration;
       this.applyIteration();
       this.checkBreakpoints();
-    } else if (currentIteration > animationsLength && animationsLength > 0) {
+    } else if (currentIteration > animationsLength &amp;&amp; animationsLength > 0) {
       this.applyIteration(this.computedAnimations[animationsLength - 1]);
     }
     if (animationsLength === currentIteration) {
@@ -1083,7 +1123,7 @@ export default class MultimediaObject {
         if (!this.reverse) {
           this.counter++;
         } else {
-          if (this.counter <= 0) {
+          if (this.counter &lt;= 0) {
             this.counter = this.totalIteration;
               // console.log(this.counter);
           }
@@ -1100,13 +1140,13 @@ export default class MultimediaObject {
 
         this.interpolateStep(this.counter, this.secondsElapsed, this.fps);
 
-        if (this.counter >= this.totalIteration && !this.reverse) {
-          if (this.repeat > 0 && this.repeatCounter < this.repeat) {
+        if (this.counter >= this.totalIteration &amp;&amp; !this.reverse) {
+          if (this.repeat > 0 &amp;&amp; this.repeatCounter &lt; this.repeat) {
             this.counter = 0;
             this.repeatCounter++;
           }
-        } else if (this.counter == 1 && this.reverse) {
-          if (this.repeat > 0 && this.repeatCounter < this.repeat) {
+        } else if (this.counter == 1 &amp;&amp; this.reverse) {
+          if (this.repeat > 0 &amp;&amp; this.repeatCounter &lt; this.repeat) {
             this.counter = 0;
             this.repeatCounter++;
           }
@@ -1334,8 +1374,8 @@ export default class MultimediaObject {
     ob.childs = [];
 
     for (const p in this) {
-      if (typeof this[p] !== 'undefined' && this[p] !== null) {
-        if (typeof this[p] !== 'function' && !this[p].element && !this[p].children && !this[p].elements && !/exportedFunctions|exportedEvents|childs|interval|then|now|delta|animated|animationStarted|currentIteration|computedAnimations|totalTime|secondsElapsed|rafID|numericSteps|counter|totalIteration|animationStarted|direction|coords|bounds|geo|infowindow|map|marker|shop/.test(p)) {
+      if (typeof this[p] !== 'undefined' &amp;&amp; this[p] !== null) {
+        if (typeof this[p] !== 'function' &amp;&amp; !this[p].element &amp;&amp; !this[p].children &amp;&amp; !this[p].elements &amp;&amp; !/exportedFunctions|exportedEvents|childs|interval|then|now|delta|animated|animationStarted|currentIteration|computedAnimations|totalTime|secondsElapsed|rafID|numericSteps|counter|totalIteration|animationStarted|direction|coords|bounds|geo|infowindow|map|marker|shop/.test(p)) {
           ob[p] = this[p];
         }
       }
@@ -1379,16 +1419,16 @@ export default class MultimediaObject {
   */
 
   setAbsoluteAssetURL(json) {
-    if (window[conf.namespace] && json && json.data) {
-      if (typeof window[conf.namespace].absoluteAssetURL !== 'undefined' && window[conf.namespace].absoluteAssetURL !== 'undefined' && window[conf.namespace].absoluteAssetURL !== '') {
+    if (window[conf.namespace] &amp;&amp; json &amp;&amp; json.data) {
+      if (typeof window[conf.namespace].absoluteAssetURL !== 'undefined' &amp;&amp; window[conf.namespace].absoluteAssetURL !== 'undefined' &amp;&amp; window[conf.namespace].absoluteAssetURL !== '') {
         this.data.absoluteAssetURL = window[conf.namespace].absoluteAssetURL;
-      } else if (typeof json.data.absoluteAssetURL !== 'undefined' && json.data.absoluteAssetURL !== '' && json.data.absoluteAssetURL !== './') {
+      } else if (typeof json.data.absoluteAssetURL !== 'undefined' &amp;&amp; json.data.absoluteAssetURL !== '' &amp;&amp; json.data.absoluteAssetURL !== './') {
         window[conf.namespace].absoluteAssetURL = json.data.absoluteAssetURL;
       } else {
         this.data.absoluteAssetURL = './';
       }
     } else if (json) {
-      this.data.absoluteAssetURL = json.data && typeof json.data.absoluteAssetURL !== 'undefined' && json.data.absoluteAssetURL !== '' ? json.data.absoluteAssetURL : './';
+      this.data.absoluteAssetURL = json.data &amp;&amp; typeof json.data.absoluteAssetURL !== 'undefined' &amp;&amp; json.data.absoluteAssetURL !== '' ? json.data.absoluteAssetURL : './';
     } else {
       this.data.absoluteAssetURL = './';
     }
@@ -1401,7 +1441,7 @@ export default class MultimediaObject {
 
   loadFromJSON(json) {
     for (const key in json) {
-      if (key === 'animations' && !json.animations.default) {
+      if (key === 'animations' &amp;&amp; !json.animations.default) {
         this.currentAnimation = json.animations;
         this.animations = {};
         this.animations.default = json.animations;
@@ -1438,8 +1478,27 @@ export default class MultimediaObject {
     this.uuid = utils.generateUUID();
     this.data = json.data || {};
     this.type = json.type;
-    this.data.absoluteAssetURL = json.data && json.data.absoluteAssetURL ? json.data.absoluteAssetURL : '';
+    this.data.absoluteAssetURL = json.data &amp;&amp; json.data.absoluteAssetURL ? json.data.absoluteAssetURL : '';
     this.data.autostart = json.data ? utils.parseBoolean(json.data.autostart) : true;
     this.setAbsoluteAssetURL(json);
   }
 }
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Wed Mar 01 2017 01:47:36 GMT+0100 (Paris, Madrid) using the Minami theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>
