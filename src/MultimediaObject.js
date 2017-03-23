@@ -1212,9 +1212,9 @@ export default class MultimediaObject {
     });
     this.animations[this.selectedAnimation] = this.currentAnimation;
     this.preInterpolateStep(this.timeline ? this.timeline.fps : this.fps);
-    if (this.timeline) {
-      this.timeline.computeSteps();
-    }
+    // if (this.timeline) {
+    //   this.timeline.computeSteps();
+    // }
     return this;
   }
 
@@ -1235,9 +1235,6 @@ export default class MultimediaObject {
     });
     this.animations[this.selectedAnimation] = this.currentAnimation;
     this.preInterpolateStep(this.timeline.fps || this.fps);
-    if (this.timeline) {
-      this.timeline.computeSteps();
-    }
     // this.dispatchEvent('actualize-timeline-elements', {}, true);
     return this;
   }
