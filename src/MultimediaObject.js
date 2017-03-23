@@ -893,7 +893,7 @@ export default class MultimediaObject {
             this.animatedProps[prop].steps[second].currentIteration = 0;
           } else {
             this.animatedProps[prop].steps[second].startValue = parseFloat(lastStep ? lastStep.endValue : (this._style[prop] ? (parseFloat(this._style[prop])) : 0));
-            this.animatedProps[prop].steps[second].unit = typeof this.currentAnimation[second][prop] === 'string' && /px|%/g.test(this.currentAnimation[second][prop]) ? utils.getUnitFromString(this.currentAnimation[second][prop] || '') : '';
+            this.animatedProps[prop].steps[second].unit = typeof this.currentAnimation[second][prop] === 'string' && /px|%|vw|vh|deg/g.test(this.currentAnimation[second][prop]) ? utils.getUnitFromString(this.currentAnimation[second][prop] || '') : '';
             this.animatedProps[prop].steps[second].endValue = parseFloat(this.currentAnimation[second][prop]);
             this.animatedProps[prop].steps[second].changeInValue = parseFloat(this.animatedProps[prop].steps[second].endValue - this.animatedProps[prop].steps[second].startValue);
             this.animatedProps[prop].steps[second].initIteration = lastStepProp ? Math.floor(lastStepProp * fps) : 0;

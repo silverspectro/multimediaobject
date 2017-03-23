@@ -7,7 +7,7 @@ export default {
       type: 'video/mp4',
       controls: 'true',
       muted: 'true',
-      loop: 'true',
+      loop: 'false',
       preload: 'true',
       playsinline: 'true',
     },

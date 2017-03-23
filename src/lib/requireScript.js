@@ -3,8 +3,6 @@
   * https://github.com/ded/script.js
   * (c) Dustin Diaz 2014 | License MIT
   */
-
-export default () => {
   let doc = document,
     head = doc.getElementsByTagName('head')[0],
     s = 'string',
@@ -30,7 +28,7 @@ export default () => {
     });
   }
 
-  function $script(paths, idOrDone, optDone) {
+  const $script = function $script(paths, idOrDone, optDone) {
     paths = paths[push] ? paths : [paths];
     let idOrDoneIsDone = idOrDone && idOrDone.call,
       done = idOrDoneIsDone ? idOrDone : optDone,
@@ -117,5 +115,4 @@ export default () => {
     $script([null], idOrDone);
   };
 
-  return $script;
-};
+  export default $script;

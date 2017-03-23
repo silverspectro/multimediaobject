@@ -1,6 +1,8 @@
 const pxPropertiesArray = [
   'baselineShift',
   'border',
+  'backgroundPositionX',
+  'backgroundPositionY',
   'borderBottom',
   'borderBottomLeftRadius',
   'borderBottomRightRadius',
@@ -117,6 +119,8 @@ const pxPropertiesArray = [
   'translate-y',
   'translate-z',
   'translate',
+  'background-position-x',
+  'background-position-y',
 ];
 
 const stylePropertiesArray = [
@@ -563,7 +567,7 @@ export default {
   },
   regex: {
     DOMEvent: new RegExp('^(click|mousedown|mouseup|mousemove|change|touchstart|touchmove|touchend|input|focus|dlclick|mouseenter|mouseleave|mouseover|mouseout|blur|search|submit|play|pause|canplay|progress)$'),
-    animatableProps: new RegExp('^(background-color|translate|scale|rotate|skew|margin-top|margin.+|padding.+|top|left|right|bottom|color|font-size|width|height|opacity)$'),
+    animatableProps: new RegExp('background-position-|background-size|background-color|translate|scale|rotate|skew|margin-|padding-|top|left|right|bottom|color|font-size|width|height|opacity', 'g'),
   },
   sets: {
     pxProperties: pxPropertiesArray,
