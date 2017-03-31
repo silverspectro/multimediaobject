@@ -1,18 +1,22 @@
 if (!Element.prototype.getElementsByClassName) {
   Element.prototype.getElementsByClassName = function (search) {
-    var d = this, elements, pattern, i, results = [];
+    let d = this,
+      elements,
+      pattern,
+      i,
+      results = [];
     if (d.querySelectorAll) { // IE8
-      return d.querySelectorAll("." + search);
+      return d.querySelectorAll(`.${search}`);
     }
     if (d.evaluate) { // IE6, IE7
-      pattern = ".//*[contains(concat(' ', @class, ' '), ' " + search + " ')]";
+      pattern = `.//*[contains(concat(' ', @class, ' '), ' ${search} ')]`;
       elements = d.evaluate(pattern, d, null, 0, null);
       while ((i = elements.iterateNext())) {
         results.push(i);
       }
     } else {
-      elements = d.getElementsByTagName("*");
-      pattern = new RegExp("(^|\\s)" + search + "(\\s|$)");
+      elements = d.getElementsByTagName('*');
+      pattern = new RegExp(`(^|\\s)${search}(\\s|$)`);
       for (i = 0; i < elements.length; i++) {
         if (pattern.test(elements[i].className)) {
           results.push(elements[i]);
@@ -20,36 +24,36 @@ if (!Element.prototype.getElementsByClassName) {
       }
     }
     return results;
-  }
+  };
 }
-var DOMSel;
+let DOMSel;
 
-const _ = function(selector) {
+const _ = function (selector) {
   return new DOMSelector(selector);
 };
 
 DOMSel = _;
 
-var DOMSelector = function(selector) {
+var DOMSelector = function (selector) {
   if (selector === window || selector === document || selector.nodeType) {
     this[0] = selector;
     this.length = 1;
     return this;
   }
 
-  var sel;
+  let sel;
 
-  if(document.querySelectorAll) {
+  if (document.querySelectorAll) {
     sel = document.querySelectorAll(selector);
-  } else if(selector.indexOf("#") === 0) {
-    sel = [document.getElementById(selector.replace("#", ""))];
-  } else if(selector.indexOf(".") === 0) {
-    sel = document.getElementsByClassName(selector.replace(".", ""));
+  } else if (selector.indexOf('#') === 0) {
+    sel = [document.getElementById(selector.replace('#', ''))];
+  } else if (selector.indexOf('.') === 0) {
+    sel = document.getElementsByClassName(selector.replace('.', ''));
   } else {
     sel = document.getElementsByTagName(selector);
   }
 
-  for (var i = 0; i < sel.length; i++) {
+  for (let i = 0; i < sel.length; i++) {
     this[i] = sel[i];
   }
 
@@ -59,95 +63,95 @@ var DOMSelector = function(selector) {
 
 DOMSel.fn = DOMSelector.prototype = {};
 
-DOMSel.fn.getStyle = function(elem) {
-  for (var i = 0; i < this.length; i++) {
+DOMSel.fn.getStyle = function (elem) {
+  for (let i = 0; i < this.length; i++) {
     return getComputedStyle(this[i])[elem];
   }
-}
-
-DOMSel.fn.css = function(style, callback) {
-	if(typeof style != "object"){
-    throw "You must pass in an object";
-  }
-	for (var i = 0; i < this.length; i++) {
-		for(var property in style) {
-      this[i].style[property] = style[property];
-      if(property == "transform") {
-        this[i].style.webkitTransform = style[property];
-      }
-		}
-	}
-	if(callback){
-    callback();
-  }
-	return this;
 };
 
-DOMSel.fn.transition = function(params, callback) {
-  if(typeof params != "object"){
-    throw "You must pass in an object";
+DOMSel.fn.css = function (style, callback) {
+  if (typeof style !== 'object') {
+    throw 'You must pass in an object';
   }
-  var that = this;
-  var c = 0;
+  for (let i = 0; i < this.length; i++) {
+    for (const property in style) {
+      this[i].style[property] = style[property];
+      if (property == 'transform') {
+        this[i].style.webkitTransform = style[property];
+      }
+    }
+  }
+  if (callback) {
+    callback();
+  }
+  return this;
+};
+
+DOMSel.fn.transition = function (params, callback) {
+  if (typeof params !== 'object') {
+    throw 'You must pass in an object';
+  }
+  const that = this;
+  let c = 0;
   var params = {
     style: params.style || {},
     duration: params.duration || 0.3,
     delay: params.delay || 0,
-    easing: params.easing || "ease-out",
-    stagger: params.stagger || false
-  }
-  var tempDelay = params.delay;
+    easing: params.easing || 'ease-out',
+    stagger: params.stagger || false,
+  };
+  let tempDelay = params.delay;
 
-	for (var i = 0; i < this.length; i++) {
-    if(params.stagger && i > 0)tempDelay += params.delay;
-    this[i].style.transition = "all "+ (params.duration+"s ") + (tempDelay +"s ") + params.easing;
-    this[i].style.WebkitTransition = "all "+ (params.duration+"s ") + (tempDelay+"s ") + params.easing;
-    window.setTimeout(function(){
-      that[c].style.transition = "";
-      that[c].style.WebkitTransition = "";
+  for (let i = 0; i < this.length; i++) {
+    if (params.stagger && i > 0)tempDelay += params.delay;
+    this[i].style.transition = `all ${params.duration}s ${tempDelay}s ${params.easing}`;
+    this[i].style.WebkitTransition = `all ${params.duration}s ${tempDelay}s ${params.easing}`;
+    window.setTimeout(() => {
+      that[c].style.transition = '';
+      that[c].style.WebkitTransition = '';
       c++;
-    }, params.stagger ? ((params.duration+tempDelay)*1000) : ((params.duration+tempDelay)*1000));
-    if(callback && i == this.length-1) {
-      window.setTimeout(callback, (params.duration+tempDelay)*1000);
+    }, params.stagger ? ((params.duration + tempDelay) * 1000) : ((params.duration + tempDelay) * 1000));
+    if (callback && i == this.length - 1) {
+      window.setTimeout(callback, (params.duration + tempDelay) * 1000);
     }
-	}
+  }
   return this.css(params.style);
 };
 
-DOMSel.fn.on = function(evt, callback) {
-  var isSlide = evt == 'slide',
+DOMSel.fn.on = function (evt, callback) {
+  let isSlide = evt == 'slide',
     detecttouch = !!('ontouchstart' in window) || !!('ontouchstart' in document.documentElement) || !!window.ontouchstart || !!window.onmsgesturechange || (window.DocumentTouch && window.document instanceof window.DocumentTouch);
-  for (var i = 0; i < this.length; i++) {
+  for (let i = 0; i < this.length; i++) {
     if (isSlide) {
       var userData = {},
         evtStarted = false,
-        evtStart = function(e) {
+        evtStart = function (e) {
           e.preventDefault();
-          var evt = e.changedTouches ? e.changedTouches[0] : e;
+          const evt = e.changedTouches ? e.changedTouches[0] : e;
           evtStarted = true;
           userData = {
             start: {
               left: evt.pageX,
-              top: evt.pageY
-            }
+              top: evt.pageY,
+            },
           };
         },
-        evtEnd = function(e) {
+        evtEnd = function (e) {
           e.preventDefault();
           if (!evtStarted) {
             return;
           }
-          var evt = e.changedTouches ? e.changedTouches[0] : e;
+          const evt = e.changedTouches ? e.changedTouches[0] : e;
           userData.end = {
             left: evt.pageX,
-            top: evt.pageY
+            top: evt.pageY,
           };
           userData.dx = userData.end.left - userData.start.left;
           userData.dy = userData.end.top - userData.start.top;
           userData.angle = Math.atan2(userData.dy, userData.dx);
           userData.angle *= 180 / Math.PI;
           userData.inMotion = (e.type == 'touchmove' || e.type == 'mousemove');
-          userData.direction = Math.abs(userData.dx) > Math.abs(userData.dy) ? ('' + userData.dx).indexOf('-') != -1 ? 'left' : 'right' : ('' + userData.dy).indexOf('-') != -1 ? 'top' : 'bottom',
+          userData.direction = Math.abs(userData.dx) > Math.abs(userData.dy) ? (`${userData.dx}`).indexOf('-') != -1 ? 'left' : 'right' : (`${userData.dy}`).indexOf('-') != -1 ? 'top' : 'bottom',
             callback.apply(this, [e, userData]);
           if (userData.inMotion == false) {
             evtStarted = false;
@@ -163,7 +167,7 @@ DOMSel.fn.on = function(evt, callback) {
         this[i].addEventListener('mouseup', evtEnd, false);
       }
     } else {
-      var fn = function(e) {
+      const fn = function (e) {
         callback.apply(this, [e]);
       };
       this[i].addEventListener(evt, fn);
@@ -177,17 +181,17 @@ DOMSel.fn.on = function(evt, callback) {
  * @param  {[type]}   nodeName Type to be found
  * @return {Boolean}           returns true on the first child of the given type found, will return false if nothing found
  */
-DOMSel.fn.hasChildOfType = function(nodeName) {
-    for (var i = 0; i < this.length; i++) {
-        if(this[i].hasChildNodes()) {
-            for (var j = 0; j < this[i].childNodes.length; j++) {
-                if(nodeName == this[i].childNodes[j].nodeName) {
-                    return true;
-                }
-            }
+DOMSel.fn.hasChildOfType = function (nodeName) {
+  for (let i = 0; i < this.length; i++) {
+    if (this[i].hasChildNodes()) {
+      for (let j = 0; j < this[i].childNodes.length; j++) {
+        if (nodeName == this[i].childNodes[j].nodeName) {
+          return true;
         }
+      }
     }
-    return false;
+  }
+  return false;
 };
 
 /**
@@ -195,17 +199,17 @@ DOMSel.fn.hasChildOfType = function(nodeName) {
  * @param  {[type]}   nodeName Type to be found
  * @return {Boolean}           returns true on the first child of the given type found, will return false if nothing found
  */
-DOMSel.fn.getChildOfType = function(nodeName) {
-    for (var i = 0; i < this.length; i++) {
-        if(this[i].hasChildNodes()) {
-            for (var j = 0; j < this[i].childNodes.length; j++) {
-                if(nodeName == this[i].childNodes[j].nodeName) {
-                    return this[i].childNodes[j];
-                }
-            }
+DOMSel.fn.getChildOfType = function (nodeName) {
+  for (let i = 0; i < this.length; i++) {
+    if (this[i].hasChildNodes()) {
+      for (let j = 0; j < this[i].childNodes.length; j++) {
+        if (nodeName == this[i].childNodes[j].nodeName) {
+          return this[i].childNodes[j];
         }
+      }
     }
-    return null;
+  }
+  return null;
 };
 
 /**
@@ -215,18 +219,18 @@ DOMSel.fn.getChildOfType = function(nodeName) {
 * @return {int} variable
 */
 
-DOMSel.constrain = function(variable, constraint) {
+DOMSel.constrain = function (variable, constraint) {
   // console.log(variable, constraint);
   let absVar = Math.abs(variable),
-      absConst = Math.abs(constraint);
+    absConst = Math.abs(constraint);
 
-  if(absVar <= absConst) {
+  if (absVar <= absConst) {
     return variable;
   }
-  if(variable < 0) {
+  if (variable < 0) {
     return -constraint;
   }
   return constraint;
 };
 
-module.exports = DOMSel;
+export default _;
