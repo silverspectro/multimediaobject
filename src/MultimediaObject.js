@@ -310,14 +310,16 @@ export default class MultimediaObject {
       } else {
         const val = `${v}${utils.unitForProperty(k, v)}`;
         // console.log(v);
-        this.style[utils.propertyWithPrefix(k)] = val;
-        if (_style < 1 || override) {
-          this._style[utils.propertyWithPrefix(k)] = val;
+        if (Object.keys(this.events).indexOf(k) < 0) {
+          this.style[utils.propertyWithPrefix(k)] = val;
+          if (_style < 1 || override) {
+            this._style[utils.propertyWithPrefix(k)] = val;
+          }
+          if (typeof v === 'string' && (v.indexOf('{{absoluteAssetURL}}') >= 0 && window[conf.namespace])) {
+            v = v.replace('{{absoluteAssetURL}}', window.MultimediaObjectEditor ? this.data.absoluteAssetURL : window[conf.namespace].absoluteAssetURL);
+          }
+          this.element.style[utils.propertyWithPrefix(k)] = v;
         }
-        if (v.indexOf('{{absoluteAssetURL}}') >= 0 && window[conf.namespace]) {
-          v = v.replace('{{absoluteAssetURL}}', window.MultimediaObjectEditor ? this.data.absoluteAssetURL : window[conf.namespace].absoluteAssetURL);
-        }
-        this.element.style[utils.propertyWithPrefix(k)] = v;
       }
     }
 
