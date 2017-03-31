@@ -75,6 +75,7 @@ export default class MultimediaObject {
     this.functions = {};
     this.selectedAnimation = 'default';
     this.currentAnimation = {};
+    this.animations = {};
     this.breakpoints = [];
     this.animated = false;
     this.computedAnimations = [];
