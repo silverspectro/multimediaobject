@@ -145,7 +145,7 @@ export default class MultimediaObject {
       }
     }
     this.applyAttributes({
-      id: this.name === 'multimediaObject' ? this.uuid : this.name,
+      id: /multimediaObject\d+/.test(this.name) ? this.uuid : this.name,
     });
     this.addGlobalStyle();
   }
