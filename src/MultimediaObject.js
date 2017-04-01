@@ -144,11 +144,9 @@ export default class MultimediaObject {
         this.addListener('startAfterPreload', () => this.startAnimation(), true);
       }
     }
-    if (!this.attributes.id) {
-      this.applyAttributes({
-        id: this.name === 'multimediaObject' ? this.uuid : this.name,
-      });
-    }
+    this.applyAttributes({
+      id: this.name.indexOf('multimediaObject') < 0 ? this.uuid : this.name,
+    });
     this.addGlobalStyle();
   }
 
@@ -414,15 +412,13 @@ export default class MultimediaObject {
 
   applyAttributes(attributes = this.attributes) {
     utils.checkIfObject(attributes, () => Object.keys(attributes), 'attributes must be an object');
-    if (Object.keys(attributes).length > 0) {
-      for (const attr in attributes) {
-        let replaced = attributes[attr];
-        if (typeof attributes[attr] === 'string' && attributes[attr].indexOf('{{absoluteAssetURL}}') >= 0 && window[conf.namespace]) {
-          replaced = attributes[attr].replace('{{absoluteAssetURL}}', window.MultimediaObjectEditor ? this.data.absoluteAssetURL : window[conf.namespace].absoluteAssetURL);
-        }
-        this.attributes[attr] = attributes[attr];
-        this.element.setAttribute(attr, replaced);
+    for (const attr in attributes) {
+      let replaced = attributes[attr];
+      if (typeof attributes[attr] === 'string' && attributes[attr].indexOf('{{absoluteAssetURL}}') >= 0 && window[conf.namespace]) {
+        replaced = attributes[attr].replace('{{absoluteAssetURL}}', window.MultimediaObjectEditor ? this.data.absoluteAssetURL : window[conf.namespace].absoluteAssetURL);
       }
+      this.attributes[attr] = attributes[attr];
+      this.element.setAttribute(attr, replaced);
     }
     return this;
   }
@@ -435,14 +431,12 @@ export default class MultimediaObject {
 
   applyBreakpoints(breakpoints = this.breakpoints) {
     if (breakpoints instanceof Array) {
-      if (breakpoints.length > 0) {
-        breakpoints.forEach((breakpoint) => {
-          if (this.breakpoints.indexOf(breakpoint) === -1) {
-            this.breakpoints.push(breakpoint);
-          }
-        });
-        this.checkBreakpoints();
-      }
+      breakpoints.forEach((breakpoint) => {
+        if (this.breakpoints.indexOf(breakpoint) === -1) {
+          this.breakpoints.push(breakpoint);
+        }
+      });
+      this.checkBreakpoints();
     } else {
       throw new Error('breakpoints must be an array');
     }
@@ -503,17 +497,15 @@ export default class MultimediaObject {
         this.element.addEventListener('mouseup', this.evtEnd, false);
       }
     };
-    if (Object.keys(events).length > 0) {
-      for (const evt in events) {
-        this.events[evt] = events[evt];
-        this._events[evt] = this.transformEvent(events[evt]);
-        if (evt === 'swipe') {
-          applySwipeEvent(evt);
-        } else if (utils.checkEvent(evt)) {
-          this.element.addEventListener(evt, this._events[evt]);
-        } else {
-          this.addListener(evt, this.events[evt]);
-        }
+    for (const evt in events) {
+      this.events[evt] = events[evt];
+      this._events[evt] = this.transformEvent(events[evt]);
+      if (evt === 'swipe') {
+        applySwipeEvent(evt);
+      } else if (utils.checkEvent(evt)) {
+        this.element.addEventListener(evt, this._events[evt]);
+      } else {
+        this.addListener(evt, this.events[evt]);
       }
     }
     return this;
@@ -1345,14 +1337,14 @@ export default class MultimediaObject {
       let txt = this.events[evt].toString(),
         args = txt.slice(txt.indexOf('(') + 1, txt.indexOf(')')).split(','),
         body = txt.slice(txt.indexOf('{') + 1, txt.lastIndexOf('}'));
-      ob.exportedEvents[evt] = { args: args.map(el => el.replace(/\s+|\n+|(\/\*\*\/\n)+/g, '')), body };
+      ob.exportedEvents[evt] = { args: args.map(el => el.replace(/\n+|(\/\*\*\/\n)+/g, '').replace(/^(\n+|\t+|\t\n+)(?!\w)$/gm, '').replace(/`/gm, '')), body };
     }
 
     for (const func in this.functions) {
       let txt = this.functions[func].toString(),
         args = txt.slice(txt.indexOf('(') + 1, txt.indexOf(')')).split(','),
         body = txt.slice(txt.indexOf('{') + 1, txt.lastIndexOf('}'));
-      ob.exportedFunctions[func] = { args: args.map(el => el.replace(/\s+|\n+|(\/\*\*\/\n)+/g, '')), body };
+      ob.exportedFunctions[func] = { args: args.map(el => el.replace(/\n+|(\/\*\*\/\n)+/g, '').replace(/^(\n+|\t+|\t\n+)(?!\w)$/gm, '').replace(/`/gm, '')), body };
     }
 
     this.childs.forEach((child) => {
@@ -1361,6 +1353,7 @@ export default class MultimediaObject {
 
     ob.style = this._style;
     ob.attributes = this.attributes;
+    delete ob.attributes.id;
     ob.breakpoints = this.breakpoints;
     ob.globalStyle = this.globalStyle;
     ob.data = this.data || {};
@@ -1411,13 +1404,13 @@ export default class MultimediaObject {
     }
 
     for (const evt in json.exportedEvents) {
-      let args = json.exportedEvents[evt].args.map(el => el.replace(/\s+|\n+|(\/\*\*\/\n)+/g, '')),
+      let args = json.exportedEvents[evt].args.map(el => el.replace(/\n+|(\/\*\*\/\n)+/g, '').replace(/^(\n+|\t+|\t\n+)(?!\w)$/gm, '').replace(/`/gm, '')),
         body = json.exportedEvents[evt].body;
       this.events[evt] = new Function(args, body);
     }
 
     for (const func in json.exportedFunctions) {
-      let args = json.exportedFunctions[func].args.map(el => el.replace(/\s+|\n+|(\/\*\*\/\n)+/g, '')),
+      let args = json.exportedFunctions[func].args.map(el => el.replace(/\n+|(\/\*\*\/\n)+/g, '').replace(/^(\n+|\t+|\t\n+)(?!\w)$/gm, '').replace(/`/gm, '')),
         body = json.exportedFunctions[func].body;
       this.functions[func] = new Function(args, body);
     }
