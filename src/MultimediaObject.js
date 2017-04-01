@@ -840,6 +840,7 @@ export default class MultimediaObject {
 
     this.animatedProps = {};
     let lastStep;
+    const eventsKeys = Object.keys(this.events);
 
     for (let secIndex = 0; secIndex < this.numericSteps.length; secIndex++) {
       const second = this.numericSteps[secIndex].toFixed(2);
@@ -1000,7 +1001,7 @@ export default class MultimediaObject {
       this.applyIteration();
       this.checkBreakpoints();
     } else if (currentIteration > animationsLength && animationsLength > 0) {
-      this.applyIteration(this.computedAnimations[animationsLength - 1]);
+      this.applyIteration(this.computedAnimations[animationsLength - 1], true);
     }
     if (animationsLength === currentIteration) {
       this.stopAnimation();
@@ -1017,12 +1018,12 @@ export default class MultimediaObject {
   * @param {object} iteration - the iteration pbject
   */
 
-  applyIteration(iteration = this.computedAnimations[this.currentIteration]) {
+  applyIteration(iteration = this.computedAnimations[this.currentIteration], end = false) {
     if (iteration) {
       const style = Object.create(iteration);
       for (const key in iteration) {
         if (!utils.isAnimatableProp(key)) {
-          this.dispatchEvent(key, { value: iteration[key] });
+          if (!end) this.dispatchEvent(key, { value: iteration[key] });
           delete style[key];
         }
       }
@@ -1191,6 +1192,7 @@ export default class MultimediaObject {
 
   addAnimationProperties(propertieArray, absoluteTime) {
     const existingProp = Object.keys(this.animatedProps);
+    this.currentAnimation = this.currentAnimation || {};
     let time = absoluteTime || (this.timeline ? Number(this.timeline.secondsElapsed) : 0);
 
     time = time === 0 ? 0.00 : time;
@@ -1269,6 +1271,7 @@ export default class MultimediaObject {
   */
 
   addAnimationKeyframe(time, prop, value, easing) {
+    this.currentAnimation = this.currentAnimation || {};
     if (!this.currentAnimation[time]) {
       this.currentAnimation[time] = {};
     }
@@ -1276,7 +1279,6 @@ export default class MultimediaObject {
     if (easing) this.currentAnimation[time].easing = easing;
     this.animations[this.selectedAnimation] = this.currentAnimation;
     // console.log(time, prop, value);
-    // console.log(this.currentAnimation, this.animations);
     this.preInterpolateStep(this.timeline.fps || this.fps);
     // this.dispatchEvent('actualize-timeline-elements', {}, true);
     return this;
@@ -1396,7 +1398,6 @@ export default class MultimediaObject {
     for (const key in json) {
       if (key === 'animations' && !json.animations.default) {
         this.currentAnimation = json.animations;
-        this.animations = {};
         this.animations.default = json.animations;
       } else {
         this[key] = json[key];
