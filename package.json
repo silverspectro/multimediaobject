@@ -44,13 +44,8 @@
     "rollup-watch": "^3.2.2"
   },
   "scripts": {
-    "start": "cross-env NODE_PATH=. && rollup -c rollup.config.test.js -w",
-    "build": "cross-env NODE_ENV=production && rollup -c",
-    "build-dev": "cross-env NODE_ENV=dev && rollup -c rollup.config.test.js",
-    "build-tpl": "rollup -c -i src/javascript/main.prod.js -o public/main.prod.js",
     "test": "karma start",
     "generate-docs": "jsdoc --configure .jsdoc.json --verbose src/MultimediaObject.js",
-    "prepublish": "npm run build && npm run build-dev",
     "postinstall": "cross-env NODE_PATH=. && node ./build/postinstall.js"
   },
   "keywords": [
