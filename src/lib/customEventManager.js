@@ -1,3 +1,4 @@
+/* eslint-disable */
 const EventManager = function () {
   this.listeners = {};
 };

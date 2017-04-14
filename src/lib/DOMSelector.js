@@ -1,3 +1,4 @@
+/* eslint-disable */
 if (!Element.prototype.getElementsByClassName) {
   Element.prototype.getElementsByClassName = function (search) {
     let d = this,

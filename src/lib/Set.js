@@ -1,3 +1,4 @@
+/* eslint-disable */
 const type = (obj) => {
   const text = obj.constructor.toString();
   return text.match(/function (.*)\(/)[1];

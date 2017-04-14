@@ -1,6 +1,5 @@
-/*
-  eslint-disable no-new-func
-*/
+/* eslint-disable */
+
 
 /*
 
@@ -876,7 +875,7 @@ export default class MultimediaObject {
             };
             this.animatedProps[prop].steps[second].initIteration = lastStepProp ? Math.floor(lastStepProp * fps) : 0;
             this.animatedProps[prop].steps[second].totalStepIteration = Math.floor(second * fps - this.animatedProps[prop].steps[second].initIteration);
-            this.animatedProps[prop].steps[second].easing = this.currentAnimation[second].easing;
+            this.animatedProps[prop].steps[second].easing = this.currentAnimation[second].easing || 'linearEase';
             this.animatedProps[prop].steps[second].currentIteration = 0;
           } else if (!/\d/g.test(this.currentAnimation[second][prop])) {
             this.animatedProps[prop].steps[second].startValue = lastStep ? lastStep.endValue : (this._style[prop] ? this._style[prop] : 'auto');
@@ -885,7 +884,7 @@ export default class MultimediaObject {
             this.animatedProps[prop].steps[second].changeInValue = this.animatedProps[prop].steps[second].endValue;
             this.animatedProps[prop].steps[second].initIteration = lastStepProp ? Math.floor(lastStepProp * fps) : 0;
             this.animatedProps[prop].steps[second].totalStepIteration = Math.floor(second * fps) - this.animatedProps[prop].steps[second].initIteration;
-            this.animatedProps[prop].steps[second].easing = this.currentAnimation[second].easing;
+            this.animatedProps[prop].steps[second].easing = this.currentAnimation[second].easing || 'linearEase';
             this.animatedProps[prop].steps[second].currentIteration = 0;
           } else {
             this.animatedProps[prop].steps[second].startValue = parseFloat(lastStep ? lastStep.endValue : (this._style[prop] ? (parseFloat(this._style[prop])) : 0));
@@ -894,7 +893,7 @@ export default class MultimediaObject {
             this.animatedProps[prop].steps[second].changeInValue = parseFloat(this.animatedProps[prop].steps[second].endValue - this.animatedProps[prop].steps[second].startValue);
             this.animatedProps[prop].steps[second].initIteration = lastStepProp ? Math.floor(lastStepProp * fps) : 0;
             this.animatedProps[prop].steps[second].totalStepIteration = Math.floor(second * fps) - this.animatedProps[prop].steps[second].initIteration;
-            this.animatedProps[prop].steps[second].easing = this.currentAnimation[second].easing;
+            this.animatedProps[prop].steps[second].easing = this.currentAnimation[second].easing || 'linearEase';
             this.animatedProps[prop].steps[second].currentIteration = 0;
           }
           // console.log(this.currentAnimation[second][prop],this.animatedProps[prop].steps[second].endValue);
@@ -909,47 +908,47 @@ export default class MultimediaObject {
     for (const prop in this.animatedProps) {
       if (!isAnimatedEvent(prop)) {
         for (let iteration = 0; iteration <= totalAnimationIteration; iteration++) {
-          let propNumericSteps = Object.keys(this.animatedProps[prop].steps),
-            iterationSeconds = (iteration / totalAnimationIteration) * totalAnimationTime,
-            secondsElapsed = isFinite(iterationSeconds) ? Number(iterationSeconds).toFixed(2) : 0,
-            stepSecond = utils.closestSuperior(secondsElapsed, propNumericSteps);
+          const propNumericSteps = Object.keys(this.animatedProps[prop].steps);
+          const iterationSeconds = (iteration / totalAnimationIteration) * totalAnimationTime;
+          const secondsElapsed = isFinite(iterationSeconds) ? Number(iterationSeconds).toFixed(2) : 0;
+          const stepSecond = utils.closestSuperior(secondsElapsed, propNumericSteps);
 
           if (!this.computedAnimations[iteration]) {
             this.computedAnimations[iteration] = {};
           }
           if (/color/ig.test(prop)) {
-            let easing = this.animatedProps[prop].steps[stepSecond].easing || 'linearEase',
-              actualIteration = this.animatedProps[prop].steps[stepSecond].currentIteration,
-              startValue = this.animatedProps[prop].steps[stepSecond].startValue,
-              endValue = this.animatedProps[prop].steps[stepSecond].endValue,
-              changeInValue = this.animatedProps[prop].steps[stepSecond].changeInValue,
-              totalIterationValue = this.animatedProps[prop].steps[stepSecond].totalStepIteration,
-              r = actualIteration < totalIterationValue ? parseInt(Easings[easing](actualIteration, startValue.r, changeInValue.r, totalIterationValue)) : endValue.r,
-              g = actualIteration < totalIterationValue ? parseInt(Easings[easing](actualIteration, startValue.g, changeInValue.g, totalIterationValue)) : endValue.g,
-              b = actualIteration < totalIterationValue ? parseInt(Easings[easing](actualIteration, startValue.b, changeInValue.b, totalIterationValue)) : endValue.b,
-              a = actualIteration < totalIterationValue ? Number(Easings[easing](actualIteration, startValue.a, changeInValue.a, totalIterationValue).toFixed(2)) : endValue.a;
+            const easing = this.animatedProps[prop].steps[stepSecond] ? this.animatedProps[prop].steps[stepSecond].easing : 'linearEase';
+            const actualIteration = this.animatedProps[prop].steps[stepSecond].currentIteration;
+            const startValue = this.animatedProps[prop].steps[stepSecond].startValue;
+            const endValue = this.animatedProps[prop].steps[stepSecond].endValue;
+            const changeInValue = this.animatedProps[prop].steps[stepSecond].changeInValue;
+            const totalIterationValue = this.animatedProps[prop].steps[stepSecond].totalStepIteration;
+            const r = actualIteration < totalIterationValue ? parseInt(Easings[easing](actualIteration, startValue.r, changeInValue.r, totalIterationValue)) : endValue.r;
+            const g = actualIteration < totalIterationValue ? parseInt(Easings[easing](actualIteration, startValue.g, changeInValue.g, totalIterationValue)) : endValue.g;
+            const b = actualIteration < totalIterationValue ? parseInt(Easings[easing](actualIteration, startValue.b, changeInValue.b, totalIterationValue)) : endValue.b;
+            const a = actualIteration < totalIterationValue ? Number(Easings[easing](actualIteration, startValue.a, changeInValue.a, totalIterationValue).toFixed(2)) : endValue.a;
 
             this.computedAnimations[iteration][prop] = `rgba(${r},${g},${b},${a})`;
             // console.log(this.computedAnimations[iteration][prop]);
           } else if (!/\d/g.test(this.animatedProps[prop].steps[stepSecond].startValue)) {
-            let easing = this.animatedProps[prop].steps[stepSecond].easing || 'linearEase',
-              actualIteration = this.animatedProps[prop].steps[stepSecond].currentIteration,
-              startValue = this.animatedProps[prop].steps[stepSecond].startValue,
-              endValue = this.animatedProps[prop].steps[stepSecond].endValue,
-              changeInValue = this.animatedProps[prop].steps[stepSecond].changeInValue,
-              totalIterationValue = this.animatedProps[prop].steps[stepSecond].totalStepIteration,
-              value = actualIteration < totalIterationValue - 1 ? startValue : endValue;
+            const easing = this.animatedProps[prop].steps[stepSecond] ? this.animatedProps[prop].steps[stepSecond].easing : 'linearEase';
+            const actualIteration = this.animatedProps[prop].steps[stepSecond].currentIteration;
+            const startValue = this.animatedProps[prop].steps[stepSecond].startValue;
+            const endValue = this.animatedProps[prop].steps[stepSecond].endValue;
+            const changeInValue = this.animatedProps[prop].steps[stepSecond].changeInValue;
+            const totalIterationValue = this.animatedProps[prop].steps[stepSecond].totalStepIteration;
+            const value = actualIteration < totalIterationValue - 1 ? startValue : endValue;
                 // console.log(prop,this.animatedProps[prop].steps[stepSecond].initIteration,iteration,actualIteration,totalIterationValue,totalAnimationIteration);
 
             this.computedAnimations[iteration][prop] = value + this.animatedProps[prop].steps[stepSecond].unit;
           } else {
-            let easing = this.animatedProps[prop].steps[stepSecond].easing || 'linearEase',
-              actualIteration = this.animatedProps[prop].steps[stepSecond].currentIteration,
-              startValue = this.animatedProps[prop].steps[stepSecond].startValue,
-              endValue = this.animatedProps[prop].steps[stepSecond].endValue,
-              changeInValue = this.animatedProps[prop].steps[stepSecond].changeInValue,
-              totalIterationValue = this.animatedProps[prop].steps[stepSecond].totalStepIteration,
-              value = actualIteration < totalIterationValue - 1 ? Easings[easing](actualIteration, startValue, changeInValue, totalIterationValue) : endValue;
+            const easing = this.animatedProps[prop].steps[stepSecond].easing || 'linearEase';
+            const actualIteration = this.animatedProps[prop].steps[stepSecond].currentIteration;
+            const startValue = this.animatedProps[prop].steps[stepSecond].startValue;
+            const endValue = this.animatedProps[prop].steps[stepSecond].endValue;
+            const changeInValue = this.animatedProps[prop].steps[stepSecond].changeInValue;
+            const totalIterationValue = this.animatedProps[prop].steps[stepSecond].totalStepIteration;
+            const value = actualIteration < totalIterationValue - 1 ? Easings[easing](actualIteration, startValue, changeInValue, totalIterationValue) : endValue;
                 // console.log(prop,this.animatedProps[prop].steps[stepSecond].initIteration,iteration,actualIteration,totalIterationValue,totalAnimationIteration);
 
             this.computedAnimations[iteration][prop] = value + this.animatedProps[prop].steps[stepSecond].unit;
@@ -1177,11 +1176,7 @@ export default class MultimediaObject {
 
     this.applyStyle(this._style);
     this.stopAnimation();
-    this.preInterpolateStep(this.timeline ? this.timeline.fps : this.fps);
-    if (this.timeline) {
-      this.timeline.computeSteps();
-      this.timeline.stop();
-    }
+    this.preInterpolateStep(this.fps);
   }
 
   /**
@@ -1190,15 +1185,15 @@ export default class MultimediaObject {
   * @param {number} absoluteTime - the time key in which to add the propertie
   */
 
-  addAnimationProperties(propertieArray, absoluteTime) {
+  addAnimationProperties(propertieArray, propValue, absoluteTime) {
     const existingProp = Object.keys(this.animatedProps);
     this.currentAnimation = this.currentAnimation || {};
-    let time = absoluteTime || (this.timeline ? Number(this.timeline.secondsElapsed) : 0);
+    let time = absoluteTime;
 
     time = time === 0 ? 0.00 : time;
     propertieArray.forEach((refProp) => {
       const prop = refProp.key || refProp;
-      const value = refProp.value || this._style[prop] || 0;
+      const value = propValue || refProp.value || this._style[prop] || 0;
 
       if (existingProp.indexOf(prop) === -1) {
         if (!this.currentAnimation[time]) {
@@ -1208,10 +1203,7 @@ export default class MultimediaObject {
       }
     });
     this.animations[this.selectedAnimation] = this.currentAnimation;
-    this.preInterpolateStep(this.timeline ? this.timeline.fps : this.fps);
-    // if (this.timeline) {
-    //   this.timeline.computeSteps();
-    // }
+    this.preInterpolateStep(this.fps);
     return this;
   }
 
@@ -1231,7 +1223,7 @@ export default class MultimediaObject {
       }
     });
     this.animations[this.selectedAnimation] = this.currentAnimation;
-    this.preInterpolateStep(this.timeline.fps || this.fps);
+    this.preInterpolateStep(this.fps);
     // this.dispatchEvent('actualize-timeline-elements', {}, true);
     return this;
   }
@@ -1253,12 +1245,11 @@ export default class MultimediaObject {
         delete this.currentAnimation[time];
       }
       this.animations[this.selectedAnimation] = this.currentAnimation;
-      this.preInterpolateStep(this.timeline.fps || this.fps);
+      this.preInterpolateStep(this.fps);
       // this.dispatchEvent('actualize-timeline-elements', {}, true);
     } else {
       console.log(`animation at ${time} don't exist`);
     }
-
     return this;
   }
 
@@ -1278,9 +1269,8 @@ export default class MultimediaObject {
     this.currentAnimation[time][prop] = value;
     if (easing) this.currentAnimation[time].easing = easing;
     this.animations[this.selectedAnimation] = this.currentAnimation;
-    // console.log(time, prop, value);
-    this.preInterpolateStep(this.timeline.fps || this.fps);
-    // this.dispatchEvent('actualize-timeline-elements', {}, true);
+
+    this.preInterpolateStep(this.fps);
     return this;
   }
 

@@ -1,3 +1,4 @@
+/* eslint-disable */
 /*!
   * $script.js JS loader & dependency manager
   * https://github.com/ded/script.js

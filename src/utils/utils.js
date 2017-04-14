@@ -1,3 +1,4 @@
+/* eslint-disable */
 import Set from '../lib/Set';
 import staticData from '../config/data.static';
 
