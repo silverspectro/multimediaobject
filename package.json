@@ -1,6 +1,6 @@
 {
   "name": "multimediaobject",
-  "version": "1.0.5",
+  "version": "1.0.8",
   "description": "Multimediaobject library",
   "main": "src/MultimediaObject.js",
   "dependencies": {
@@ -50,9 +50,7 @@
     "build-tpl": "rollup -c -i src/javascript/main.prod.js -o public/main.prod.js",
     "test": "karma start",
     "pretest" : "npm run build && npm run build-dev",
-    "generate-docs": "jsdoc --configure .jsdoc.json --verbose src/MultimediaObject.js",
-    "preinstall": "npm install --ignore-scripts",
-    "postinstall": "cross-env NODE_PATH=. && node ./build/postinstall.js"
+    "generate-docs": "jsdoc --configure .jsdoc.json --verbose src/MultimediaObject.js"
   },
   "keywords": [
     "MultimediaObject",
