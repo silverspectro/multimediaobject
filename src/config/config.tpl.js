@@ -1,6 +1,6 @@
 export default {
-  namespace: 'test',
-  container: 'scene',
+  namespace: '{{ namespace }}',
+  container: '{{ scene }}',
   defaultAttributes: {
     video: {
       src: '',
