@@ -1,6 +1,3 @@
-/* eslint-disable */
-
-
 /*
 
 Copyright 2016 Ciro André DE CARO
@@ -1179,6 +1176,13 @@ export default class MultimediaObject {
     this.preInterpolateStep(this.fps);
   }
 
+  cleanCurrentAnimation() {
+    Object.keys(this.currentAnimation).forEach(time => {
+      if (Object.keys(this.currentAnimation[time]).length === 1) delete this.currentAnimation[time];
+    });
+    this.animations[this.selectedAnimation] = this.currentAnimation;
+  }
+
   /**
   * Add a animation propertie
   * @param {array} propertieArray - the propertie array propertie = { key, value }
@@ -1186,6 +1190,7 @@ export default class MultimediaObject {
   */
 
   addAnimationProperties(propertieArray, propValue, absoluteTime) {
+    this.cleanCurrentAnimation();
     const existingProp = Object.keys(this.animatedProps);
     this.currentAnimation = this.currentAnimation || {};
     let time = absoluteTime;
@@ -1222,7 +1227,7 @@ export default class MultimediaObject {
         }
       }
     });
-    this.animations[this.selectedAnimation] = this.currentAnimation;
+    this.cleanCurrentAnimation();
     this.preInterpolateStep(this.fps);
     // this.dispatchEvent('actualize-timeline-elements', {}, true);
     return this;
@@ -1241,10 +1246,7 @@ export default class MultimediaObject {
       } else {
         delete this.currentAnimation[time];
       }
-      if (Object.keys(this.currentAnimation[time]).length === 1) {
-        delete this.currentAnimation[time];
-      }
-      this.animations[this.selectedAnimation] = this.currentAnimation;
+      this.cleanCurrentAnimation();
       this.preInterpolateStep(this.fps);
       // this.dispatchEvent('actualize-timeline-elements', {}, true);
     } else {
@@ -1268,8 +1270,7 @@ export default class MultimediaObject {
     }
     this.currentAnimation[time][prop] = value;
     if (easing) this.currentAnimation[time].easing = easing;
-    this.animations[this.selectedAnimation] = this.currentAnimation;
-
+    this.cleanCurrentAnimation();
     this.preInterpolateStep(this.fps);
     return this;
   }
