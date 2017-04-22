@@ -134,7 +134,7 @@ export default class MultimediaObject {
           this.appendElementTo();
         }
       }
-      if (this.data.autostart) {
+      if (this.data.autostart && !(this.DOMParent instanceof MultimediaObject)) {
         this.startAnimation();
       } else {
         this.addListener('startAfterPreload', () => this.startAnimation(), true);
@@ -991,6 +991,10 @@ export default class MultimediaObject {
       this.currentIteration = currentIteration;
       this.applyIteration();
     }
+    console.log(this.childs);
+    this.childs.forEach((child) => {
+      child.interpolateStep(currentIteration, seconds, fps);
+    });
     if (animationsLength > currentIteration) {
       this.animated = true;
       this.currentIteration = currentIteration;
@@ -1042,6 +1046,7 @@ export default class MultimediaObject {
   */
 
   startAnimation() {
+    this.counter = 0;
     this.runAnimation();
   }
 
@@ -1062,12 +1067,12 @@ export default class MultimediaObject {
 
   runAnimation(time) {
     this.rafID = window.requestAnimationFrame(time => this.runAnimation(time));
-    if (Object.keys(this.currentAnimation).length > 0) {
+    if (Object.keys(this.currentAnimation).length > 0 || this.totalTime > 0 && this.childs.length > 0) {
       this.now = performance.now() || Date.now();
       this.delta = this.now - this.then;
       if (!this.animationStarted) {
         this.animationStarted = true;
-        this.totalTime = Number(this.getSortedSteps()[this.getSortedSteps().length - 1]);
+        this.totalTime = this.totalTime !== 0 ? this.totalTime : Number(this.getSortedSteps()[this.getSortedSteps().length - 1]);
         this.totalIteration = this.totalTime * this.fps;
       } else if (this.delta > this.interval) {
         this.then = this.now - (this.delta % this.interval);
@@ -1177,7 +1182,7 @@ export default class MultimediaObject {
   }
 
   cleanCurrentAnimation() {
-    Object.keys(this.currentAnimation).forEach(time => {
+    Object.keys(this.currentAnimation).forEach((time) => {
       if (Object.keys(this.currentAnimation[time]).length === 1) delete this.currentAnimation[time];
     });
     this.animations[this.selectedAnimation] = this.currentAnimation;
@@ -1320,7 +1325,7 @@ export default class MultimediaObject {
 
     for (const p in this) {
       if (typeof this[p] !== 'undefined' && this[p] !== null) {
-        if (typeof this[p] !== 'function' && !this[p].element && !this[p].children && !this[p].elements && !/exportedFunctions|exportedEvents|childs|interval|then|now|delta|animated|animationStarted|currentIteration|computedAnimations|totalTime|secondsElapsed|rafID|numericSteps|counter|totalIteration|animationStarted|direction|coords|bounds|geo|infowindow|map|marker|shop/.test(p)) {
+        if (typeof this[p] !== 'function' && !this[p].element && !this[p].children && !this[p].elements && !/exportedFunctions|exportedEvents|childs|interval|then|now|delta|animated|animationStarted|currentIteration|computedAnimations|secondsElapsed|rafID|numericSteps|counter|totalIteration|animationStarted|direction|coords|bounds|geo|infowindow|map|marker|shop/.test(p)) {
           ob[p] = this[p];
         }
       }
@@ -1351,6 +1356,7 @@ export default class MultimediaObject {
     ob.globalStyle = this.globalStyle;
     ob.data = this.data || {};
     ob.currentAnimation = this.currentAnimation;
+    ob.animations = this.animations;
     ob.load = true;
     ob.type = this.type;
     ob.data.absoluteAssetURL = this.data.absoluteAssetURL || './';
