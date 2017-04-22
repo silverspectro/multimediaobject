@@ -991,7 +991,6 @@ export default class MultimediaObject {
       this.currentIteration = currentIteration;
       this.applyIteration();
     }
-    console.log(this.childs);
     this.childs.forEach((child) => {
       child.interpolateStep(currentIteration, seconds, fps);
     });
@@ -1101,11 +1100,15 @@ export default class MultimediaObject {
           if (this.repeat > 0 && this.repeatCounter < this.repeat) {
             this.counter = 0;
             this.repeatCounter++;
+          } else {
+            this.stopAnimation();
           }
         } else if (this.counter == 1 && this.reverse) {
           if (this.repeat > 0 && this.repeatCounter < this.repeat) {
             this.counter = 0;
             this.repeatCounter++;
+          } else {
+            this.stopAnimation();
           }
         }
         // console.log(this.secondsElapsed);
