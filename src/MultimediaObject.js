@@ -493,10 +493,10 @@ export default class MultimediaObject {
         this.element.addEventListener('mouseup', this.evtEnd, false);
       }
     };
-    if(!window.MultimediaObjectEditor) {
-      for (const evt in events) {
-        this.events[evt] = events[evt];
-        this._events[evt] = this.transformEvent(events[evt]);
+    for (const evt in events) {
+      this.events[evt] = events[evt];
+      this._events[evt] = this.transformEvent(events[evt]);
+      if(!window.MultimediaObjectEditor) {
         if (evt === 'swipe') {
           applySwipeEvent(evt);
         } else if (utils.checkEvent(evt)) {
