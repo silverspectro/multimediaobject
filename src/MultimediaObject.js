@@ -1374,18 +1374,20 @@ export default class MultimediaObject {
   */
 
   setAbsoluteAssetURL(json) {
-    if (window[conf.namespace] && json && json.data) {
-      if (typeof window[conf.namespace].absoluteAssetURL !== 'undefined' && window[conf.namespace].absoluteAssetURL !== 'undefined' && window[conf.namespace].absoluteAssetURL !== '') {
-        this.data.absoluteAssetURL = window[conf.namespace].absoluteAssetURL;
-      } else if (typeof json.data.absoluteAssetURL !== 'undefined' && json.data.absoluteAssetURL !== '' && json.data.absoluteAssetURL !== './') {
-        window[conf.namespace].absoluteAssetURL = json.data.absoluteAssetURL;
+    if(!this.template) {
+      if (window[conf.namespace] && json && json.data) {
+        if (typeof window[conf.namespace].absoluteAssetURL !== 'undefined' && window[conf.namespace].absoluteAssetURL !== 'undefined' && window[conf.namespace].absoluteAssetURL !== '') {
+          this.data.absoluteAssetURL = window[conf.namespace].absoluteAssetURL;
+        } else if (typeof json.data.absoluteAssetURL !== 'undefined' && json.data.absoluteAssetURL !== '' && json.data.absoluteAssetURL !== './') {
+          window[conf.namespace].absoluteAssetURL = json.data.absoluteAssetURL;
+        } else {
+          this.data.absoluteAssetURL = './';
+        }
+      } else if (json) {
+        this.data.absoluteAssetURL = json.data && typeof json.data.absoluteAssetURL !== 'undefined' && json.data.absoluteAssetURL !== '' ? json.data.absoluteAssetURL : './';
       } else {
         this.data.absoluteAssetURL = './';
       }
-    } else if (json) {
-      this.data.absoluteAssetURL = json.data && typeof json.data.absoluteAssetURL !== 'undefined' && json.data.absoluteAssetURL !== '' ? json.data.absoluteAssetURL : './';
-    } else {
-      this.data.absoluteAssetURL = './';
     }
   }
 
