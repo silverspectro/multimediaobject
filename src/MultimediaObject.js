@@ -575,6 +575,7 @@ export default class MultimediaObject {
 
   removeFunction(functionName) {
     if (this.functions[functionName]) {
+      delete this[functionName];
       delete this.functions[functionName];
     } else {
       console.log('Function does not exist');
