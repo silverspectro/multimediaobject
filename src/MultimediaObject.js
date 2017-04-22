@@ -493,15 +493,17 @@ export default class MultimediaObject {
         this.element.addEventListener('mouseup', this.evtEnd, false);
       }
     };
-    for (const evt in events) {
-      this.events[evt] = events[evt];
-      this._events[evt] = this.transformEvent(events[evt]);
-      if (evt === 'swipe') {
-        applySwipeEvent(evt);
-      } else if (utils.checkEvent(evt)) {
-        this.element.addEventListener(evt, this._events[evt]);
-      } else {
-        this.addListener(evt, this.events[evt]);
+    if(!window.MultimediaObjectEditor) {
+      for (const evt in events) {
+        this.events[evt] = events[evt];
+        this._events[evt] = this.transformEvent(events[evt]);
+        if (evt === 'swipe') {
+          applySwipeEvent(evt);
+        } else if (utils.checkEvent(evt)) {
+          this.element.addEventListener(evt, this._events[evt]);
+        } else {
+          this.addListener(evt, this.events[evt]);
+        }
       }
     }
     return this;
