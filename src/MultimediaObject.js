@@ -327,7 +327,9 @@ export default class MultimediaObject {
       zU: this._style.translateZ ? utils.getUnitFromString(this._style.translateZ) : 'px',
     };
     const rot = {
-      value: this._style.rotate ? utils.getNumFromString(this._style.rotate) : 0,
+      x: this._style.rotateX ? utils.getNumFromString(this._style.rotateX) : 0,
+      y: this._style.rotateY ? utils.getNumFromString(this._style.rotateY) : 0,
+      z: this._style.rotateZ ? (utils.getNumFromString(this._style.rotateZ) || utils.getNumFromString(this._style.rotate)) : 0,
       u: 'deg',
     };
     const ske = {
@@ -354,9 +356,17 @@ export default class MultimediaObject {
           trans.z = utils.getNumFromString(a);
           trans.zU = utils.getUnitFromString(a);
         }
-        if (a.indexOf('rotate') >= 0) {
-          rot.value = utils.getNumFromString(a);
+
+        if (a.indexOf('rotateX') >= 0 || a.indexOf('rotate-x') >= 0) {
+          rot.x = utils.getNumFromString(a);
+        } else if (a.indexOf('rotateY') >= 0 || a.indexOf('rotate-y') >= 0) {
+          rot.y = utils.getNumFromString(a);
+        } else if (a.indexOf('rotateZ') >= 0 || a.indexOf('rotate-z') >= 0) {
+          rot.z = utils.getNumFromString(a);
+        } else if (a.indexOf('rotate') >= 0) {
+          rot.z = utils.getNumFromString(a);
         }
+
         if (a.indexOf('scaleX') >= 0 || a.indexOf('scale-x') >= 0) {
           sca.x = utils.getNumFromString(a);
         } else if (a.indexOf('scaleY') >= 0 || a.indexOf('scale-y') >= 0) {
@@ -370,7 +380,7 @@ export default class MultimediaObject {
       });
       // console.log(z);
       z[0] = `translate3d(${trans.x}${trans.xU},${trans.y}${trans.yU},${trans.z}${trans.zU})`;
-      z[1] = `rotate(${rot.value}${rot.u})`;
+      z[1] = `rotateX(${rot.x}${rot.u}) rotateY(${rot.y}${rot.u}) rotateZ(${rot.z}${rot.u})`;
       z[2] = `skew(${ske.x}${ske.u},${ske.y}${ske.u})`;
       z[3] = `scale(${sca.x},${sca.y})`;
       // console.log(z);
