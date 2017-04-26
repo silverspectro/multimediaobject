@@ -506,7 +506,7 @@ export default class MultimediaObject {
     for (const evt in events) {
       this.events[evt] = events[evt];
       this._events[evt] = this.transformEvent(events[evt]);
-      if(!window.MultimediaObjectEditor) {
+      if (!window.MultimediaObjectEditor) {
         if (evt === 'swipe') {
           applySwipeEvent(evt);
         } else if (utils.checkEvent(evt)) {
@@ -514,7 +514,7 @@ export default class MultimediaObject {
         } else {
           this.addListener(evt, this.events[evt]);
         }
-      }
+      } else if (!utils.checkEvent(evt)) this.addListener(evt, this.events[evt]);
     }
     return this;
   }
@@ -913,7 +913,7 @@ export default class MultimediaObject {
 
     // console.log(this.animatedProps);
 
-    this.computedAnimations = !this.computedAnimations || [];
+    this.computedAnimations = [];
 
     for (const prop in this.animatedProps) {
       if (!isAnimatedEvent(prop)) {
@@ -922,6 +922,7 @@ export default class MultimediaObject {
           const iterationSeconds = (iteration / totalAnimationIteration) * totalAnimationTime;
           const secondsElapsed = isFinite(iterationSeconds) ? Number(iterationSeconds).toFixed(2) : 0;
           const stepSecond = utils.closestSuperior(secondsElapsed, propNumericSteps);
+          // console.log(stepSecond, secondsElapsed, propNumericSteps);
 
           if (!this.computedAnimations[iteration]) {
             this.computedAnimations[iteration] = {};
@@ -959,7 +960,7 @@ export default class MultimediaObject {
             const changeInValue = this.animatedProps[prop].steps[stepSecond].changeInValue;
             const totalIterationValue = this.animatedProps[prop].steps[stepSecond].totalStepIteration;
             const value = actualIteration < totalIterationValue - 1 ? Easings[easing](actualIteration, startValue, changeInValue, totalIterationValue) : endValue;
-                // console.log(prop,this.animatedProps[prop].steps[stepSecond].initIteration,iteration,actualIteration,totalIterationValue,totalAnimationIteration);
+            // console.log(prop,actualIteration, totalIterationValue, value, endValue, stepSecond);
 
             this.computedAnimations[iteration][prop] = value + this.animatedProps[prop].steps[stepSecond].unit;
           }
@@ -978,8 +979,6 @@ export default class MultimediaObject {
         }
       }
     }
-
-    // console.log(this.animatedProps, this.computedAnimations);
     return this;
   }
 
@@ -1387,7 +1386,7 @@ export default class MultimediaObject {
   */
 
   setAbsoluteAssetURL(json) {
-    if(!this.template) {
+    if (!this.template) {
       if (window[conf.namespace] && json && json.data) {
         if (typeof window[conf.namespace].absoluteAssetURL !== 'undefined' && window[conf.namespace].absoluteAssetURL !== 'undefined' && window[conf.namespace].absoluteAssetURL !== '') {
           this.data.absoluteAssetURL = window[conf.namespace].absoluteAssetURL;
