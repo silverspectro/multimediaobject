@@ -136,7 +136,7 @@ export default class MultimediaObject {
       }
       if (this.data.autostart && !(this.DOMParent instanceof MultimediaObject)) {
         this.startAnimation();
-      } else {
+      } else if(this.data.autostart) {
         this.addListener('startAfterPreload', () => this.startAnimation(), true);
       }
     }
