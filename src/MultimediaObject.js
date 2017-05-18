@@ -1400,6 +1400,8 @@ export default class MultimediaObject {
       } else {
         this.data.absoluteAssetURL = './';
       }
+    } else if (!window.MultimediaObjectEditor && typeof window[conf.namespace].absoluteAssetURL !== 'undefined' && window[conf.namespace].absoluteAssetURL !== 'undefined' && window[conf.namespace].absoluteAssetURL !== '') {
+      this.data.absoluteAssetURL = window[conf.namespace].absoluteAssetURL;
     }
   }
 
