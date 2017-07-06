@@ -134,7 +134,7 @@ export default class MultimediaObject {
           this.appendElementTo();
         }
       }
-      if (utils.parseBoolean(this.data.autostart) && !(this.DOMParent instanceof MultimediaObject)) {
+      if (utils.parseBoolean(this.data.autostart) && !(this.DOMParent instanceof MultimediaObject) && utils.parseBoolean(this.data.forceStart)) {
         this.startAnimation();
       } else if(utils.parseBoolean(this.data.autostart)) {
         this.addListener('startAfterPreload', () => this.startAnimation(), true);
@@ -159,6 +159,7 @@ export default class MultimediaObject {
       }
     }
     this.data.autostart = typeof this.data.autostart === 'undefined' ? true : utils.parseBoolean(this.data.autostart);
+    this.data.forceStart = false;
     if (this.element) {
       this.applyAttributes();
     }
