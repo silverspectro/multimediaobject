@@ -1,6 +1,7 @@
 var MultimediaObject = (function () {
 'use strict';
 
+/* eslint-disable */
 // http://paulirish.com/2011/requestanimationframe-for-smart-animating/
 // http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
 
@@ -75,6 +76,7 @@ var createClass = function () {
   };
 }();
 
+/* eslint-disable */
 var type = function type(obj) {
   var text = obj.constructor.toString();
   return text.match(/function (.*)\(/)[1];
@@ -161,16 +163,17 @@ var staticData = {
   },
   regex: {
     DOMEvent: new RegExp('^(click|mousedown|mouseup|mousemove|change|touchstart|touchmove|touchend|input|focus|dlclick|mouseenter|mouseleave|mouseover|mouseout|blur|search|submit|play|pause|canplay|progress)$'),
-    animatableProps: new RegExp('background-position-|background-size|background-color|translate|scale|rotate|skew|margin-|padding-|top|left|right|bottom|color|font-size|width|height|opacity|width|height', 'g')
+    animatableProps: new RegExp('background-position-|background-size|background-color|translate|scale|rotate|skew|margin-|padding-|top|left|right|bottom|color|font-size|width|height|opacity|width|height', 'gi')
   },
   sets: {
     pxProperties: pxPropertiesArray,
     degProperties: ['rotate', 'rotate-x', 'rotate-y', 'rotate-z', 'rotate-x', 'rotate-y', 'rotate-z', 'skew', 'skewX', 'skewY', 'skewZ', 'skew-x', 'skew-y', 'skew-z'],
-    transformProperties: ['translate', 'translateX', 'translateY', 'translateZ', 'translateX', 'translate-x', 'translateY', 'translate-y', 'translate-z', 'scale', 'scaleX', 'scaleY', 'scaleZ', 'scale-x', 'scale-y', 'scale-z', 'rotate', 'rotateX', 'rotateY', 'rotateZ', 'rotate-x', 'rotate-y', 'rotate-z', 'skew', 'skewX', 'skewY', 'skewZ', 'skew-x', 'skew-y', 'skew-z', 'perspective', 'perspectiveX', 'perspectiveY', 'perspectiveZ', 'perspective-x', 'perspective-y', 'perspective-z'],
+    transformProperties: ['translate', 'translateX', 'translateY', 'translateZ', 'translateX', 'translate-x', 'translateY', 'translate-y', 'translate-z', 'scale', 'scaleX', 'scaleY', 'scaleZ', 'scale-x', 'scale-y', 'scale-z', 'rotate', 'rotateX', 'rotateY', 'rotateZ', 'rotate-x', 'rotate-y', 'rotate-z', 'skew', 'skewX', 'skewY', 'skewZ', 'skew-x', 'skew-y', 'skew-z'],
     styleProperties: stylePropertiesArray
   }
 };
 
+/* eslint-disable */
 var Atoms = function Atoms() {
   var type = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'block';
 
@@ -214,7 +217,7 @@ var closestSuperior = function closestSuperior(num, arr) {
     return a - b;
   });
   for (var i = 0; i < sortedArr.length; i++) {
-    if (num < sortedArr[i]) {
+    if (parseFloat(num) < parseFloat(sortedArr[i])) {
       return sortedArr[i];
     }
   }
@@ -398,6 +401,7 @@ var transformToColor = function transformToColor(propertie) {
   return colorObj;
 };
 
+/* eslint-disable */
 var linearEase = function linearEase(currentIteration, startValue, changeInValue, totalIterations) {
   return changeInValue * currentIteration / totalIterations + startValue;
 };
@@ -562,6 +566,7 @@ var Easings = Object.freeze({
 	easeInOutBounce: easeInOutBounce
 });
 
+/* eslint-disable */
 var EventManager = function EventManager() {
   this.listeners = {};
 };
@@ -599,9 +604,11 @@ EventManager.prototype = {
     return this;
   },
   removeListener: function removeListener(event, fn) {
-    var fnIndex = this.listeners[event].indexOf(fn);
-    if (fnIndex > 0) {
-      this.listeners[event].splice(fnIndex, 1);
+    if (this.listeners[event]) {
+      var fnIndex = this.listeners[event].indexOf(fn);
+      if (fnIndex > 0) {
+        this.listeners[event].splice(fnIndex, 1);
+      }
     }
     return this;
   }
@@ -609,6 +616,7 @@ EventManager.prototype = {
 
 var eventManager = new EventManager();
 
+/* eslint-disable */
 /*!
   * $script.js JS loader & dependency manager
   * https://github.com/ded/script.js
@@ -739,7 +747,7 @@ var conf = {
       type: 'video/mp4',
       controls: 'true',
       muted: 'true',
-      loop: 'true',
+      loop: 'false',
       preload: 'true',
       playsinline: 'true'
     },
@@ -762,10 +770,6 @@ var conf = {
 };
 
 /*
-  eslint-disable no-new-func
-*/
-
-/*
 
 Copyright 2016 Ciro André DE CARO
 
@@ -782,8 +786,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 */
-
-var viperhtml = require('viperhtml');
 
 raf();
 /**
@@ -903,16 +905,16 @@ var MultimediaObject = function () {
             this.appendElementTo();
           }
         }
-        if (this.data.autostart) {
+        if (parseBoolean(this.data.autostart) && !(this.DOMParent instanceof MultimediaObject) && parseBoolean(this.data.forceStart)) {
           this.startAnimation();
-        } else {
+        } else if (parseBoolean(this.data.autostart)) {
           this.addListener('startAfterPreload', function () {
             return _this.startAnimation();
           }, true);
         }
       }
       this.applyAttributes({
-        id: /multimediaObject\d+/.test(this.name) ? this.uuid : this.name
+        id: /multimediaObject(\d+)?/.test(this.name) ? this.uuid : this.name
       });
       this.addGlobalStyle();
     }
@@ -932,6 +934,7 @@ var MultimediaObject = function () {
         }
       }
       this.data.autostart = typeof this.data.autostart === 'undefined' ? true : parseBoolean(this.data.autostart);
+      this.data.forceStart = false;
       if (this.element) {
         this.applyAttributes();
       }
@@ -1130,7 +1133,9 @@ var MultimediaObject = function () {
         zU: this._style.translateZ ? getUnitFromString(this._style.translateZ) : 'px'
       };
       var rot = {
-        value: this._style.rotate ? getNumFromString(this._style.rotate) : 0,
+        x: this._style.rotateX ? getNumFromString(this._style.rotateX) : 0,
+        y: this._style.rotateY ? getNumFromString(this._style.rotateY) : 0,
+        z: this._style.rotateZ ? getNumFromString(this._style.rotateZ) || getNumFromString(this._style.rotate) : 0,
         u: 'deg'
       };
       var ske = {
@@ -1159,9 +1164,17 @@ var MultimediaObject = function () {
             trans.z = getNumFromString(a);
             trans.zU = getUnitFromString(a);
           }
-          if (a.indexOf('rotate') >= 0) {
-            rot.value = getNumFromString(a);
+
+          if (a.indexOf('rotateX') >= 0 || a.indexOf('rotate-x') >= 0) {
+            rot.x = getNumFromString(a);
+          } else if (a.indexOf('rotateY') >= 0 || a.indexOf('rotate-y') >= 0) {
+            rot.y = getNumFromString(a);
+          } else if (a.indexOf('rotateZ') >= 0 || a.indexOf('rotate-z') >= 0) {
+            rot.z = getNumFromString(a);
+          } else if (a.indexOf('rotate') >= 0) {
+            rot.z = getNumFromString(a);
           }
+
           if (a.indexOf('scaleX') >= 0 || a.indexOf('scale-x') >= 0) {
             sca.x = getNumFromString(a);
           } else if (a.indexOf('scaleY') >= 0 || a.indexOf('scale-y') >= 0) {
@@ -1175,7 +1188,7 @@ var MultimediaObject = function () {
         });
         // console.log(z);
         z[0] = 'translate3d(' + trans.x + trans.xU + ',' + trans.y + trans.yU + ',' + trans.z + trans.zU + ')';
-        z[1] = 'rotate(' + rot.value + rot.u + ')';
+        z[1] = 'rotateX(' + rot.x + rot.u + ') rotateY(' + rot.y + rot.u + ') rotateZ(' + rot.z + rot.u + ')';
         z[2] = 'skew(' + ske.x + ske.u + ',' + ske.y + ske.u + ')';
         z[3] = 'scale(' + sca.x + ',' + sca.y + ')';
         // console.log(z);
@@ -1327,13 +1340,15 @@ var MultimediaObject = function () {
       for (var evt in events) {
         this.events[evt] = events[evt];
         this._events[evt] = this.transformEvent(events[evt]);
-        if (evt === 'swipe') {
-          applySwipeEvent(evt);
-        } else if (checkEvent(evt)) {
-          this.element.addEventListener(evt, this._events[evt]);
-        } else {
-          this.addListener(evt, this.events[evt]);
-        }
+        if (!window.MultimediaObjectEditor) {
+          if (evt === 'swipe') {
+            applySwipeEvent(evt);
+          } else if (checkEvent(evt)) {
+            this.element.addEventListener(evt, this._events[evt]);
+          } else {
+            this.addListener(evt, this.events[evt]);
+          }
+        } else if (!checkEvent(evt)) this.addListener(evt, this.events[evt]);
       }
       return this;
     }
@@ -1410,6 +1425,7 @@ var MultimediaObject = function () {
     key: 'removeFunction',
     value: function removeFunction(functionName) {
       if (this.functions[functionName]) {
+        delete this[functionName];
         delete this.functions[functionName];
       } else {
         console.log('Function does not exist');
@@ -1746,7 +1762,7 @@ var MultimediaObject = function () {
               };
               this.animatedProps[prop].steps[second].initIteration = lastStepProp ? Math.floor(lastStepProp * fps) : 0;
               this.animatedProps[prop].steps[second].totalStepIteration = Math.floor(second * fps - this.animatedProps[prop].steps[second].initIteration);
-              this.animatedProps[prop].steps[second].easing = this.currentAnimation[second].easing;
+              this.animatedProps[prop].steps[second].easing = this.currentAnimation[second].easing || 'linearEase';
               this.animatedProps[prop].steps[second].currentIteration = 0;
             } else if (!/\d/g.test(this.currentAnimation[second][prop])) {
               this.animatedProps[prop].steps[second].startValue = lastStep ? lastStep.endValue : this._style[prop] ? this._style[prop] : 'auto';
@@ -1755,7 +1771,7 @@ var MultimediaObject = function () {
               this.animatedProps[prop].steps[second].changeInValue = this.animatedProps[prop].steps[second].endValue;
               this.animatedProps[prop].steps[second].initIteration = lastStepProp ? Math.floor(lastStepProp * fps) : 0;
               this.animatedProps[prop].steps[second].totalStepIteration = Math.floor(second * fps) - this.animatedProps[prop].steps[second].initIteration;
-              this.animatedProps[prop].steps[second].easing = this.currentAnimation[second].easing;
+              this.animatedProps[prop].steps[second].easing = this.currentAnimation[second].easing || 'linearEase';
               this.animatedProps[prop].steps[second].currentIteration = 0;
             } else {
               this.animatedProps[prop].steps[second].startValue = parseFloat(lastStep ? lastStep.endValue : this._style[prop] ? parseFloat(this._style[prop]) : 0);
@@ -1764,7 +1780,7 @@ var MultimediaObject = function () {
               this.animatedProps[prop].steps[second].changeInValue = parseFloat(this.animatedProps[prop].steps[second].endValue - this.animatedProps[prop].steps[second].startValue);
               this.animatedProps[prop].steps[second].initIteration = lastStepProp ? Math.floor(lastStepProp * fps) : 0;
               this.animatedProps[prop].steps[second].totalStepIteration = Math.floor(second * fps) - this.animatedProps[prop].steps[second].initIteration;
-              this.animatedProps[prop].steps[second].easing = this.currentAnimation[second].easing;
+              this.animatedProps[prop].steps[second].easing = this.currentAnimation[second].easing || 'linearEase';
               this.animatedProps[prop].steps[second].currentIteration = 0;
             }
             // console.log(this.currentAnimation[second][prop],this.animatedProps[prop].steps[second].endValue);
@@ -1774,53 +1790,54 @@ var MultimediaObject = function () {
 
       // console.log(this.animatedProps);
 
-      this.computedAnimations = !this.computedAnimations || [];
+      this.computedAnimations = [];
 
       for (var _prop in this.animatedProps) {
         if (!isAnimatedEvent(_prop)) {
           for (var iteration = 0; iteration <= totalAnimationIteration; iteration++) {
-            var propNumericSteps = Object.keys(this.animatedProps[_prop].steps),
-                iterationSeconds = iteration / totalAnimationIteration * totalAnimationTime,
-                secondsElapsed = isFinite(iterationSeconds) ? Number(iterationSeconds).toFixed(2) : 0,
-                stepSecond = closestSuperior(secondsElapsed, propNumericSteps);
+            var propNumericSteps = Object.keys(this.animatedProps[_prop].steps);
+            var iterationSeconds = iteration / totalAnimationIteration * totalAnimationTime;
+            var secondsElapsed = isFinite(iterationSeconds) ? Number(iterationSeconds).toFixed(2) : 0;
+            var stepSecond = closestSuperior(secondsElapsed, propNumericSteps);
+            // console.log(stepSecond, secondsElapsed, propNumericSteps);
 
             if (!this.computedAnimations[iteration]) {
               this.computedAnimations[iteration] = {};
             }
             if (/color/ig.test(_prop)) {
-              var _easing = this.animatedProps[_prop].steps[stepSecond].easing || 'linearEase',
-                  actualIteration = this.animatedProps[_prop].steps[stepSecond].currentIteration,
-                  startValue = this.animatedProps[_prop].steps[stepSecond].startValue,
-                  endValue = this.animatedProps[_prop].steps[stepSecond].endValue,
-                  changeInValue = this.animatedProps[_prop].steps[stepSecond].changeInValue,
-                  totalIterationValue = this.animatedProps[_prop].steps[stepSecond].totalStepIteration,
-                  r = actualIteration < totalIterationValue ? parseInt(Easings[_easing](actualIteration, startValue.r, changeInValue.r, totalIterationValue)) : endValue.r,
-                  g = actualIteration < totalIterationValue ? parseInt(Easings[_easing](actualIteration, startValue.g, changeInValue.g, totalIterationValue)) : endValue.g,
-                  b = actualIteration < totalIterationValue ? parseInt(Easings[_easing](actualIteration, startValue.b, changeInValue.b, totalIterationValue)) : endValue.b,
-                  a = actualIteration < totalIterationValue ? Number(Easings[_easing](actualIteration, startValue.a, changeInValue.a, totalIterationValue).toFixed(2)) : endValue.a;
+              var _easing = this.animatedProps[_prop].steps[stepSecond] ? this.animatedProps[_prop].steps[stepSecond].easing : 'linearEase';
+              var actualIteration = this.animatedProps[_prop].steps[stepSecond].currentIteration;
+              var startValue = this.animatedProps[_prop].steps[stepSecond].startValue;
+              var endValue = this.animatedProps[_prop].steps[stepSecond].endValue;
+              var changeInValue = this.animatedProps[_prop].steps[stepSecond].changeInValue;
+              var totalIterationValue = this.animatedProps[_prop].steps[stepSecond].totalStepIteration;
+              var r = actualIteration < totalIterationValue ? parseInt(Easings[_easing](actualIteration, startValue.r, changeInValue.r, totalIterationValue)) : endValue.r;
+              var g = actualIteration < totalIterationValue ? parseInt(Easings[_easing](actualIteration, startValue.g, changeInValue.g, totalIterationValue)) : endValue.g;
+              var b = actualIteration < totalIterationValue ? parseInt(Easings[_easing](actualIteration, startValue.b, changeInValue.b, totalIterationValue)) : endValue.b;
+              var a = actualIteration < totalIterationValue ? Number(Easings[_easing](actualIteration, startValue.a, changeInValue.a, totalIterationValue).toFixed(2)) : endValue.a;
 
               this.computedAnimations[iteration][_prop] = 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')';
               // console.log(this.computedAnimations[iteration][prop]);
             } else if (!/\d/g.test(this.animatedProps[_prop].steps[stepSecond].startValue)) {
-              var _easing2 = this.animatedProps[_prop].steps[stepSecond].easing || 'linearEase',
-                  _actualIteration = this.animatedProps[_prop].steps[stepSecond].currentIteration,
-                  _startValue = this.animatedProps[_prop].steps[stepSecond].startValue,
-                  _endValue = this.animatedProps[_prop].steps[stepSecond].endValue,
-                  _changeInValue = this.animatedProps[_prop].steps[stepSecond].changeInValue,
-                  _totalIterationValue = this.animatedProps[_prop].steps[stepSecond].totalStepIteration,
-                  value = _actualIteration < _totalIterationValue - 1 ? _startValue : _endValue;
+              var _easing2 = this.animatedProps[_prop].steps[stepSecond] ? this.animatedProps[_prop].steps[stepSecond].easing : 'linearEase';
+              var _actualIteration = this.animatedProps[_prop].steps[stepSecond].currentIteration;
+              var _startValue = this.animatedProps[_prop].steps[stepSecond].startValue;
+              var _endValue = this.animatedProps[_prop].steps[stepSecond].endValue;
+              var _changeInValue = this.animatedProps[_prop].steps[stepSecond].changeInValue;
+              var _totalIterationValue = this.animatedProps[_prop].steps[stepSecond].totalStepIteration;
+              var value = _actualIteration < _totalIterationValue - 1 ? _startValue : _endValue;
               // console.log(prop,this.animatedProps[prop].steps[stepSecond].initIteration,iteration,actualIteration,totalIterationValue,totalAnimationIteration);
 
               this.computedAnimations[iteration][_prop] = value + this.animatedProps[_prop].steps[stepSecond].unit;
             } else {
-              var _easing3 = this.animatedProps[_prop].steps[stepSecond].easing || 'linearEase',
-                  _actualIteration2 = this.animatedProps[_prop].steps[stepSecond].currentIteration,
-                  _startValue2 = this.animatedProps[_prop].steps[stepSecond].startValue,
-                  _endValue2 = this.animatedProps[_prop].steps[stepSecond].endValue,
-                  _changeInValue2 = this.animatedProps[_prop].steps[stepSecond].changeInValue,
-                  _totalIterationValue2 = this.animatedProps[_prop].steps[stepSecond].totalStepIteration,
-                  _value = _actualIteration2 < _totalIterationValue2 - 1 ? Easings[_easing3](_actualIteration2, _startValue2, _changeInValue2, _totalIterationValue2) : _endValue2;
-              // console.log(prop,this.animatedProps[prop].steps[stepSecond].initIteration,iteration,actualIteration,totalIterationValue,totalAnimationIteration);
+              var _easing3 = this.animatedProps[_prop].steps[stepSecond].easing || 'linearEase';
+              var _actualIteration2 = this.animatedProps[_prop].steps[stepSecond].currentIteration;
+              var _startValue2 = this.animatedProps[_prop].steps[stepSecond].startValue;
+              var _endValue2 = this.animatedProps[_prop].steps[stepSecond].endValue;
+              var _changeInValue2 = this.animatedProps[_prop].steps[stepSecond].changeInValue;
+              var _totalIterationValue2 = this.animatedProps[_prop].steps[stepSecond].totalStepIteration;
+              var _value = _actualIteration2 < _totalIterationValue2 - 1 ? Easings[_easing3](_actualIteration2, _startValue2, _changeInValue2, _totalIterationValue2) : _endValue2;
+              // console.log(prop,actualIteration, totalIterationValue, value, endValue, stepSecond);
 
               this.computedAnimations[iteration][_prop] = _value + this.animatedProps[_prop].steps[stepSecond].unit;
             }
@@ -1839,8 +1856,6 @@ var MultimediaObject = function () {
           }
         }
       }
-
-      // console.log(this.animatedProps, this.computedAnimations);
       return this;
     }
 
@@ -1867,6 +1882,9 @@ var MultimediaObject = function () {
         this.currentIteration = currentIteration;
         this.applyIteration();
       }
+      this.childs.forEach(function (child) {
+        child.interpolateStep(currentIteration, seconds, fps);
+      });
       if (animationsLength > currentIteration) {
         this.animated = true;
         this.currentIteration = currentIteration;
@@ -1927,6 +1945,7 @@ var MultimediaObject = function () {
   }, {
     key: 'startAnimation',
     value: function startAnimation() {
+      this.counter = 0;
       this.runAnimation();
     }
 
@@ -1955,12 +1974,12 @@ var MultimediaObject = function () {
       this.rafID = window.requestAnimationFrame(function (time) {
         return _this10.runAnimation(time);
       });
-      if (Object.keys(this.currentAnimation).length > 0) {
+      if (Object.keys(this.currentAnimation).length > 0 || this.totalTime > 0 && this.childs.length > 0) {
         this.now = performance.now() || Date.now();
         this.delta = this.now - this.then;
         if (!this.animationStarted) {
           this.animationStarted = true;
-          this.totalTime = Number(this.getSortedSteps()[this.getSortedSteps().length - 1]);
+          this.totalTime = this.totalTime !== 0 ? this.totalTime : Number(this.getSortedSteps()[this.getSortedSteps().length - 1]);
           this.totalIteration = this.totalTime * this.fps;
         } else if (this.delta > this.interval) {
           this.then = this.now - this.delta % this.interval;
@@ -1989,11 +2008,15 @@ var MultimediaObject = function () {
             if (this.repeat > 0 && this.repeatCounter < this.repeat) {
               this.counter = 0;
               this.repeatCounter++;
+            } else {
+              this.stopAnimation();
             }
           } else if (this.counter == 1 && this.reverse) {
             if (this.repeat > 0 && this.repeatCounter < this.repeat) {
               this.counter = 0;
               this.repeatCounter++;
+            } else {
+              this.stopAnimation();
             }
           }
           // console.log(this.secondsElapsed);
@@ -2076,11 +2099,17 @@ var MultimediaObject = function () {
 
       this.applyStyle(this._style);
       this.stopAnimation();
-      this.preInterpolateStep(this.timeline ? this.timeline.fps : this.fps);
-      if (this.timeline) {
-        this.timeline.computeSteps();
-        this.timeline.stop();
-      }
+      this.preInterpolateStep(this.fps);
+    }
+  }, {
+    key: 'cleanCurrentAnimation',
+    value: function cleanCurrentAnimation() {
+      var _this11 = this;
+
+      Object.keys(this.currentAnimation).forEach(function (time) {
+        if (Object.keys(_this11.currentAnimation[time]).length === 1) delete _this11.currentAnimation[time];
+      });
+      this.animations[this.selectedAnimation] = this.currentAnimation;
     }
 
     /**
@@ -2091,30 +2120,28 @@ var MultimediaObject = function () {
 
   }, {
     key: 'addAnimationProperties',
-    value: function addAnimationProperties(propertieArray, absoluteTime) {
-      var _this11 = this;
+    value: function addAnimationProperties(propertieArray, propValue, absoluteTime) {
+      var _this12 = this;
 
+      this.cleanCurrentAnimation();
       var existingProp = Object.keys(this.animatedProps);
       this.currentAnimation = this.currentAnimation || {};
-      var time = absoluteTime || (this.timeline ? Number(this.timeline.secondsElapsed) : 0);
+      var time = absoluteTime;
 
       time = time === 0 ? 0.00 : time;
       propertieArray.forEach(function (refProp) {
         var prop = refProp.key || refProp;
-        var value = refProp.value || _this11._style[prop] || 0;
+        var value = propValue || refProp.value || _this12._style[prop] || 0;
 
         if (existingProp.indexOf(prop) === -1) {
-          if (!_this11.currentAnimation[time]) {
-            _this11.currentAnimation[time] = {};
+          if (!_this12.currentAnimation[time]) {
+            _this12.currentAnimation[time] = {};
           }
-          _this11.currentAnimation[time][prop] = value;
+          _this12.currentAnimation[time][prop] = value;
         }
       });
       this.animations[this.selectedAnimation] = this.currentAnimation;
-      this.preInterpolateStep(this.timeline ? this.timeline.fps : this.fps);
-      // if (this.timeline) {
-      //   this.timeline.computeSteps();
-      // }
+      this.preInterpolateStep(this.fps);
       return this;
     }
 
@@ -2126,19 +2153,19 @@ var MultimediaObject = function () {
   }, {
     key: 'deleteAnimationProperties',
     value: function deleteAnimationProperties(propertieArray) {
-      var _this12 = this;
+      var _this13 = this;
 
       propertieArray.forEach(function (refProp, index) {
-        for (var step in _this12.currentAnimation) {
-          for (var prop in _this12.currentAnimation[step]) {
+        for (var step in _this13.currentAnimation) {
+          for (var prop in _this13.currentAnimation[step]) {
             if (prop === refProp) {
-              delete _this12.currentAnimation[step][prop];
+              delete _this13.currentAnimation[step][prop];
             }
           }
         }
       });
-      this.animations[this.selectedAnimation] = this.currentAnimation;
-      this.preInterpolateStep(this.timeline.fps || this.fps);
+      this.cleanCurrentAnimation();
+      this.preInterpolateStep(this.fps);
       // this.dispatchEvent('actualize-timeline-elements', {}, true);
       return this;
     }
@@ -2158,16 +2185,12 @@ var MultimediaObject = function () {
         } else {
           delete this.currentAnimation[time];
         }
-        if (Object.keys(this.currentAnimation[time]).length === 1) {
-          delete this.currentAnimation[time];
-        }
-        this.animations[this.selectedAnimation] = this.currentAnimation;
-        this.preInterpolateStep(this.timeline.fps || this.fps);
+        this.cleanCurrentAnimation();
+        this.preInterpolateStep(this.fps);
         // this.dispatchEvent('actualize-timeline-elements', {}, true);
       } else {
         console.log('animation at ' + time + ' don\'t exist');
       }
-
       return this;
     }
 
@@ -2188,10 +2211,8 @@ var MultimediaObject = function () {
       }
       this.currentAnimation[time][prop] = value;
       if (easing) this.currentAnimation[time].easing = easing;
-      this.animations[this.selectedAnimation] = this.currentAnimation;
-      // console.log(time, prop, value);
-      this.preInterpolateStep(this.timeline.fps || this.fps);
-      // this.dispatchEvent('actualize-timeline-elements', {}, true);
+      this.cleanCurrentAnimation();
+      this.preInterpolateStep(this.fps);
       return this;
     }
 
@@ -2250,7 +2271,7 @@ var MultimediaObject = function () {
 
       for (var p in this) {
         if (typeof this[p] !== 'undefined' && this[p] !== null) {
-          if (typeof this[p] !== 'function' && !this[p].element && !this[p].children && !this[p].elements && !/exportedFunctions|exportedEvents|childs|interval|then|now|delta|animated|animationStarted|currentIteration|computedAnimations|totalTime|secondsElapsed|rafID|numericSteps|counter|totalIteration|animationStarted|direction|coords|bounds|geo|infowindow|map|marker|shop/.test(p)) {
+          if (typeof this[p] !== 'function' && !this[p].element && !this[p].children && !this[p].elements && !/exportedFunctions|exportedEvents|childs|interval|then|now|delta|animated|animationStarted|currentIteration|computedAnimations|secondsElapsed|rafID|numericSteps|counter|totalIteration|animationStarted|direction|coords|bounds|geo|infowindow|map|marker|shop/.test(p)) {
             ob[p] = this[p];
           }
         }
@@ -2285,6 +2306,7 @@ var MultimediaObject = function () {
       ob.globalStyle = this.globalStyle;
       ob.data = this.data || {};
       ob.currentAnimation = this.currentAnimation;
+      ob.animations = this.animations;
       ob.load = true;
       ob.type = this.type;
       ob.data.absoluteAssetURL = this.data.absoluteAssetURL || './';
@@ -2300,19 +2322,21 @@ var MultimediaObject = function () {
 
   }, {
     key: 'setAbsoluteAssetURL',
-    value: function setAbsoluteAssetURL(json) {
-      if (window[conf.namespace] && json && json.data) {
+    value: function setAbsoluteAssetURL() {
+      if (window.MultimediaObjectEditor) {
+        if (!this.data.template && window[conf.namespace]) {
+          if (typeof window[conf.namespace].absoluteAssetURL !== 'undefined' && window[conf.namespace].absoluteAssetURL !== 'undefined' && window[conf.namespace].absoluteAssetURL !== '') {
+            this.data.absoluteAssetURL = window[conf.namespace].absoluteAssetURL;
+          }
+        } else {
+          this.data.absoluteAssetURL = this.data.templateURL;
+        }
+      } else if (!window.MultimediaObjectEditor && window[conf.namespace]) {
         if (typeof window[conf.namespace].absoluteAssetURL !== 'undefined' && window[conf.namespace].absoluteAssetURL !== 'undefined' && window[conf.namespace].absoluteAssetURL !== '') {
           this.data.absoluteAssetURL = window[conf.namespace].absoluteAssetURL;
-        } else if (typeof json.data.absoluteAssetURL !== 'undefined' && json.data.absoluteAssetURL !== '' && json.data.absoluteAssetURL !== './') {
-          window[conf.namespace].absoluteAssetURL = json.data.absoluteAssetURL;
         } else {
-          this.data.absoluteAssetURL = './';
+          this.data.absoluteAssetURL = this.data.absoluteAssetURL || './';
         }
-      } else if (json) {
-        this.data.absoluteAssetURL = json.data && typeof json.data.absoluteAssetURL !== 'undefined' && json.data.absoluteAssetURL !== '' ? json.data.absoluteAssetURL : './';
-      } else {
-        this.data.absoluteAssetURL = './';
       }
     }
 
@@ -2324,7 +2348,7 @@ var MultimediaObject = function () {
   }, {
     key: 'loadFromJSON',
     value: function loadFromJSON(json) {
-      var _this13 = this;
+      var _this14 = this;
 
       for (var key in json) {
         if (key === 'animations' && !json.animations.default) {
@@ -2353,23 +2377,19 @@ var MultimediaObject = function () {
       if (json.childs) {
         json.childs.forEach(function (child, index) {
           child.load = true;
-          if (json.data) {
-            child.data = child.data || {};
-            // child.data.absoluteAssetURL = json.data.absoluteAssetURL || "";
-            child.data.autostart = parseBoolean(child.data.autostart);
-            child.data.absoluteAssetURL = child.data.absoluteAssetURL || '';
-          }
-          child.DOMParent = _this13;
-          _this13.childs[index] = new MultimediaObject(child);
+          child.data = child.data || {};
+          // child.data.absoluteAssetURL = json.data.absoluteAssetURL || "";
+          child.data.autostart = parseBoolean(child.data.autostart);
+          child.DOMParent = _this14;
+          _this14.childs[index] = new MultimediaObject(child);
         });
       }
 
       this.uuid = generateUUID();
       this.data = json.data || {};
       this.type = json.type;
-      this.data.absoluteAssetURL = json.data && json.data.absoluteAssetURL ? json.data.absoluteAssetURL : '';
       this.data.autostart = json.data ? parseBoolean(json.data.autostart) : true;
-      this.setAbsoluteAssetURL(json);
+      this.setAbsoluteAssetURL();
     }
   }]);
   return MultimediaObject;

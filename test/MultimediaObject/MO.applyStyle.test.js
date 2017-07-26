@@ -45,7 +45,7 @@ describe('MultimediaObject applyStyle', () => {
     scaleX: '1.2',
     scaleY: '1',
     rotate: '45deg',
-    transform: 'translate3d(10%, 5em, 15px) rotate(45deg) skew(0deg, 0deg) scale(1.2, 1)',
+    transform: 'translate3d(10%, 5em, 15px) rotateX(0deg) rotateY(0deg) rotateZ(45deg) skew(0deg, 0deg) scale(1.2, 1)',
   };
 
   ob2.applyStyle(style2, true);

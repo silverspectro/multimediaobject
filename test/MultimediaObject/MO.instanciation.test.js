@@ -90,7 +90,7 @@ describe('new Multimediaobject()', () => {
 
     it('functions should have the correct context and arguments', () => {
       ob2.logMessage('Hello');
-      expect(ob2.logMessage.calls.all()).toEqual([{ object: ob2, args: ['Hello'], returnValue: undefined }]);
+      expect(ob2.logMessage.calls.all()).toEqual([{ object: ob2, invocationOrder: 46, args: ['Hello'], returnValue: undefined }]);
     });
 
     it(`should have a style corresponding to ${JSON.stringify(testConf.style)}`, () => {

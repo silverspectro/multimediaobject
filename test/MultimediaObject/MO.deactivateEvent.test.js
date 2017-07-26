@@ -52,7 +52,7 @@ describe('MO.deactivateEvent', () => {
       for (const event in normalEvents) {
         expect(ob.events[event]).toBeDefined();
         expect(ob._events[event]).toBeDefined();
-        expect(ob.element.removeEventListener.calls.all()[ind]).toEqual({ object: ob.element, args: [event, oldFunc[ind]], returnValue: undefined });
+        expect(ob.element.removeEventListener.calls.all()[ind]).toEqual({ object: ob.element, invocationOrder: 24 + ind, args: [event, oldFunc[ind]], returnValue: undefined });
         ind++;
       }
     });
