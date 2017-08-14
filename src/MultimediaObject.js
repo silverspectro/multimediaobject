@@ -93,6 +93,7 @@ export default class MultimediaObject {
     this.animationStarted = false;
 
     if (typeof type === 'object') {
+      this.uuid = type.uuid || this.uuid;
       this.name = name || type.name;
       this.type = type.type || 'block';
 
@@ -1441,7 +1442,7 @@ export default class MultimediaObject {
       });
     }
 
-    this.uuid = utils.generateUUID();
+    this.uuid = json.uuid || utils.generateUUID();
     this.data = json.data || {};
     this.type = json.type;
     this.data.autostart = json.data ? utils.parseBoolean(json.data.autostart) : true;
