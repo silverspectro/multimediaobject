@@ -57,6 +57,12 @@ raf();
 * });
 */
 
+const unserializeFunction = (serialized) => {
+  let args = serialized.args.map(el => el.replace(/\n+|(\/\*\*\/\n)+/g, '').replace(/^(\n+|\t+|\t\n+)(?!\w)$/gm, '').replace(/`/gm, '')),
+  body = serialized.body;
+  return new Function(args, body);
+}
+
 
 export default class MultimediaObject {
   constructor(type = 'block', name = 'multimediaObject', fps = 60) {
@@ -744,6 +750,18 @@ export default class MultimediaObject {
   }
 
   /**
+  * remove MultimediaObject.element from container parameter
+  */
+
+  removeElement() {
+    if (this.DOMParent instanceof MultimediaObject) {
+      this.DOMParent.element.removeChild(this.element);
+    } else {
+      this.DOMParent.removeChild(this.element);
+    }
+  }
+
+  /**
   * append MultimediaObject.element to container parameter
   * @param {DOMElement | MultimediaObject} container - the container to append to
   * @return {object} MultimediaObject
@@ -1379,7 +1397,7 @@ export default class MultimediaObject {
     ob.data.absoluteAssetURL = this.data.absoluteAssetURL || './';
 
     // console.log(ob);
-    return ob;
+    return JSON.stringify(ob);
   }
 
   /**
@@ -1415,21 +1433,17 @@ export default class MultimediaObject {
       if (key === 'animations' && !json.animations.default) {
         this.currentAnimation = json.animations;
         this.animations.default = json.animations;
-      } else {
+      } else if (key !== 'childs') {
         this[key] = json[key];
       }
     }
 
     for (const evt in json.exportedEvents) {
-      let args = json.exportedEvents[evt].args.map(el => el.replace(/\n+|(\/\*\*\/\n)+/g, '').replace(/^(\n+|\t+|\t\n+)(?!\w)$/gm, '').replace(/`/gm, '')),
-        body = json.exportedEvents[evt].body;
-      this.events[evt] = new Function(args, body);
+      this.events[evt] = unserializeFunction(json.exportedEvents[evt]);
     }
 
     for (const func in json.exportedFunctions) {
-      let args = json.exportedFunctions[func].args.map(el => el.replace(/\n+|(\/\*\*\/\n)+/g, '').replace(/^(\n+|\t+|\t\n+)(?!\w)$/gm, '').replace(/`/gm, '')),
-        body = json.exportedFunctions[func].body;
-      this.functions[func] = new Function(args, body);
+      this.functions[func] = unserializeFunction(json.exportedFunctions[func]);
     }
     if (json.childs) {
       json.childs.forEach((child, index) => {
@@ -1438,7 +1452,7 @@ export default class MultimediaObject {
         // child.data.absoluteAssetURL = json.data.absoluteAssetURL || "";
         child.data.autostart = utils.parseBoolean(child.data.autostart);
         child.DOMParent = this;
-        this.childs[index] = new MultimediaObject(child);
+        this.childs.push(new MultimediaObject(child));
       });
     }
 
