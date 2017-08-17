@@ -1407,8 +1407,6 @@ export default class MultimediaObject {
     ob.name = this.name;
     ob.DOMParentUUID = this.DOMParentUUID;
     ob.data.absoluteAssetURL = this.data.absoluteAssetURL || './';
-
-    // console.log(ob);
     return ob;
   }
 
