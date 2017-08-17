@@ -16,7 +16,7 @@ limitations under the License.
 
 */
 
-
+import { findIndex } from 'lodash/array';
 import raf from './lib/raf';
 import * as utils from './utils/utils';
 import * as Easings from './utils/easings';
@@ -87,6 +87,7 @@ export default class MultimediaObject {
     this.innerHTML = '';
 
     this.DOMParent = null;
+    this.DOMParentUUID = null;
 
     this.fps = fps;
     this.then = performance.now() || Date.now();
@@ -767,17 +768,19 @@ export default class MultimediaObject {
   * @return {object} MultimediaObject
   */
 
-  appendElementTo(container) {
+  appendElementTo(container, appendChild = true) {
     if (container) {
       if (container instanceof MultimediaObject) {
         container.element.appendChild(this.element);
+        this.DOMParentUUID = container.uuid;
       } else {
         container.appendChild(this.element);
+        this.DOMParentUUID = null;
       }
       this.DOMParent = container;
       const childsLength = this.childs.length;
 
-      if (childsLength > 0) {
+      if (childsLength > 0 && appendChild) {
         this.childs.forEach((child, index) => {
           child.DOMParent = this;
           child.appendElementTo(this);
@@ -786,11 +789,13 @@ export default class MultimediaObject {
     } else {
       document.body.appendChild(this.element);
       this.DOMParent = document.body;
+      this.DOMParentUUID = null;
       const childsLength = this.childs.length;
 
       if (childsLength > 0) {
         this.childs.forEach((child, index) => {
           child.DOMParent = this;
+          child.DOMParentUUID = this.uuid;
           child.appendElementTo(this);
         });
       }
@@ -807,15 +812,15 @@ export default class MultimediaObject {
   * @return {object} MultimediaObject
   */
 
-  add(child) {
+  add(child, appendChild = true) {
     this.childs.push(child);
     if (child instanceof MultimediaObject) {
-      this.element.appendChild(child.element);
+      if (appendChild) this.element.appendChild(child.element);
     } else {
-      this.element.appendChild(child);
+      if (appendChild) this.element.appendChild(child);
     }
     child.DOMParent = this;
-    eventManager.dispatchEvent('actualize-DOM-elements');
+    child.DOMParentUUID = this.uuid;
     return this;
   }
 
@@ -826,17 +831,21 @@ export default class MultimediaObject {
   */
 
   remove(child) {
-    const elementIndex = this.childs.indexOf(child);
+    const elementIndex = findIndex(this.childs, { uuid: child.uuid });
     if (elementIndex >= 0) {
       this.childs.splice(elementIndex, 1);
-      if (child instanceof MultimediaObject) {
-        this.element.removeChild(child.element);
-      } else {
-        this.element.removeChild(child);
+      try {
+        if (child instanceof MultimediaObject) {
+          this.element.removeChild(child.element);
+        } else {
+          this.element.removeChild(child);
+        }
+      } catch(e) {
+        console.log(this.name);
+        console.log(child);
+        console.error(e);
       }
-      child.DOMParent = null;
     }
-    eventManager.dispatchEvent('actualize-DOM-elements');
     return this;
   }
 
@@ -1023,9 +1032,11 @@ export default class MultimediaObject {
       this.currentIteration = currentIteration;
       this.applyIteration();
     }
-    this.childs.forEach((child) => {
-      child.interpolateStep(currentIteration, seconds, fps);
-    });
+    if (!window.MultimediaObjectEditor) {
+      this.childs.forEach((child) => {
+        child.interpolateStep(currentIteration, seconds, fps);
+      });
+    }
     if (animationsLength > currentIteration) {
       this.animated = true;
       this.currentIteration = currentIteration;
@@ -1360,7 +1371,7 @@ export default class MultimediaObject {
 
     for (const p in this) {
       if (typeof this[p] !== 'undefined' && this[p] !== null) {
-        if (typeof this[p] !== 'function' && !this[p].element && !this[p].children && !this[p].elements && !/exportedFunctions|exportedEvents|childs|interval|then|now|delta|animated|animationStarted|currentIteration|computedAnimations|secondsElapsed|rafID|numericSteps|counter|totalIteration|animationStarted|direction|coords|bounds|geo|infowindow|map|marker|shop/.test(p)) {
+        if (typeof this[p] !== 'function' && p !== 'events' && p !== 'functions' && !this[p].element && !this[p].children && !this[p].elements && !/exportedFunctions|exportedEvents|childs|interval|then|now|delta|animated|animationStarted|currentIteration|computedAnimations|secondsElapsed|rafID|numericSteps|counter|totalIteration|animationStarted|direction|coords|bounds|geo|infowindow|map|marker|shop|/.test(p)) {
           ob[p] = this[p];
         }
       }
@@ -1381,23 +1392,28 @@ export default class MultimediaObject {
     }
 
     this.childs.forEach((child) => {
-      ob.childs.push(child.exportToJSON());
+      const c = child.exportToJSON();
+      ob.childs.push(c);
     });
 
     ob.style = this._style;
     ob.attributes = this.attributes;
     delete ob.attributes.id;
     ob.breakpoints = this.breakpoints;
+    ob.dependencies = this.dependencies;
     ob.globalStyle = this.globalStyle;
     ob.data = this.data || {};
-    ob.currentAnimation = this.currentAnimation;
+    ob.selectedAnimaton = this.selectedAnimaton;
     ob.animations = this.animations;
     ob.load = true;
     ob.type = this.type;
+    ob.uuid = this.uuid;
+    ob.name = this.name;
+    ob.DOMParentUUID = this.DOMParentUUID;
     ob.data.absoluteAssetURL = this.data.absoluteAssetURL || './';
 
     // console.log(ob);
-    return JSON.stringify(ob);
+    return ob;
   }
 
   /**
@@ -1452,13 +1468,16 @@ export default class MultimediaObject {
         // child.data.absoluteAssetURL = json.data.absoluteAssetURL || "";
         child.data.autostart = utils.parseBoolean(child.data.autostart);
         child.DOMParent = this;
+        child.DOMParentUUID = this.uuid;
         this.childs.push(new MultimediaObject(child));
       });
     }
 
     this.uuid = json.uuid || utils.generateUUID();
+    this.DOMParentUUID = json.DOMParentUUID || null;
     this.data = json.data || {};
     this.type = json.type;
+    this.dependencies = json.dependencies || [];
     this.data.autostart = json.data ? utils.parseBoolean(json.data.autostart) : true;
     this.setAbsoluteAssetURL();
   }
