@@ -840,11 +840,7 @@ export default class MultimediaObject {
         } else {
           this.element.removeChild(child);
         }
-      } catch(e) {
-        console.log(this.name);
-        console.log(child);
-        console.error(e);
-      }
+      } catch(e) {}
     }
     return this;
   }
