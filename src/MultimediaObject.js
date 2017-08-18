@@ -16,7 +16,44 @@ limitations under the License.
 
 */
 
-import { findIndex } from 'lodash/array';
+const findIndex = (array, params, one) => {
+  if (!(array instanceof Array))
+    throw new Error('findBy: can find only in array');
+  const length = array.length;
+  const results = [];
+  let index = 0;
+
+  const cycleParams = (queries, element) => {
+    if (typeof queries === 'object') {
+      let found = true;
+      for (const key in queries) {
+        if (!element[key] || queries[key] !== element[key]) {
+          found = false;
+          continue;
+        }
+      }
+      if (found) {
+        results.push(index);
+      }
+    } else if (queries === element) {
+      results.push(index);
+    }
+    return results;
+  };
+
+  while (index < length) {
+    if (typeof params === typeof array[index]) {
+      cycleParams(params, array[index]);
+    }
+    if (one && results.length > 0) {
+      return results[0];
+    }
+    index += 1;
+  }
+
+  return results;
+};
+
 import raf from './lib/raf';
 import * as utils from './utils/utils';
 import * as Easings from './utils/easings';
@@ -792,7 +829,7 @@ export default class MultimediaObject {
       this.DOMParentUUID = null;
       const childsLength = this.childs.length;
 
-      if (childsLength > 0) {
+      if (childsLength > 0 && appendChild) {
         this.childs.forEach((child, index) => {
           child.DOMParent = this;
           child.DOMParentUUID = this.uuid;
@@ -801,7 +838,12 @@ export default class MultimediaObject {
       }
     }
     if (this.initializer) {
-      this.initializer();
+      try {
+        this.initializer();
+      } catch(e) {
+        console.error(`error in ${this.name} initializer`);
+        console.error(e);
+      }
     }
     return this;
   }
@@ -831,7 +873,7 @@ export default class MultimediaObject {
   */
 
   remove(child) {
-    const elementIndex = findIndex(this.childs, { uuid: child.uuid });
+    const elementIndex = findIndex(this.childs, { uuid: child.uuid }, true);
     if (elementIndex >= 0) {
       this.childs.splice(elementIndex, 1);
       try {
