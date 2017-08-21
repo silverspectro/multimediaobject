@@ -122,6 +122,7 @@ export default class MultimediaObject {
     this.dependencies = [];
     this.animatedProps = {};
     this.innerHTML = '';
+    this.repeatCounter = 0;
 
     this.DOMParent = null;
     this.DOMParentUUID = null;
@@ -153,6 +154,7 @@ export default class MultimediaObject {
       this.applyEvents();
       this.applyBreakpoints();
       this.applyDependencies();
+      this.changeAnimation(this.selectedAnimation);
     } else {
       this.name = name;
       this.type = type;
@@ -829,7 +831,7 @@ export default class MultimediaObject {
       this.DOMParentUUID = null;
       const childsLength = this.childs.length;
 
-      if (childsLength > 0 && appendChild) {
+      if (childsLength > 0) {
         this.childs.forEach((child, index) => {
           child.DOMParent = this;
           child.DOMParentUUID = this.uuid;
@@ -838,12 +840,7 @@ export default class MultimediaObject {
       }
     }
     if (this.initializer) {
-      try {
-        this.initializer();
-      } catch(e) {
-        console.error(`error in ${this.name} initializer`);
-        console.error(e);
-      }
+      this.initializer();
     }
     return this;
   }
@@ -873,7 +870,7 @@ export default class MultimediaObject {
   */
 
   remove(child) {
-    const elementIndex = findIndex(this.childs, { uuid: child.uuid }, true);
+    const elementIndex = findIndex(this.childs, { uuid: child.uuid });
     if (elementIndex >= 0) {
       this.childs.splice(elementIndex, 1);
       try {
@@ -1152,7 +1149,8 @@ export default class MultimediaObject {
       this.delta = this.now - this.then;
       if (!this.animationStarted) {
         this.animationStarted = true;
-        this.totalTime = this.totalTime !== 0 ? this.totalTime : Number(this.getSortedSteps()[this.getSortedSteps().length - 1]);
+        const sortedSteps = this.getSortedSteps();
+        this.totalTime = sortedSteps.length > 0 ? Number(sortedSteps[sortedSteps.length - 1]) : 0;
         this.totalIteration = this.totalTime * this.fps;
       } else if (this.delta > this.interval) {
         this.then = this.now - (this.delta % this.interval);
@@ -1176,18 +1174,17 @@ export default class MultimediaObject {
         // console.log(this.counter, this.totalIteration);
 
         this.interpolateStep(this.counter, this.secondsElapsed, this.fps);
-
         if (this.counter >= this.totalIteration && !this.reverse) {
           if (this.repeat > 0 && this.repeatCounter < this.repeat) {
-            this.counter = 0;
             this.repeatCounter++;
+            this.restartAnimation();
           } else {
             this.stopAnimation();
           }
         } else if (this.counter == 1 && this.reverse) {
           if (this.repeat > 0 && this.repeatCounter < this.repeat) {
-            this.counter = 0;
             this.repeatCounter++;
+            this.restartAnimation();
           } else {
             this.stopAnimation();
           }
@@ -1278,16 +1275,17 @@ export default class MultimediaObject {
   * @param {number} absoluteTime - the time key in which to add the propertie
   */
 
-  addAnimationProperties(propertieArray, propValue, absoluteTime) {
+  addAnimationProperties(propertieArray, propValue, absoluteTime = 0.00) {
     this.cleanCurrentAnimation();
     const existingProp = Object.keys(this.animatedProps);
     this.currentAnimation = this.currentAnimation || {};
     let time = absoluteTime;
 
-    time = time === 0 ? 0.00 : time;
     propertieArray.forEach((refProp) => {
       const prop = refProp.key || refProp;
       const value = propValue || refProp.value || this._style[prop] || 0;
+
+      console.log(prop, value);
 
       if (existingProp.indexOf(prop) === -1) {
         if (!this.currentAnimation[time]) {
@@ -1447,6 +1445,7 @@ export default class MultimediaObject {
     ob.type = this.type;
     ob.uuid = this.uuid;
     ob.name = this.name;
+    ob.repeat = this.repeat;
     ob.DOMParentUUID = this.DOMParentUUID;
     ob.data.absoluteAssetURL = this.data.absoluteAssetURL || './';
     return ob;
@@ -1511,8 +1510,10 @@ export default class MultimediaObject {
 
     this.uuid = json.uuid || utils.generateUUID();
     this.DOMParentUUID = json.DOMParentUUID || null;
+    this.selectedAnimation = json.selectedAnimation;
     this.data = json.data || {};
     this.type = json.type;
+    this.repeat = parseInt(json.repeat, 10);
     this.dependencies = json.dependencies || [];
     this.data.autostart = json.data ? utils.parseBoolean(json.data.autostart) : true;
     this.setAbsoluteAssetURL();
