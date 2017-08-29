@@ -155,6 +155,15 @@ export default class MultimediaObject {
       this.applyBreakpoints();
       this.applyDependencies();
       this.changeAnimation(this.selectedAnimation);
+      
+      if(!window.MultimediaObjectEditor) {
+        if (this.data.autostart && this.data.forceStart && !(this.DOMParent instanceof MultimediaObject)) {
+          this.startAnimation();
+        } else if(this.data.autostart) {
+          this.addListener('startAfterPreload', () => this.startAnimation(), true);
+        }
+      }
+
     } else {
       this.name = name;
       this.type = type;
@@ -181,11 +190,6 @@ export default class MultimediaObject {
           this.appendElementTo();
         }
       }
-      if (utils.parseBoolean(this.data.autostart) && !(this.DOMParent instanceof MultimediaObject) && utils.parseBoolean(this.data.forceStart)) {
-        this.startAnimation();
-      } else if(utils.parseBoolean(this.data.autostart)) {
-        this.addListener('startAfterPreload', () => this.startAnimation(), true);
-      }
     }
     this.applyAttributes({
       id: /multimediaObject(\d+)?/.test(this.name) ? this.uuid : this.name,
@@ -206,7 +210,7 @@ export default class MultimediaObject {
       }
     }
     this.data.autostart = typeof this.data.autostart === 'undefined' ? true : utils.parseBoolean(this.data.autostart);
-    this.data.forceStart = false;
+    this.data.forceStart = typeof this.data.forceStart === 'undefined' ? false : utils.parseBoolean(this.data.forceStart);
     if (this.element) {
       this.applyAttributes();
     }
@@ -1380,6 +1384,7 @@ export default class MultimediaObject {
         delete this.currentAnimation[t];
       }
     }
+    this.totalTime = this.numericSteps[this.numericSteps.length - 1];
     return this.numericSteps;
   }
 
@@ -1502,6 +1507,7 @@ export default class MultimediaObject {
         child.data = child.data || {};
         // child.data.absoluteAssetURL = json.data.absoluteAssetURL || "";
         child.data.autostart = utils.parseBoolean(child.data.autostart);
+        child.data.forceStart = utils.parseBoolean(child.data.forceStart);
         child.DOMParent = this;
         child.DOMParentUUID = this.uuid;
         this.childs.push(new MultimediaObject(child));
@@ -1516,6 +1522,7 @@ export default class MultimediaObject {
     this.repeat = parseInt(json.repeat, 10);
     this.dependencies = json.dependencies || [];
     this.data.autostart = json.data ? utils.parseBoolean(json.data.autostart) : true;
+    this.data.forceStart = json.data ? utils.parseBoolean(json.data.forceStart) : false;
     this.setAbsoluteAssetURL();
   }
 }
