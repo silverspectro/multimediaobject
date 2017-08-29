@@ -1444,7 +1444,7 @@ export default class MultimediaObject {
     ob.dependencies = this.dependencies;
     ob.globalStyle = this.globalStyle;
     ob.data = this.data || {};
-    ob.selectedAnimaton = this.selectedAnimaton;
+    ob.selectedAnimation = this.selectedAnimation;
     ob.animations = this.animations;
     ob.load = true;
     ob.type = this.type;
@@ -1517,6 +1517,7 @@ export default class MultimediaObject {
     this.uuid = json.uuid || utils.generateUUID();
     this.DOMParentUUID = json.DOMParentUUID || null;
     this.selectedAnimation = json.selectedAnimation;
+    console.log(json.selectedAnimation);
     this.data = json.data || {};
     this.type = json.type;
     this.repeat = parseInt(json.repeat, 10);
