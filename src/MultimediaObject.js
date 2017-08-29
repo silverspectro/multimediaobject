@@ -1517,7 +1517,6 @@ export default class MultimediaObject {
     this.uuid = json.uuid || utils.generateUUID();
     this.DOMParentUUID = json.DOMParentUUID || null;
     this.selectedAnimation = json.selectedAnimation;
-    console.log(json.selectedAnimation);
     this.data = json.data || {};
     this.type = json.type;
     this.repeat = parseInt(json.repeat, 10);
