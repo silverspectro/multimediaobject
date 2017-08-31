@@ -476,7 +476,7 @@ export default class MultimediaObject {
         replaced = attributes[attr].replace('{{absoluteAssetURL}}', window.MultimediaObjectEditor ? this.data.absoluteAssetURL : window[conf.namespace].absoluteAssetURL);
       }
       this.attributes[attr] = attributes[attr];
-      this.element.setAttribute(attr, replaced);
+      if (this.element.getAttribute(attr) !== replaced) this.element.setAttribute(attr, replaced);
     }
     return this;
   }
@@ -843,9 +843,15 @@ export default class MultimediaObject {
         });
       }
     }
-    if (this.initializer) {
-      this.initializer();
-    }
+    window.setTimeout(() => {
+      if (this.initializer) {
+        try {
+          this.initializer();
+        } catch(e) {
+          console.error(e);
+        }
+      }
+    }, 0);
     return this;
   }
 
