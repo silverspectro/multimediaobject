@@ -1295,8 +1295,6 @@ export default class MultimediaObject {
       const prop = refProp.key || refProp;
       const value = propValue || refProp.value || this._style[prop] || 0;
 
-      console.log(prop, value);
-
       if (existingProp.indexOf(prop) === -1) {
         if (!this.currentAnimation[time]) {
           this.currentAnimation[time] = {};
