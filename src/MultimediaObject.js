@@ -299,6 +299,12 @@ export default class MultimediaObject {
     if (typeof style !== 'string') {
       throw new Error('addGlobalStyle: style is not a string');
     }
+    const existingStyle = document.getElementById(`${this.uuid}-style`);
+    
+    if (existingStyle !== null) {
+      document.head.removeChild(existingStyle);
+    }
+
     const styleMarkup = document.createElement('style');
     const styleText = style;
 
@@ -705,7 +711,7 @@ export default class MultimediaObject {
           this.element.style[utils.propertyWithPrefix(propertieName)] = '';
           this.element.style[propertieName] = '';
           delete this.style[propertieName];
-        } else {
+        } else if (propertieName) {
           console.log(`${propertieName} style does not exist`);
         }
     }
