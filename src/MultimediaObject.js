@@ -160,7 +160,7 @@ export default class MultimediaObject {
         if (this.data.autostart && this.data.forceStart && !(this.DOMParent instanceof MultimediaObject)) {
           this.startAnimation();
         } else if(this.data.autostart) {
-          this.addListener('startAfterPreload', () => this.startAnimation(), true);
+          this.addListener('startAfterPreload', () => this.startAnimation());
         }
       }
 
@@ -563,16 +563,16 @@ export default class MultimediaObject {
     };
     for (const evt in events) {
       this.events[evt] = events[evt];
-      this._events[evt] = this.transformEvent(events[evt]);
+      this._events[evt] = events[evt].bind(this);
       if (!window.MultimediaObjectEditor) {
         if (evt === 'swipe') {
           applySwipeEvent(evt);
         } else if (utils.checkEvent(evt)) {
           this.element.addEventListener(evt, this._events[evt]);
         } else {
-          this.addListener(evt, this.events[evt]);
+          this.addListener(evt, this._events[evt]);
         }
-      } else if (!utils.checkEvent(evt)) this.addListener(evt, this.events[evt]);
+      } else if (!utils.checkEvent(evt)) this.addListener(evt, this._events[evt]);
     }
     return this;
   }
@@ -916,7 +916,7 @@ export default class MultimediaObject {
   * @return {object} MultimediaObject
   */
 
-  preInterpolateStep(fps) {
+  preInterpolateStep(fps = this.fps) {
     this.getSortedSteps();
     let isAnimatedEvent = (string) => {
         if (Object.keys(this._events).join().indexOf(string) >= 0) {
@@ -1059,6 +1059,7 @@ export default class MultimediaObject {
         }
       }
     }
+    // console.log(this.computedAnimations);
     return this;
   }
 
@@ -1073,7 +1074,7 @@ export default class MultimediaObject {
 
   interpolateStep(currentIteration, seconds, fps) {
     const animationsLength = this.computedAnimations.length;
-    // console.log(animationsLength,currentIteration);
+    // console.log(animationsLength);
     if (animationsLength <= 0) {
       this.preInterpolateStep(fps);
     }
@@ -1112,6 +1113,7 @@ export default class MultimediaObject {
   */
 
   applyIteration(iteration = this.computedAnimations[this.currentIteration], end = false) {
+    // console.log(iteration);
     if (iteration) {
       const style = Object.create(iteration);
       for (const key in iteration) {
@@ -1216,50 +1218,33 @@ export default class MultimediaObject {
   * Add an event listener or a custom event
   * @param {string} listener - the name of the event
   * @param {function} fn - the function to execute on event dispatch
-  * @param {boolean} glob - is the custom event global or bind to the object id
   */
 
-  addListener(listener, fn, glob) {
-    glob = glob || /global/ig.test(listener);
-    if (glob) {
-      return eventManager.addListener(listener, fn);
-    }
-    return eventManager.addListener(`${this.uuid}-${listener}`, fn);
+  addListener(listener, fn) {
+    return eventManager.addListener(`${listener}`, fn);
   }
 
   /**
   * Remove an event
   * @param {string} listener - the name of the event
   * @param {function} fn - the function to remove
-  * @param {boolean} glob - is the custom event global or bind to the object id
   */
 
-  removeListener(listener, fn, glob) {
-    glob = glob || /global/ig.test(listener);
-    if (glob) {
-      if (fn instanceof Function) {
-        return eventManager.removeListener(listener, fn);
-      }
-      return eventManager.removeListener(listener, this[fn]);
-    } else if (fn instanceof Function) {
-      return eventManager.removeListener(`${this.uuid}-${listener}`, fn);
+  removeListener(listener, fn) {
+    if (fn instanceof Function) {
+      return eventManager.removeListener(`${listener}`, fn);
     }
-    return eventManager.removeListener(`${this.uuid}-${listener}`, this[fn]);
+    return eventManager.removeListener(`${listener}`, this[fn]);
   }
 
   /**
   * Dispatch a custom event
   * @param {string} eventName - the name of the event
   * @param {object} params - the parameter to transmit
-  * @param {boolean} glob - is the custom event global or bind to the object id
   */
 
-  dispatchEvent(eventName, params, glob) {
-    glob = glob || /global/ig.test(eventName);
-    if (glob) {
-      return eventManager.dispatchEvent(eventName, params, this);
-    }
-    return eventManager.dispatchEvent(`${this.uuid}-${eventName}`, params, this);
+  dispatchEvent(eventName, params) {
+    return eventManager.dispatchEvent(eventName, params, this);
   }
 
   /**
@@ -1275,7 +1260,7 @@ export default class MultimediaObject {
 
     this.applyStyle(this._style);
     this.stopAnimation();
-    this.preInterpolateStep(this.fps);
+    this.preInterpolateStep();
   }
 
   cleanCurrentAnimation() {
@@ -1309,7 +1294,7 @@ export default class MultimediaObject {
       }
     });
     this.animations[this.selectedAnimation] = this.currentAnimation;
-    this.preInterpolateStep(this.fps);
+    this.preInterpolateStep();
     return this;
   }
 
@@ -1329,7 +1314,7 @@ export default class MultimediaObject {
       }
     });
     this.cleanCurrentAnimation();
-    this.preInterpolateStep(this.fps);
+    this.preInterpolateStep();
     // this.dispatchEvent('actualize-timeline-elements', {}, true);
     return this;
   }
@@ -1348,7 +1333,7 @@ export default class MultimediaObject {
         delete this.currentAnimation[time];
       }
       this.cleanCurrentAnimation();
-      this.preInterpolateStep(this.fps);
+      this.preInterpolateStep();
       // this.dispatchEvent('actualize-timeline-elements', {}, true);
     } else {
       console.log(`animation at ${time} don't exist`);
@@ -1372,7 +1357,8 @@ export default class MultimediaObject {
     this.currentAnimation[time][prop] = value;
     if (easing) this.currentAnimation[time].easing = easing;
     this.cleanCurrentAnimation();
-    this.preInterpolateStep(this.fps);
+    this.preInterpolateStep();
+    // console.log(time, prop, value);
     return this;
   }
 
