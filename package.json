@@ -1,6 +1,6 @@
 {
   "name": "multimediaobject",
-  "version": "1.0.36",
+  "version": "1.0.37",
   "description": "Multimediaobject library",
   "main": "src/MultimediaObject.js",
   "dependencies": {
