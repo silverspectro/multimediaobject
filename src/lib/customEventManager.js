@@ -1,3 +1,4 @@
+/* eslint-disable */
 const EventManager = function () {
   this.listeners = {};
 };
@@ -35,9 +36,11 @@ EventManager.prototype = {
     return this;
   },
   removeListener(event, fn) {
-    const fnIndex = this.listeners[event].indexOf(fn);
-    if (fnIndex > 0) {
-      this.listeners[event].splice(fnIndex, 1);
+    if(this.listeners[event]) {
+      const fnIndex = this.listeners[event].indexOf(fn);
+      if (fnIndex > 0) {
+        this.listeners[event].splice(fnIndex, 1);
+      }
     }
     return this;
   },

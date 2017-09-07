@@ -1,13 +1,12 @@
 export default {
-  namespace: 'test',
-  container: 'scene',
+  namespace: '{{ namespace }}',
+  container: '{{ scene }}',
   defaultAttributes: {
     video: {
       src: '',
       type: 'video/mp4',
       controls: 'true',
       muted: 'true',
-      loop: 'false',
       preload: 'true',
       playsinline: 'true',
     },

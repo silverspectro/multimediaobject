@@ -117,6 +117,14 @@ describe('MO.applyBreakpoints', () => {
   });
 
   describe('check if animation', () => {
+    let originalTimeout;
+    beforeEach(() => {
+      originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
+      jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
+    });
+    afterEach(function() {
+      jasmine.DEFAULT_TIMEOUT_INTERVAL = originalTimeout;
+    });
     const queries = [
       {
         querie: {
@@ -154,19 +162,22 @@ describe('MO.applyBreakpoints', () => {
           translateX: '-100%',
         },
       },
+      breakpoints: queries,
     });
     ob.appendElementTo(container);
 
-    it('should apply the breakpoints', () => {
-      window.MultimediaObjectEditor = true;
+    it('should apply the breakpoints', (done) => {
+      window.MultimediaObjectEditor = false;
       container.style.width = '400px';
       container.style.height = '200px';
-      ob.currentIteration = 25;
 
-      ob.applyBreakpoints(queries);
+      ob.startAnimation();
 
-      expect(ob.style.left).toEqual('70.83333333333333%');
-      expect(ob.style.translateX).toEqual('-70.83333333333333%');
+      window.setTimeout(() => {
+        expect(ob.style.left).toEqual('70.83333333333333%');
+        expect(ob.style.translateX).toEqual('-70.83333333333333%');
+        done();
+      }, 410);
     });
   });
 });

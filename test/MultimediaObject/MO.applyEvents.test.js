@@ -43,12 +43,21 @@ describe('MO.applyEvents', () => {
       ob.applyEvents(normalEvents);
       spyOn(ob.element, 'addEventListener');
     });
-    it('should have applied events', () => {
+    it('should have not applied events if in MultimediaObjectEditor', () => {
+      window.MultimediaObjectEditor = true;
+      ob.applyEvents(normalEvents);
+      for (const event in normalEvents) {
+        expect(ob.events[event]).toBeDefined();
+        expect(ob.element.addEventListener).not.toHaveBeenCalled();
+      }
+    });
+    it('should have applied events MultimediaObjectEditor = false', () => {
+      window.MultimediaObjectEditor = false;
       ob.applyEvents(normalEvents);
       let ind = 0;
       for (const event in normalEvents) {
         expect(ob.events[event]).toBeDefined();
-        expect(ob.element.addEventListener.calls.all()[ind]).toEqual({ object: ob.element, args: [event, ob._events[event]], returnValue: undefined });
+        expect(ob.element.addEventListener).toHaveBeenCalledWith(event, ob._events[event]);
         ind++;
       }
     });

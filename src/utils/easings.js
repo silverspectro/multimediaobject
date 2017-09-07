@@ -1,3 +1,4 @@
+/* eslint-disable */
 export const linearEase = (currentIteration, startValue, changeInValue, totalIterations) => changeInValue * currentIteration / totalIterations + startValue;
 export const easeInQuad = (t, b, c, d) => c * (t /= d) * t + b;
 export const easeOutQuad = (t, b, c, d) => -c * (t /= d) * (t - 2) + b;

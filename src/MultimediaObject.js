@@ -1,8 +1,4 @@
 /*
-  eslint-disable no-new-func
-*/
-
-/*
 
 Copyright 2016 Ciro André DE CARO
 
@@ -20,6 +16,43 @@ limitations under the License.
 
 */
 
+const findIndex = (array, params, one) => {
+  if (!(array instanceof Array))
+    throw new Error('findBy: can find only in array');
+  const length = array.length;
+  const results = [];
+  let index = 0;
+
+  const cycleParams = (queries, element) => {
+    if (typeof queries === 'object') {
+      let found = true;
+      for (const key in queries) {
+        if (!element[key] || queries[key] !== element[key]) {
+          found = false;
+          continue;
+        }
+      }
+      if (found) {
+        results.push(index);
+      }
+    } else if (queries === element) {
+      results.push(index);
+    }
+    return results;
+  };
+
+  while (index < length) {
+    if (typeof params === typeof array[index]) {
+      cycleParams(params, array[index]);
+    }
+    if (one && results.length > 0) {
+      return results[0];
+    }
+    index += 1;
+  }
+
+  return results;
+};
 
 import raf from './lib/raf';
 import * as utils from './utils/utils';
@@ -61,6 +94,12 @@ raf();
 * });
 */
 
+const unserializeFunction = (serialized) => {
+  let args = serialized.args.map(el => el.replace(/\n+|(\/\*\*\/\n)+/g, '').replace(/^(\n+|\t+|\t\n+)(?!\w)$/gm, '').replace(/`/gm, '')),
+  body = serialized.body;
+  return new Function(args, body);
+}
+
 
 export default class MultimediaObject {
   constructor(type = 'block', name = 'multimediaObject', fps = 60) {
@@ -85,18 +124,10 @@ export default class MultimediaObject {
     this.innerHTML = '';
 
     this.DOMParent = null;
-
-    this.fps = fps;
-    this.then = performance.now() || Date.now();
-    this.interval = 1000 / this.fps;
-    this.totalIteration = 0;
-    this.counter = 0;
-
-    this.reverse = false;
-    this.repeat = 0;
-    this.animationStarted = false;
+    this.DOMParentUUID = null;
 
     if (typeof type === 'object') {
+      this.uuid = type.uuid || this.uuid;
       this.name = name || type.name;
       this.type = type.type || 'block';
 
@@ -112,12 +143,35 @@ export default class MultimediaObject {
       this.applyEvents();
       this.applyBreakpoints();
       this.applyDependencies();
+      this.changeAnimation(this.selectedAnimation);
+
     } else {
       this.name = name;
       this.type = type;
 
       this.init();
       this.addDefaultParameters();
+    }
+
+    this.fps = fps;
+    this.then = performance.now() || Date.now();
+    this.interval = 1000 / this.fps;
+    this.totalIteration = 0;
+    this.counter = 0;
+
+    this.reverse = false;
+    this.repeat = 0;
+    this.animationStarted = false;
+    this.repeatCounter = 0;
+
+    if(!window.MultimediaObjectEditor) {
+      if (this.data.forceStart) {
+        this.startAnimation();
+      } else if(this.data.autostart && !(this.DOMParent instanceof MultimediaObject)) {
+        this.addListener('startAfterPreload', () => {
+          this.startAnimation();
+        });
+      }
     }
   }
 
@@ -138,14 +192,9 @@ export default class MultimediaObject {
           this.appendElementTo();
         }
       }
-      if (this.data.autostart) {
-        this.startAnimation();
-      } else {
-        this.addListener('startAfterPreload', () => this.startAnimation(), true);
-      }
     }
     this.applyAttributes({
-      id: /multimediaObject\d+/.test(this.name) ? this.uuid : this.name,
+      id: /multimediaObject(\d+)?/.test(this.name) ? this.uuid : this.name,
     });
     this.addGlobalStyle();
   }
@@ -163,6 +212,7 @@ export default class MultimediaObject {
       }
     }
     this.data.autostart = typeof this.data.autostart === 'undefined' ? true : utils.parseBoolean(this.data.autostart);
+    this.data.forceStart = typeof this.data.forceStart === 'undefined' ? false : utils.parseBoolean(this.data.forceStart);
     if (this.element) {
       this.applyAttributes();
     }
@@ -251,6 +301,12 @@ export default class MultimediaObject {
     if (typeof style !== 'string') {
       throw new Error('addGlobalStyle: style is not a string');
     }
+    const existingStyle = document.getElementById(`${this.uuid}-style`);
+    
+    if (existingStyle !== null) {
+      document.head.removeChild(existingStyle);
+    }
+
     const styleMarkup = document.createElement('style');
     const styleText = style;
 
@@ -331,7 +387,9 @@ export default class MultimediaObject {
       zU: this._style.translateZ ? utils.getUnitFromString(this._style.translateZ) : 'px',
     };
     const rot = {
-      value: this._style.rotate ? utils.getNumFromString(this._style.rotate) : 0,
+      x: this._style.rotateX ? utils.getNumFromString(this._style.rotateX) : 0,
+      y: this._style.rotateY ? utils.getNumFromString(this._style.rotateY) : 0,
+      z: this._style.rotateZ ? (utils.getNumFromString(this._style.rotateZ) || utils.getNumFromString(this._style.rotate)) : 0,
       u: 'deg',
     };
     const ske = {
@@ -358,9 +416,17 @@ export default class MultimediaObject {
           trans.z = utils.getNumFromString(a);
           trans.zU = utils.getUnitFromString(a);
         }
-        if (a.indexOf('rotate') >= 0) {
-          rot.value = utils.getNumFromString(a);
+
+        if (a.indexOf('rotateX') >= 0 || a.indexOf('rotate-x') >= 0) {
+          rot.x = utils.getNumFromString(a);
+        } else if (a.indexOf('rotateY') >= 0 || a.indexOf('rotate-y') >= 0) {
+          rot.y = utils.getNumFromString(a);
+        } else if (a.indexOf('rotateZ') >= 0 || a.indexOf('rotate-z') >= 0) {
+          rot.z = utils.getNumFromString(a);
+        } else if (a.indexOf('rotate') >= 0) {
+          rot.z = utils.getNumFromString(a);
         }
+
         if (a.indexOf('scaleX') >= 0 || a.indexOf('scale-x') >= 0) {
           sca.x = utils.getNumFromString(a);
         } else if (a.indexOf('scaleY') >= 0 || a.indexOf('scale-y') >= 0) {
@@ -374,7 +440,7 @@ export default class MultimediaObject {
       });
       // console.log(z);
       z[0] = `translate3d(${trans.x}${trans.xU},${trans.y}${trans.yU},${trans.z}${trans.zU})`;
-      z[1] = `rotate(${rot.value}${rot.u})`;
+      z[1] = `rotateX(${rot.x}${rot.u}) rotateY(${rot.y}${rot.u}) rotateZ(${rot.z}${rot.u})`;
       z[2] = `skew(${ske.x}${ske.u},${ske.y}${ske.u})`;
       z[3] = `scale(${sca.x},${sca.y})`;
       // console.log(z);
@@ -418,7 +484,7 @@ export default class MultimediaObject {
         replaced = attributes[attr].replace('{{absoluteAssetURL}}', window.MultimediaObjectEditor ? this.data.absoluteAssetURL : window[conf.namespace].absoluteAssetURL);
       }
       this.attributes[attr] = attributes[attr];
-      this.element.setAttribute(attr, replaced);
+      if (this.element.getAttribute(attr) !== replaced) this.element.setAttribute(attr, replaced);
     }
     return this;
   }
@@ -499,14 +565,16 @@ export default class MultimediaObject {
     };
     for (const evt in events) {
       this.events[evt] = events[evt];
-      this._events[evt] = this.transformEvent(events[evt]);
-      if (evt === 'swipe') {
-        applySwipeEvent(evt);
-      } else if (utils.checkEvent(evt)) {
-        this.element.addEventListener(evt, this._events[evt]);
-      } else {
-        this.addListener(evt, this.events[evt]);
-      }
+      this._events[evt] = events[evt].bind(this);
+      if (!window.MultimediaObjectEditor) {
+        if (evt === 'swipe') {
+          applySwipeEvent(evt);
+        } else if (utils.checkEvent(evt)) {
+          this.element.addEventListener(evt, this._events[evt]);
+        } else {
+          this.addListener(evt, this._events[evt]);
+        }
+      } else if (!utils.checkEvent(evt)) this.addListener(evt, this._events[evt]);
     }
     return this;
   }
@@ -577,6 +645,7 @@ export default class MultimediaObject {
 
   removeFunction(functionName) {
     if (this.functions[functionName]) {
+      delete this[functionName];
       delete this.functions[functionName];
     } else {
       console.log('Function does not exist');
@@ -644,7 +713,7 @@ export default class MultimediaObject {
           this.element.style[utils.propertyWithPrefix(propertieName)] = '';
           this.element.style[propertieName] = '';
           delete this.style[propertieName];
-        } else {
+        } else if (propertieName) {
           console.log(`${propertieName} style does not exist`);
         }
     }
@@ -733,22 +802,36 @@ export default class MultimediaObject {
   }
 
   /**
+  * remove MultimediaObject.element from container parameter
+  */
+
+  removeElement() {
+    if (this.DOMParent instanceof MultimediaObject) {
+      this.DOMParent.element.removeChild(this.element);
+    } else {
+      this.DOMParent.removeChild(this.element);
+    }
+  }
+
+  /**
   * append MultimediaObject.element to container parameter
   * @param {DOMElement | MultimediaObject} container - the container to append to
   * @return {object} MultimediaObject
   */
 
-  appendElementTo(container) {
+  appendElementTo(container, appendChild = true) {
     if (container) {
       if (container instanceof MultimediaObject) {
         container.element.appendChild(this.element);
+        this.DOMParentUUID = container.uuid;
       } else {
         container.appendChild(this.element);
+        this.DOMParentUUID = null;
       }
       this.DOMParent = container;
       const childsLength = this.childs.length;
 
-      if (childsLength > 0) {
+      if (childsLength > 0 && appendChild) {
         this.childs.forEach((child, index) => {
           child.DOMParent = this;
           child.appendElementTo(this);
@@ -757,18 +840,26 @@ export default class MultimediaObject {
     } else {
       document.body.appendChild(this.element);
       this.DOMParent = document.body;
+      this.DOMParentUUID = null;
       const childsLength = this.childs.length;
 
       if (childsLength > 0) {
         this.childs.forEach((child, index) => {
           child.DOMParent = this;
+          child.DOMParentUUID = this.uuid;
           child.appendElementTo(this);
         });
       }
     }
-    if (this.initializer) {
-      this.initializer();
-    }
+    window.setTimeout(() => {
+      if (this.initializer) {
+        try {
+          this.initializer();
+        } catch(e) {
+          console.error(e);
+        }
+      }
+    }, 0);
     return this;
   }
 
@@ -778,15 +869,15 @@ export default class MultimediaObject {
   * @return {object} MultimediaObject
   */
 
-  add(child) {
+  add(child, appendChild = true) {
     this.childs.push(child);
     if (child instanceof MultimediaObject) {
-      this.element.appendChild(child.element);
+      if (appendChild) this.element.appendChild(child.element);
     } else {
-      this.element.appendChild(child);
+      if (appendChild) this.element.appendChild(child);
     }
     child.DOMParent = this;
-    eventManager.dispatchEvent('actualize-DOM-elements');
+    child.DOMParentUUID = this.uuid;
     return this;
   }
 
@@ -797,17 +888,17 @@ export default class MultimediaObject {
   */
 
   remove(child) {
-    const elementIndex = this.childs.indexOf(child);
+    const elementIndex = findIndex(this.childs, { uuid: child.uuid });
     if (elementIndex >= 0) {
       this.childs.splice(elementIndex, 1);
-      if (child instanceof MultimediaObject) {
-        this.element.removeChild(child.element);
-      } else {
-        this.element.removeChild(child);
-      }
-      child.DOMParent = null;
+      try {
+        if (child instanceof MultimediaObject) {
+          this.element.removeChild(child.element);
+        } else {
+          this.element.removeChild(child);
+        }
+      } catch(e) {}
     }
-    eventManager.dispatchEvent('actualize-DOM-elements');
     return this;
   }
 
@@ -827,7 +918,7 @@ export default class MultimediaObject {
   * @return {object} MultimediaObject
   */
 
-  preInterpolateStep(fps) {
+  preInterpolateStep(fps = this.fps) {
     this.getSortedSteps();
     let isAnimatedEvent = (string) => {
         if (Object.keys(this._events).join().indexOf(string) >= 0) {
@@ -876,7 +967,7 @@ export default class MultimediaObject {
             };
             this.animatedProps[prop].steps[second].initIteration = lastStepProp ? Math.floor(lastStepProp * fps) : 0;
             this.animatedProps[prop].steps[second].totalStepIteration = Math.floor(second * fps - this.animatedProps[prop].steps[second].initIteration);
-            this.animatedProps[prop].steps[second].easing = this.currentAnimation[second].easing;
+            this.animatedProps[prop].steps[second].easing = this.currentAnimation[second].easing || 'linearEase';
             this.animatedProps[prop].steps[second].currentIteration = 0;
           } else if (!/\d/g.test(this.currentAnimation[second][prop])) {
             this.animatedProps[prop].steps[second].startValue = lastStep ? lastStep.endValue : (this._style[prop] ? this._style[prop] : 'auto');
@@ -885,7 +976,7 @@ export default class MultimediaObject {
             this.animatedProps[prop].steps[second].changeInValue = this.animatedProps[prop].steps[second].endValue;
             this.animatedProps[prop].steps[second].initIteration = lastStepProp ? Math.floor(lastStepProp * fps) : 0;
             this.animatedProps[prop].steps[second].totalStepIteration = Math.floor(second * fps) - this.animatedProps[prop].steps[second].initIteration;
-            this.animatedProps[prop].steps[second].easing = this.currentAnimation[second].easing;
+            this.animatedProps[prop].steps[second].easing = this.currentAnimation[second].easing || 'linearEase';
             this.animatedProps[prop].steps[second].currentIteration = 0;
           } else {
             this.animatedProps[prop].steps[second].startValue = parseFloat(lastStep ? lastStep.endValue : (this._style[prop] ? (parseFloat(this._style[prop])) : 0));
@@ -894,7 +985,7 @@ export default class MultimediaObject {
             this.animatedProps[prop].steps[second].changeInValue = parseFloat(this.animatedProps[prop].steps[second].endValue - this.animatedProps[prop].steps[second].startValue);
             this.animatedProps[prop].steps[second].initIteration = lastStepProp ? Math.floor(lastStepProp * fps) : 0;
             this.animatedProps[prop].steps[second].totalStepIteration = Math.floor(second * fps) - this.animatedProps[prop].steps[second].initIteration;
-            this.animatedProps[prop].steps[second].easing = this.currentAnimation[second].easing;
+            this.animatedProps[prop].steps[second].easing = this.currentAnimation[second].easing || 'linearEase';
             this.animatedProps[prop].steps[second].currentIteration = 0;
           }
           // console.log(this.currentAnimation[second][prop],this.animatedProps[prop].steps[second].endValue);
@@ -904,53 +995,54 @@ export default class MultimediaObject {
 
     // console.log(this.animatedProps);
 
-    this.computedAnimations = !this.computedAnimations || [];
+    this.computedAnimations = [];
 
     for (const prop in this.animatedProps) {
       if (!isAnimatedEvent(prop)) {
         for (let iteration = 0; iteration <= totalAnimationIteration; iteration++) {
-          let propNumericSteps = Object.keys(this.animatedProps[prop].steps),
-            iterationSeconds = (iteration / totalAnimationIteration) * totalAnimationTime,
-            secondsElapsed = isFinite(iterationSeconds) ? Number(iterationSeconds).toFixed(2) : 0,
-            stepSecond = utils.closestSuperior(secondsElapsed, propNumericSteps);
+          const propNumericSteps = Object.keys(this.animatedProps[prop].steps);
+          const iterationSeconds = (iteration / totalAnimationIteration) * totalAnimationTime;
+          const secondsElapsed = isFinite(iterationSeconds) ? Number(iterationSeconds).toFixed(2) : 0;
+          const stepSecond = utils.closestSuperior(secondsElapsed, propNumericSteps);
+          // console.log(stepSecond, secondsElapsed, propNumericSteps);
 
           if (!this.computedAnimations[iteration]) {
             this.computedAnimations[iteration] = {};
           }
           if (/color/ig.test(prop)) {
-            let easing = this.animatedProps[prop].steps[stepSecond].easing || 'linearEase',
-              actualIteration = this.animatedProps[prop].steps[stepSecond].currentIteration,
-              startValue = this.animatedProps[prop].steps[stepSecond].startValue,
-              endValue = this.animatedProps[prop].steps[stepSecond].endValue,
-              changeInValue = this.animatedProps[prop].steps[stepSecond].changeInValue,
-              totalIterationValue = this.animatedProps[prop].steps[stepSecond].totalStepIteration,
-              r = actualIteration < totalIterationValue ? parseInt(Easings[easing](actualIteration, startValue.r, changeInValue.r, totalIterationValue)) : endValue.r,
-              g = actualIteration < totalIterationValue ? parseInt(Easings[easing](actualIteration, startValue.g, changeInValue.g, totalIterationValue)) : endValue.g,
-              b = actualIteration < totalIterationValue ? parseInt(Easings[easing](actualIteration, startValue.b, changeInValue.b, totalIterationValue)) : endValue.b,
-              a = actualIteration < totalIterationValue ? Number(Easings[easing](actualIteration, startValue.a, changeInValue.a, totalIterationValue).toFixed(2)) : endValue.a;
+            const easing = this.animatedProps[prop].steps[stepSecond] ? this.animatedProps[prop].steps[stepSecond].easing : 'linearEase';
+            const actualIteration = this.animatedProps[prop].steps[stepSecond].currentIteration;
+            const startValue = this.animatedProps[prop].steps[stepSecond].startValue;
+            const endValue = this.animatedProps[prop].steps[stepSecond].endValue;
+            const changeInValue = this.animatedProps[prop].steps[stepSecond].changeInValue;
+            const totalIterationValue = this.animatedProps[prop].steps[stepSecond].totalStepIteration;
+            const r = actualIteration < totalIterationValue ? parseInt(Easings[easing](actualIteration, startValue.r, changeInValue.r, totalIterationValue)) : endValue.r;
+            const g = actualIteration < totalIterationValue ? parseInt(Easings[easing](actualIteration, startValue.g, changeInValue.g, totalIterationValue)) : endValue.g;
+            const b = actualIteration < totalIterationValue ? parseInt(Easings[easing](actualIteration, startValue.b, changeInValue.b, totalIterationValue)) : endValue.b;
+            const a = actualIteration < totalIterationValue ? Number(Easings[easing](actualIteration, startValue.a, changeInValue.a, totalIterationValue).toFixed(2)) : endValue.a;
 
             this.computedAnimations[iteration][prop] = `rgba(${r},${g},${b},${a})`;
             // console.log(this.computedAnimations[iteration][prop]);
           } else if (!/\d/g.test(this.animatedProps[prop].steps[stepSecond].startValue)) {
-            let easing = this.animatedProps[prop].steps[stepSecond].easing || 'linearEase',
-              actualIteration = this.animatedProps[prop].steps[stepSecond].currentIteration,
-              startValue = this.animatedProps[prop].steps[stepSecond].startValue,
-              endValue = this.animatedProps[prop].steps[stepSecond].endValue,
-              changeInValue = this.animatedProps[prop].steps[stepSecond].changeInValue,
-              totalIterationValue = this.animatedProps[prop].steps[stepSecond].totalStepIteration,
-              value = actualIteration < totalIterationValue - 1 ? startValue : endValue;
+            const easing = this.animatedProps[prop].steps[stepSecond] ? this.animatedProps[prop].steps[stepSecond].easing : 'linearEase';
+            const actualIteration = this.animatedProps[prop].steps[stepSecond].currentIteration;
+            const startValue = this.animatedProps[prop].steps[stepSecond].startValue;
+            const endValue = this.animatedProps[prop].steps[stepSecond].endValue;
+            const changeInValue = this.animatedProps[prop].steps[stepSecond].changeInValue;
+            const totalIterationValue = this.animatedProps[prop].steps[stepSecond].totalStepIteration;
+            const value = actualIteration < totalIterationValue - 1 ? startValue : endValue;
                 // console.log(prop,this.animatedProps[prop].steps[stepSecond].initIteration,iteration,actualIteration,totalIterationValue,totalAnimationIteration);
 
             this.computedAnimations[iteration][prop] = value + this.animatedProps[prop].steps[stepSecond].unit;
           } else {
-            let easing = this.animatedProps[prop].steps[stepSecond].easing || 'linearEase',
-              actualIteration = this.animatedProps[prop].steps[stepSecond].currentIteration,
-              startValue = this.animatedProps[prop].steps[stepSecond].startValue,
-              endValue = this.animatedProps[prop].steps[stepSecond].endValue,
-              changeInValue = this.animatedProps[prop].steps[stepSecond].changeInValue,
-              totalIterationValue = this.animatedProps[prop].steps[stepSecond].totalStepIteration,
-              value = actualIteration < totalIterationValue - 1 ? Easings[easing](actualIteration, startValue, changeInValue, totalIterationValue) : endValue;
-                // console.log(prop,this.animatedProps[prop].steps[stepSecond].initIteration,iteration,actualIteration,totalIterationValue,totalAnimationIteration);
+            const easing = this.animatedProps[prop].steps[stepSecond].easing || 'linearEase';
+            const actualIteration = this.animatedProps[prop].steps[stepSecond].currentIteration;
+            const startValue = this.animatedProps[prop].steps[stepSecond].startValue;
+            const endValue = this.animatedProps[prop].steps[stepSecond].endValue;
+            const changeInValue = this.animatedProps[prop].steps[stepSecond].changeInValue;
+            const totalIterationValue = this.animatedProps[prop].steps[stepSecond].totalStepIteration;
+            const value = actualIteration < totalIterationValue - 1 ? Easings[easing](actualIteration, startValue, changeInValue, totalIterationValue) : endValue;
+            // console.log(prop,actualIteration, totalIterationValue, value, endValue, stepSecond);
 
             this.computedAnimations[iteration][prop] = value + this.animatedProps[prop].steps[stepSecond].unit;
           }
@@ -969,8 +1061,7 @@ export default class MultimediaObject {
         }
       }
     }
-
-    // console.log(this.animatedProps, this.computedAnimations);
+    // console.log(this.computedAnimations);
     return this;
   }
 
@@ -985,7 +1076,7 @@ export default class MultimediaObject {
 
   interpolateStep(currentIteration, seconds, fps) {
     const animationsLength = this.computedAnimations.length;
-    // console.log(animationsLength,currentIteration);
+    // console.log(animationsLength);
     if (animationsLength <= 0) {
       this.preInterpolateStep(fps);
     }
@@ -994,6 +1085,13 @@ export default class MultimediaObject {
       eventManager.dispatchEvent(`${this.uuid}-animationStart`);
       this.currentIteration = currentIteration;
       this.applyIteration();
+    }
+    if (!window.MultimediaObjectEditor) {
+      this.childs.forEach((child) => {
+        if (!child.animationStarted) {
+          child.interpolateStep(currentIteration, seconds, fps);
+        }
+      });
     }
     if (animationsLength > currentIteration) {
       this.animated = true;
@@ -1046,6 +1144,7 @@ export default class MultimediaObject {
   */
 
   startAnimation() {
+    this.counter = 0;
     this.runAnimation();
   }
 
@@ -1065,13 +1164,14 @@ export default class MultimediaObject {
   */
 
   runAnimation(time) {
-    this.rafID = window.requestAnimationFrame(time => this.runAnimation(time));
-    if (Object.keys(this.currentAnimation).length > 0) {
+    this.rafID = window.requestAnimationFrame(t => this.runAnimation(t));
+    if (Object.keys(this.currentAnimation).length > 0 || this.totalTime > 0 && this.childs.length > 0) {
       this.now = performance.now() || Date.now();
       this.delta = this.now - this.then;
       if (!this.animationStarted) {
         this.animationStarted = true;
-        this.totalTime = Number(this.getSortedSteps()[this.getSortedSteps().length - 1]);
+        const sortedSteps = this.getSortedSteps();
+        this.totalTime = sortedSteps.length > 0 ? Number(sortedSteps[sortedSteps.length - 1]) : 0;
         this.totalIteration = this.totalTime * this.fps;
       } else if (this.delta > this.interval) {
         this.then = this.now - (this.delta % this.interval);
@@ -1095,16 +1195,21 @@ export default class MultimediaObject {
         // console.log(this.counter, this.totalIteration);
 
         this.interpolateStep(this.counter, this.secondsElapsed, this.fps);
-
-        if (this.counter >= this.totalIteration && !this.reverse) {
-          if (this.repeat > 0 && this.repeatCounter < this.repeat) {
-            this.counter = 0;
-            this.repeatCounter++;
-          }
-        } else if (this.counter == 1 && this.reverse) {
-          if (this.repeat > 0 && this.repeatCounter < this.repeat) {
-            this.counter = 0;
-            this.repeatCounter++;
+        if (this.animationStarted) {
+          if (this.counter >= this.totalIteration && !this.reverse) {
+            if (this.repeat > 0 && this.repeatCounter < this.repeat) {
+              this.repeatCounter++;
+              this.restartAnimation();
+            } else {
+              this.stopAnimation();
+            }
+          } else if (this.counter === 1 && this.reverse) {
+            if (this.repeat > 0 && this.repeatCounter < this.repeat) {
+              this.repeatCounter++;
+              this.restartAnimation();
+            } else {
+              this.stopAnimation();
+            }
           }
         }
         // console.log(this.secondsElapsed);
@@ -1118,50 +1223,33 @@ export default class MultimediaObject {
   * Add an event listener or a custom event
   * @param {string} listener - the name of the event
   * @param {function} fn - the function to execute on event dispatch
-  * @param {boolean} glob - is the custom event global or bind to the object id
   */
 
-  addListener(listener, fn, glob) {
-    glob = glob || /global/ig.test(listener);
-    if (glob) {
-      return eventManager.addListener(listener, fn);
-    }
-    return eventManager.addListener(`${this.uuid}-${listener}`, fn);
+  addListener(listener, fn) {
+    return eventManager.addListener(`${listener}`, fn);
   }
 
   /**
   * Remove an event
   * @param {string} listener - the name of the event
   * @param {function} fn - the function to remove
-  * @param {boolean} glob - is the custom event global or bind to the object id
   */
 
-  removeListener(listener, fn, glob) {
-    glob = glob || /global/ig.test(listener);
-    if (glob) {
-      if (fn instanceof Function) {
-        return eventManager.removeListener(listener, fn);
-      }
-      return eventManager.removeListener(listener, this[fn]);
-    } else if (fn instanceof Function) {
-      return eventManager.removeListener(`${this.uuid}-${listener}`, fn);
+  removeListener(listener, fn) {
+    if (fn instanceof Function) {
+      return eventManager.removeListener(`${listener}`, fn);
     }
-    return eventManager.removeListener(`${this.uuid}-${listener}`, this[fn]);
+    return eventManager.removeListener(`${listener}`, this[fn]);
   }
 
   /**
   * Dispatch a custom event
   * @param {string} eventName - the name of the event
   * @param {object} params - the parameter to transmit
-  * @param {boolean} glob - is the custom event global or bind to the object id
   */
 
-  dispatchEvent(eventName, params, glob) {
-    glob = glob || /global/ig.test(eventName);
-    if (glob) {
-      return eventManager.dispatchEvent(eventName, params, this);
-    }
-    return eventManager.dispatchEvent(`${this.uuid}-${eventName}`, params, this);
+  dispatchEvent(eventName, params) {
+    return eventManager.dispatchEvent(eventName, params, this);
   }
 
   /**
@@ -1177,11 +1265,14 @@ export default class MultimediaObject {
 
     this.applyStyle(this._style);
     this.stopAnimation();
-    this.preInterpolateStep(this.timeline ? this.timeline.fps : this.fps);
-    if (this.timeline) {
-      this.timeline.computeSteps();
-      this.timeline.stop();
-    }
+    this.preInterpolateStep();
+  }
+
+  cleanCurrentAnimation() {
+    Object.keys(this.currentAnimation).forEach((time) => {
+      if (Object.keys(this.currentAnimation[time]).length === 1) delete this.currentAnimation[time];
+    });
+    this.animations[this.selectedAnimation] = this.currentAnimation;
   }
 
   /**
@@ -1190,15 +1281,15 @@ export default class MultimediaObject {
   * @param {number} absoluteTime - the time key in which to add the propertie
   */
 
-  addAnimationProperties(propertieArray, absoluteTime) {
+  addAnimationProperties(propertieArray, propValue, absoluteTime = 0.00) {
+    this.cleanCurrentAnimation();
     const existingProp = Object.keys(this.animatedProps);
     this.currentAnimation = this.currentAnimation || {};
-    let time = absoluteTime || (this.timeline ? Number(this.timeline.secondsElapsed) : 0);
+    let time = absoluteTime;
 
-    time = time === 0 ? 0.00 : time;
     propertieArray.forEach((refProp) => {
       const prop = refProp.key || refProp;
-      const value = refProp.value || this._style[prop] || 0;
+      const value = propValue || refProp.value || this._style[prop] || 0;
 
       if (existingProp.indexOf(prop) === -1) {
         if (!this.currentAnimation[time]) {
@@ -1208,10 +1299,7 @@ export default class MultimediaObject {
       }
     });
     this.animations[this.selectedAnimation] = this.currentAnimation;
-    this.preInterpolateStep(this.timeline ? this.timeline.fps : this.fps);
-    // if (this.timeline) {
-    //   this.timeline.computeSteps();
-    // }
+    this.preInterpolateStep();
     return this;
   }
 
@@ -1230,8 +1318,8 @@ export default class MultimediaObject {
         }
       }
     });
-    this.animations[this.selectedAnimation] = this.currentAnimation;
-    this.preInterpolateStep(this.timeline.fps || this.fps);
+    this.cleanCurrentAnimation();
+    this.preInterpolateStep();
     // this.dispatchEvent('actualize-timeline-elements', {}, true);
     return this;
   }
@@ -1249,16 +1337,12 @@ export default class MultimediaObject {
       } else {
         delete this.currentAnimation[time];
       }
-      if (Object.keys(this.currentAnimation[time]).length === 1) {
-        delete this.currentAnimation[time];
-      }
-      this.animations[this.selectedAnimation] = this.currentAnimation;
-      this.preInterpolateStep(this.timeline.fps || this.fps);
+      this.cleanCurrentAnimation();
+      this.preInterpolateStep();
       // this.dispatchEvent('actualize-timeline-elements', {}, true);
     } else {
       console.log(`animation at ${time} don't exist`);
     }
-
     return this;
   }
 
@@ -1277,10 +1361,9 @@ export default class MultimediaObject {
     }
     this.currentAnimation[time][prop] = value;
     if (easing) this.currentAnimation[time].easing = easing;
-    this.animations[this.selectedAnimation] = this.currentAnimation;
+    this.cleanCurrentAnimation();
+    this.preInterpolateStep();
     // console.log(time, prop, value);
-    this.preInterpolateStep(this.timeline.fps || this.fps);
-    // this.dispatchEvent('actualize-timeline-elements', {}, true);
     return this;
   }
 
@@ -1302,6 +1385,7 @@ export default class MultimediaObject {
         delete this.currentAnimation[t];
       }
     }
+    this.totalTime = this.numericSteps[this.numericSteps.length - 1];
     return this.numericSteps;
   }
 
@@ -1329,7 +1413,7 @@ export default class MultimediaObject {
 
     for (const p in this) {
       if (typeof this[p] !== 'undefined' && this[p] !== null) {
-        if (typeof this[p] !== 'function' && !this[p].element && !this[p].children && !this[p].elements && !/exportedFunctions|exportedEvents|childs|interval|then|now|delta|animated|animationStarted|currentIteration|computedAnimations|totalTime|secondsElapsed|rafID|numericSteps|counter|totalIteration|animationStarted|direction|coords|bounds|geo|infowindow|map|marker|shop/.test(p)) {
+        if (typeof this[p] !== 'function' && p !== 'events' && p !== 'functions' && !this[p].element && !this[p].children && !this[p].elements && !/exportedFunctions|exportedEvents|childs|interval|then|now|delta|animated|animationStarted|currentIteration|computedAnimations|secondsElapsed|rafID|numericSteps|counter|totalIteration|animationStarted|direction|coords|bounds|geo|infowindow|map|marker|shop|/.test(p)) {
           ob[p] = this[p];
         }
       }
@@ -1350,21 +1434,26 @@ export default class MultimediaObject {
     }
 
     this.childs.forEach((child) => {
-      ob.childs.push(child.exportToJSON());
+      const c = child.exportToJSON();
+      ob.childs.push(c);
     });
 
     ob.style = this._style;
     ob.attributes = this.attributes;
     delete ob.attributes.id;
     ob.breakpoints = this.breakpoints;
+    ob.dependencies = this.dependencies;
     ob.globalStyle = this.globalStyle;
     ob.data = this.data || {};
-    ob.currentAnimation = this.currentAnimation;
+    ob.selectedAnimation = this.selectedAnimation;
+    ob.animations = this.animations;
     ob.load = true;
     ob.type = this.type;
+    ob.uuid = this.uuid;
+    ob.name = this.name;
+    ob.repeat = this.repeat;
+    ob.DOMParentUUID = this.DOMParentUUID;
     ob.data.absoluteAssetURL = this.data.absoluteAssetURL || './';
-
-    // console.log(ob);
     return ob;
   }
 
@@ -1373,19 +1462,21 @@ export default class MultimediaObject {
   * @param {object} json - the json representation of a MultimediaObject
   */
 
-  setAbsoluteAssetURL(json) {
-    if (window[conf.namespace] && json && json.data) {
+  setAbsoluteAssetURL() {
+    if (window.MultimediaObjectEditor) {
+      if (!this.data.template && window[conf.namespace]) {
+        if (typeof window[conf.namespace].absoluteAssetURL !== 'undefined' && window[conf.namespace].absoluteAssetURL !== 'undefined' && window[conf.namespace].absoluteAssetURL !== '') {
+          this.data.absoluteAssetURL = window[conf.namespace].absoluteAssetURL;
+        }
+      } else {
+        this.data.absoluteAssetURL = this.data.templateURL;
+      }
+    } else if (!window.MultimediaObjectEditor && window[conf.namespace]) {
       if (typeof window[conf.namespace].absoluteAssetURL !== 'undefined' && window[conf.namespace].absoluteAssetURL !== 'undefined' && window[conf.namespace].absoluteAssetURL !== '') {
         this.data.absoluteAssetURL = window[conf.namespace].absoluteAssetURL;
-      } else if (typeof json.data.absoluteAssetURL !== 'undefined' && json.data.absoluteAssetURL !== '' && json.data.absoluteAssetURL !== './') {
-        window[conf.namespace].absoluteAssetURL = json.data.absoluteAssetURL;
       } else {
-        this.data.absoluteAssetURL = './';
+        this.data.absoluteAssetURL = this.data.absoluteAssetURL || './';
       }
-    } else if (json) {
-      this.data.absoluteAssetURL = json.data && typeof json.data.absoluteAssetURL !== 'undefined' && json.data.absoluteAssetURL !== '' ? json.data.absoluteAssetURL : './';
-    } else {
-      this.data.absoluteAssetURL = './';
     }
   }
 
@@ -1399,41 +1490,40 @@ export default class MultimediaObject {
       if (key === 'animations' && !json.animations.default) {
         this.currentAnimation = json.animations;
         this.animations.default = json.animations;
-      } else {
+      } else if (key !== 'childs') {
         this[key] = json[key];
       }
     }
 
     for (const evt in json.exportedEvents) {
-      let args = json.exportedEvents[evt].args.map(el => el.replace(/\n+|(\/\*\*\/\n)+/g, '').replace(/^(\n+|\t+|\t\n+)(?!\w)$/gm, '').replace(/`/gm, '')),
-        body = json.exportedEvents[evt].body;
-      this.events[evt] = new Function(args, body);
+      this.events[evt] = unserializeFunction(json.exportedEvents[evt]);
     }
 
     for (const func in json.exportedFunctions) {
-      let args = json.exportedFunctions[func].args.map(el => el.replace(/\n+|(\/\*\*\/\n)+/g, '').replace(/^(\n+|\t+|\t\n+)(?!\w)$/gm, '').replace(/`/gm, '')),
-        body = json.exportedFunctions[func].body;
-      this.functions[func] = new Function(args, body);
+      this.functions[func] = unserializeFunction(json.exportedFunctions[func]);
     }
     if (json.childs) {
       json.childs.forEach((child, index) => {
         child.load = true;
-        if (json.data) {
-          child.data = child.data || {};
-          // child.data.absoluteAssetURL = json.data.absoluteAssetURL || "";
-          child.data.autostart = utils.parseBoolean(child.data.autostart);
-          child.data.absoluteAssetURL = child.data.absoluteAssetURL || '';
-        }
+        child.data = child.data || {};
+        // child.data.absoluteAssetURL = json.data.absoluteAssetURL || "";
+        child.data.autostart = utils.parseBoolean(child.data.autostart);
+        child.data.forceStart = utils.parseBoolean(child.data.forceStart);
         child.DOMParent = this;
-        this.childs[index] = new MultimediaObject(child);
+        child.DOMParentUUID = this.uuid;
+        this.childs.push(new MultimediaObject(child));
       });
     }
 
-    this.uuid = utils.generateUUID();
+    this.uuid = json.uuid || utils.generateUUID();
+    this.DOMParentUUID = json.DOMParentUUID || null;
+    this.selectedAnimation = json.selectedAnimation;
     this.data = json.data || {};
     this.type = json.type;
-    this.data.absoluteAssetURL = json.data && json.data.absoluteAssetURL ? json.data.absoluteAssetURL : '';
+    this.repeat = parseInt(json.repeat, 10);
+    this.dependencies = json.dependencies || [];
     this.data.autostart = json.data ? utils.parseBoolean(json.data.autostart) : true;
-    this.setAbsoluteAssetURL(json);
+    this.data.forceStart = json.data ? utils.parseBoolean(json.data.forceStart) : false;
+    this.setAbsoluteAssetURL();
   }
 }

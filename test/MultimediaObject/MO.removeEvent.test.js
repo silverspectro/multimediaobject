@@ -52,7 +52,7 @@ describe('MO.removeEvent', () => {
       for (const event in normalEvents) {
         expect(ob.events[event]).toBeUndefined();
         expect(ob._events[event]).toBeUndefined();
-        expect(ob.element.removeEventListener.calls.all()[ind]).toEqual({ object: ob.element, args: [event, oldFunc[ind]], returnValue: undefined });
+        expect(ob.element.removeEventListener.calls.all()[ind]).toEqual({ object: ob.element, invocationOrder: 47 + ind, args: [event, oldFunc[ind]], returnValue: undefined });
         ind++;
       }
     });

@@ -20,7 +20,7 @@ describe('MO.applyFunctions', () => {
     it('should have applied function test', () => {
       expect(ob.test).toBeDefined();
       ob.test();
-      expect(ob.test.calls.all()).toEqual([{ object: ob, args: [], returnValue: 'test' }]);
+      expect(ob.test.calls.all()).toEqual([{ object: ob, invocationOrder: 22, args: [], returnValue: 'test' }]);
     });
 
     it('should have not applied function init and applyStyle', () => {
@@ -40,7 +40,7 @@ describe('MO.applyFunctions', () => {
     it('should have replaced function test', () => {
       expect(ob.test).toBeDefined();
       ob.test('lol');
-      expect(ob.test.calls.all()).toEqual([{ object: ob, args: ['lol'], returnValue: 'lol' }]);
+      expect(ob.test.calls.all()).toEqual([{ object: ob, invocationOrder: 23, args: ['lol'], returnValue: 'lol' }]);
     });
   });
 });

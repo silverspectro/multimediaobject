@@ -567,7 +567,7 @@ export default {
   },
   regex: {
     DOMEvent: new RegExp('^(click|mousedown|mouseup|mousemove|change|touchstart|touchmove|touchend|input|focus|dlclick|mouseenter|mouseleave|mouseover|mouseout|blur|search|submit|play|pause|canplay|progress)$'),
-    animatableProps: new RegExp('background-position-|background-size|background-color|translate|scale|rotate|skew|margin-|padding-|top|left|right|bottom|color|font-size|width|height|opacity|width|height', 'g'),
+    animatableProps: new RegExp('background-position-|background-size|background-color|translate|scale|rotate|skew|margin-|padding-|top|left|right|bottom|color|font-size|width|height|opacity|width|height', 'gi'),
   },
   sets: {
     pxProperties: pxPropertiesArray,
@@ -618,13 +618,6 @@ export default {
       'skew-x',
       'skew-y',
       'skew-z',
-      'perspective',
-      'perspectiveX',
-      'perspectiveY',
-      'perspectiveZ',
-      'perspective-x',
-      'perspective-y',
-      'perspective-z',
     ],
     styleProperties: stylePropertiesArray,
   },
