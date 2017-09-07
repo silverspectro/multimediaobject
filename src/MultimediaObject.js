@@ -165,10 +165,13 @@ export default class MultimediaObject {
     this.repeatCounter = 0;
 
     if(!window.MultimediaObjectEditor) {
-      if (this.data.autostart && this.data.forceStart && !(this.DOMParent instanceof MultimediaObject)) {
+      if (this.data.forceStart) {
         this.startAnimation();
-      } else if(this.data.autostart) {
-        this.addListener('startAfterPreload', () => this.startAnimation());
+      } else if(this.data.autostart && !(this.DOMParent instanceof MultimediaObject)) {
+        this.addListener('startAfterPreload', () => {
+          console.log(this.name, 'launched after preload');
+          this.startAnimation();
+        });
       }
     }
   }
@@ -1115,7 +1118,6 @@ export default class MultimediaObject {
   */
 
   applyIteration(iteration = this.computedAnimations[this.currentIteration], end = false) {
-    // console.log(iteration);
     if (iteration) {
       const style = Object.create(iteration);
       for (const key in iteration) {
@@ -1163,7 +1165,7 @@ export default class MultimediaObject {
   */
 
   runAnimation(time) {
-    this.rafID = window.requestAnimationFrame(time => this.runAnimation(time));
+    this.rafID = window.requestAnimationFrame(t => this.runAnimation(t));
     if (Object.keys(this.currentAnimation).length > 0 || this.totalTime > 0 && this.childs.length > 0) {
       this.now = performance.now() || Date.now();
       this.delta = this.now - this.then;
@@ -1194,19 +1196,21 @@ export default class MultimediaObject {
         // console.log(this.counter, this.totalIteration);
 
         this.interpolateStep(this.counter, this.secondsElapsed, this.fps);
-        if (this.counter >= this.totalIteration && !this.reverse) {
-          if (this.repeat > 0 && this.repeatCounter < this.repeat) {
-            this.repeatCounter++;
-            this.restartAnimation();
-          } else {
-            this.stopAnimation();
-          }
-        } else if (this.counter == 1 && this.reverse) {
-          if (this.repeat > 0 && this.repeatCounter < this.repeat) {
-            this.repeatCounter++;
-            this.restartAnimation();
-          } else {
-            this.stopAnimation();
+        if (this.animationStarted) {
+          if (this.counter >= this.totalIteration && !this.reverse) {
+            if (this.repeat > 0 && this.repeatCounter < this.repeat) {
+              this.repeatCounter++;
+              this.restartAnimation();
+            } else {
+              this.stopAnimation();
+            }
+          } else if (this.counter === 1 && this.reverse) {
+            if (this.repeat > 0 && this.repeatCounter < this.repeat) {
+              this.repeatCounter++;
+              this.restartAnimation();
+            } else {
+              this.stopAnimation();
+            }
           }
         }
         // console.log(this.secondsElapsed);

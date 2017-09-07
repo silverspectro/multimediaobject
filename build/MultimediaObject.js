@@ -935,11 +935,12 @@ var MultimediaObject = function () {
     this.repeatCounter = 0;
 
     if (!window.MultimediaObjectEditor) {
-      if (this.data.autostart && this.data.forceStart && !(this.DOMParent instanceof MultimediaObject)) {
+      if (this.data.forceStart) {
         this.startAnimation();
-      } else if (this.data.autostart) {
+      } else if (this.data.autostart && !(this.DOMParent instanceof MultimediaObject)) {
         this.addListener('startAfterPreload', function () {
-          return _this.startAnimation();
+          console.log(_this.name, 'launched after preload');
+          _this.startAnimation();
         });
       }
     }
@@ -2007,7 +2008,6 @@ var MultimediaObject = function () {
       var iteration = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.computedAnimations[this.currentIteration];
       var end = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
 
-      // console.log(iteration);
       if (iteration) {
         var style = Object.create(iteration);
         for (var key in iteration) {
@@ -2065,8 +2065,8 @@ var MultimediaObject = function () {
     value: function runAnimation(time) {
       var _this10 = this;
 
-      this.rafID = window.requestAnimationFrame(function (time) {
-        return _this10.runAnimation(time);
+      this.rafID = window.requestAnimationFrame(function (t) {
+        return _this10.runAnimation(t);
       });
       if (Object.keys(this.currentAnimation).length > 0 || this.totalTime > 0 && this.childs.length > 0) {
         this.now = performance.now() || Date.now();
@@ -2098,19 +2098,21 @@ var MultimediaObject = function () {
           // console.log(this.counter, this.totalIteration);
 
           this.interpolateStep(this.counter, this.secondsElapsed, this.fps);
-          if (this.counter >= this.totalIteration && !this.reverse) {
-            if (this.repeat > 0 && this.repeatCounter < this.repeat) {
-              this.repeatCounter++;
-              this.restartAnimation();
-            } else {
-              this.stopAnimation();
-            }
-          } else if (this.counter == 1 && this.reverse) {
-            if (this.repeat > 0 && this.repeatCounter < this.repeat) {
-              this.repeatCounter++;
-              this.restartAnimation();
-            } else {
-              this.stopAnimation();
+          if (this.animationStarted) {
+            if (this.counter >= this.totalIteration && !this.reverse) {
+              if (this.repeat > 0 && this.repeatCounter < this.repeat) {
+                this.repeatCounter++;
+                this.restartAnimation();
+              } else {
+                this.stopAnimation();
+              }
+            } else if (this.counter === 1 && this.reverse) {
+              if (this.repeat > 0 && this.repeatCounter < this.repeat) {
+                this.repeatCounter++;
+                this.restartAnimation();
+              } else {
+                this.stopAnimation();
+              }
             }
           }
           // console.log(this.secondsElapsed);
