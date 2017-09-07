@@ -122,20 +122,9 @@ export default class MultimediaObject {
     this.dependencies = [];
     this.animatedProps = {};
     this.innerHTML = '';
-    this.repeatCounter = 0;
 
     this.DOMParent = null;
     this.DOMParentUUID = null;
-
-    this.fps = fps;
-    this.then = performance.now() || Date.now();
-    this.interval = 1000 / this.fps;
-    this.totalIteration = 0;
-    this.counter = 0;
-
-    this.reverse = false;
-    this.repeat = 0;
-    this.animationStarted = false;
 
     if (typeof type === 'object') {
       this.uuid = type.uuid || this.uuid;
@@ -155,14 +144,6 @@ export default class MultimediaObject {
       this.applyBreakpoints();
       this.applyDependencies();
       this.changeAnimation(this.selectedAnimation);
-      
-      if(!window.MultimediaObjectEditor) {
-        if (this.data.autostart && this.data.forceStart && !(this.DOMParent instanceof MultimediaObject)) {
-          this.startAnimation();
-        } else if(this.data.autostart) {
-          this.addListener('startAfterPreload', () => this.startAnimation());
-        }
-      }
 
     } else {
       this.name = name;
@@ -170,6 +151,25 @@ export default class MultimediaObject {
 
       this.init();
       this.addDefaultParameters();
+    }
+
+    this.fps = fps;
+    this.then = performance.now() || Date.now();
+    this.interval = 1000 / this.fps;
+    this.totalIteration = 0;
+    this.counter = 0;
+
+    this.reverse = false;
+    this.repeat = 0;
+    this.animationStarted = false;
+    this.repeatCounter = 0;
+
+    if(!window.MultimediaObjectEditor) {
+      if (this.data.autostart && this.data.forceStart && !(this.DOMParent instanceof MultimediaObject)) {
+        this.startAnimation();
+      } else if(this.data.autostart) {
+        this.addListener('startAfterPreload', () => this.startAnimation());
+      }
     }
   }
 
@@ -1086,7 +1086,9 @@ export default class MultimediaObject {
     }
     if (!window.MultimediaObjectEditor) {
       this.childs.forEach((child) => {
-        child.interpolateStep(currentIteration, seconds, fps);
+        if (!child.animationStarted) {
+          child.interpolateStep(currentIteration, seconds, fps);
+        }
       });
     }
     if (animationsLength > currentIteration) {

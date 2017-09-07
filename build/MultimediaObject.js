@@ -747,7 +747,6 @@ var conf = {
       type: 'video/mp4',
       controls: 'true',
       muted: 'true',
-      loop: 'false',
       preload: 'true',
       playsinline: 'true'
     },
@@ -787,6 +786,43 @@ limitations under the License.
 
 */
 
+var findIndex = function findIndex(array, params, one) {
+  if (!(array instanceof Array)) throw new Error('findBy: can find only in array');
+  var length = array.length;
+  var results = [];
+  var index = 0;
+
+  var cycleParams = function cycleParams(queries, element) {
+    if ((typeof queries === 'undefined' ? 'undefined' : _typeof(queries)) === 'object') {
+      var found = true;
+      for (var key in queries) {
+        if (!element[key] || queries[key] !== element[key]) {
+          found = false;
+          continue;
+        }
+      }
+      if (found) {
+        results.push(index);
+      }
+    } else if (queries === element) {
+      results.push(index);
+    }
+    return results;
+  };
+
+  while (index < length) {
+    if ((typeof params === 'undefined' ? 'undefined' : _typeof(params)) === _typeof(array[index])) {
+      cycleParams(params, array[index]);
+    }
+    if (one && results.length > 0) {
+      return results[0];
+    }
+    index += 1;
+  }
+
+  return results;
+};
+
 raf();
 /**
 * Represents a MultimediaObject
@@ -820,9 +856,20 @@ raf();
 * });
 */
 
+var unserializeFunction = function unserializeFunction(serialized) {
+  var args = serialized.args.map(function (el) {
+    return el.replace(/\n+|(\/\*\*\/\n)+/g, '').replace(/^(\n+|\t+|\t\n+)(?!\w)$/gm, '').replace(/`/gm, '');
+  }),
+      body = serialized.body;
+  return new Function(args, body);
+};
+
 var MultimediaObject = function () {
   function MultimediaObject() {
     var type = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'block';
+
+    var _this = this;
+
     var name = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'multimediaObject';
     var fps = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 60;
     classCallCheck(this, MultimediaObject);
@@ -848,18 +895,10 @@ var MultimediaObject = function () {
     this.innerHTML = '';
 
     this.DOMParent = null;
-
-    this.fps = fps;
-    this.then = performance.now() || Date.now();
-    this.interval = 1000 / this.fps;
-    this.totalIteration = 0;
-    this.counter = 0;
-
-    this.reverse = false;
-    this.repeat = 0;
-    this.animationStarted = false;
+    this.DOMParentUUID = null;
 
     if ((typeof type === 'undefined' ? 'undefined' : _typeof(type)) === 'object') {
+      this.uuid = type.uuid || this.uuid;
       this.name = name || type.name;
       this.type = type.type || 'block';
 
@@ -875,12 +914,34 @@ var MultimediaObject = function () {
       this.applyEvents();
       this.applyBreakpoints();
       this.applyDependencies();
+      this.changeAnimation(this.selectedAnimation);
     } else {
       this.name = name;
       this.type = type;
 
       this.init();
       this.addDefaultParameters();
+    }
+
+    this.fps = fps;
+    this.then = performance.now() || Date.now();
+    this.interval = 1000 / this.fps;
+    this.totalIteration = 0;
+    this.counter = 0;
+
+    this.reverse = false;
+    this.repeat = 0;
+    this.animationStarted = false;
+    this.repeatCounter = 0;
+
+    if (!window.MultimediaObjectEditor) {
+      if (this.data.autostart && this.data.forceStart && !(this.DOMParent instanceof MultimediaObject)) {
+        this.startAnimation();
+      } else if (this.data.autostart) {
+        this.addListener('startAfterPreload', function () {
+          return _this.startAnimation();
+        });
+      }
     }
   }
 
@@ -892,8 +953,6 @@ var MultimediaObject = function () {
   createClass(MultimediaObject, [{
     key: 'init',
     value: function init() {
-      var _this = this;
-
       this.generate(Atoms(this.type));
       this.element.innerHTML = this.innerHTML;
       this.getSortedSteps();
@@ -904,13 +963,6 @@ var MultimediaObject = function () {
           } else {
             this.appendElementTo();
           }
-        }
-        if (parseBoolean(this.data.autostart) && !(this.DOMParent instanceof MultimediaObject) && parseBoolean(this.data.forceStart)) {
-          this.startAnimation();
-        } else if (parseBoolean(this.data.autostart)) {
-          this.addListener('startAfterPreload', function () {
-            return _this.startAnimation();
-          }, true);
         }
       }
       this.applyAttributes({
@@ -934,7 +986,7 @@ var MultimediaObject = function () {
         }
       }
       this.data.autostart = typeof this.data.autostart === 'undefined' ? true : parseBoolean(this.data.autostart);
-      this.data.forceStart = false;
+      this.data.forceStart = typeof this.data.forceStart === 'undefined' ? false : parseBoolean(this.data.forceStart);
       if (this.element) {
         this.applyAttributes();
       }
@@ -1046,6 +1098,12 @@ var MultimediaObject = function () {
       if (typeof style !== 'string') {
         throw new Error('addGlobalStyle: style is not a string');
       }
+      var existingStyle = document.getElementById(this.uuid + '-style');
+
+      if (existingStyle !== null) {
+        document.head.removeChild(existingStyle);
+      }
+
       var styleMarkup = document.createElement('style');
       var styleText = style;
 
@@ -1246,7 +1304,7 @@ var MultimediaObject = function () {
           replaced = attributes[attr].replace('{{absoluteAssetURL}}', window.MultimediaObjectEditor ? this.data.absoluteAssetURL : window[conf.namespace].absoluteAssetURL);
         }
         this.attributes[attr] = attributes[attr];
-        this.element.setAttribute(attr, replaced);
+        if (this.element.getAttribute(attr) !== replaced) this.element.setAttribute(attr, replaced);
       }
       return this;
     }
@@ -1339,16 +1397,16 @@ var MultimediaObject = function () {
       };
       for (var evt in events) {
         this.events[evt] = events[evt];
-        this._events[evt] = this.transformEvent(events[evt]);
+        this._events[evt] = events[evt].bind(this);
         if (!window.MultimediaObjectEditor) {
           if (evt === 'swipe') {
             applySwipeEvent(evt);
           } else if (checkEvent(evt)) {
             this.element.addEventListener(evt, this._events[evt]);
           } else {
-            this.addListener(evt, this.events[evt]);
+            this.addListener(evt, this._events[evt]);
           }
-        } else if (!checkEvent(evt)) this.addListener(evt, this.events[evt]);
+        } else if (!checkEvent(evt)) this.addListener(evt, this._events[evt]);
       }
       return this;
     }
@@ -1497,7 +1555,7 @@ var MultimediaObject = function () {
             this.element.style[propertyWithPrefix(propertieName)] = '';
             this.element.style[propertieName] = '';
             delete this.style[propertieName];
-          } else {
+          } else if (propertieName) {
             console.log(propertieName + ' style does not exist');
           }
       }
@@ -1595,6 +1653,20 @@ var MultimediaObject = function () {
     }
 
     /**
+    * remove MultimediaObject.element from container parameter
+    */
+
+  }, {
+    key: 'removeElement',
+    value: function removeElement() {
+      if (this.DOMParent instanceof MultimediaObject) {
+        this.DOMParent.element.removeChild(this.element);
+      } else {
+        this.DOMParent.removeChild(this.element);
+      }
+    }
+
+    /**
     * append MultimediaObject.element to container parameter
     * @param {DOMElement | MultimediaObject} container - the container to append to
     * @return {object} MultimediaObject
@@ -1605,16 +1677,20 @@ var MultimediaObject = function () {
     value: function appendElementTo(container) {
       var _this8 = this;
 
+      var appendChild = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+
       if (container) {
         if (container instanceof MultimediaObject) {
           container.element.appendChild(this.element);
+          this.DOMParentUUID = container.uuid;
         } else {
           container.appendChild(this.element);
+          this.DOMParentUUID = null;
         }
         this.DOMParent = container;
         var childsLength = this.childs.length;
 
-        if (childsLength > 0) {
+        if (childsLength > 0 && appendChild) {
           this.childs.forEach(function (child, index) {
             child.DOMParent = _this8;
             child.appendElementTo(_this8);
@@ -1623,18 +1699,26 @@ var MultimediaObject = function () {
       } else {
         document.body.appendChild(this.element);
         this.DOMParent = document.body;
+        this.DOMParentUUID = null;
         var _childsLength = this.childs.length;
 
         if (_childsLength > 0) {
           this.childs.forEach(function (child, index) {
             child.DOMParent = _this8;
+            child.DOMParentUUID = _this8.uuid;
             child.appendElementTo(_this8);
           });
         }
       }
-      if (this.initializer) {
-        this.initializer();
-      }
+      window.setTimeout(function () {
+        if (_this8.initializer) {
+          try {
+            _this8.initializer();
+          } catch (e) {
+            console.error(e);
+          }
+        }
+      }, 0);
       return this;
     }
 
@@ -1647,14 +1731,16 @@ var MultimediaObject = function () {
   }, {
     key: 'add',
     value: function add(child) {
+      var appendChild = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+
       this.childs.push(child);
       if (child instanceof MultimediaObject) {
-        this.element.appendChild(child.element);
+        if (appendChild) this.element.appendChild(child.element);
       } else {
-        this.element.appendChild(child);
+        if (appendChild) this.element.appendChild(child);
       }
       child.DOMParent = this;
-      eventManager.dispatchEvent('actualize-DOM-elements');
+      child.DOMParentUUID = this.uuid;
       return this;
     }
 
@@ -1667,17 +1753,17 @@ var MultimediaObject = function () {
   }, {
     key: 'remove',
     value: function remove(child) {
-      var elementIndex = this.childs.indexOf(child);
+      var elementIndex = findIndex(this.childs, { uuid: child.uuid });
       if (elementIndex >= 0) {
         this.childs.splice(elementIndex, 1);
-        if (child instanceof MultimediaObject) {
-          this.element.removeChild(child.element);
-        } else {
-          this.element.removeChild(child);
-        }
-        child.DOMParent = null;
+        try {
+          if (child instanceof MultimediaObject) {
+            this.element.removeChild(child.element);
+          } else {
+            this.element.removeChild(child);
+          }
+        } catch (e) {}
       }
-      eventManager.dispatchEvent('actualize-DOM-elements');
       return this;
     }
 
@@ -1711,8 +1797,10 @@ var MultimediaObject = function () {
 
   }, {
     key: 'preInterpolateStep',
-    value: function preInterpolateStep(fps) {
+    value: function preInterpolateStep() {
       var _this9 = this;
+
+      var fps = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.fps;
 
       this.getSortedSteps();
       var isAnimatedEvent = function isAnimatedEvent(string) {
@@ -1856,6 +1944,7 @@ var MultimediaObject = function () {
           }
         }
       }
+      // console.log(this.computedAnimations);
       return this;
     }
 
@@ -1872,7 +1961,7 @@ var MultimediaObject = function () {
     key: 'interpolateStep',
     value: function interpolateStep(currentIteration, seconds, fps) {
       var animationsLength = this.computedAnimations.length;
-      // console.log(animationsLength,currentIteration);
+      // console.log(animationsLength);
       if (animationsLength <= 0) {
         this.preInterpolateStep(fps);
       }
@@ -1882,9 +1971,13 @@ var MultimediaObject = function () {
         this.currentIteration = currentIteration;
         this.applyIteration();
       }
-      this.childs.forEach(function (child) {
-        child.interpolateStep(currentIteration, seconds, fps);
-      });
+      if (!window.MultimediaObjectEditor) {
+        this.childs.forEach(function (child) {
+          if (!child.animationStarted) {
+            child.interpolateStep(currentIteration, seconds, fps);
+          }
+        });
+      }
       if (animationsLength > currentIteration) {
         this.animated = true;
         this.currentIteration = currentIteration;
@@ -1914,6 +2007,7 @@ var MultimediaObject = function () {
       var iteration = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.computedAnimations[this.currentIteration];
       var end = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
 
+      // console.log(iteration);
       if (iteration) {
         var style = Object.create(iteration);
         for (var key in iteration) {
@@ -1979,7 +2073,8 @@ var MultimediaObject = function () {
         this.delta = this.now - this.then;
         if (!this.animationStarted) {
           this.animationStarted = true;
-          this.totalTime = this.totalTime !== 0 ? this.totalTime : Number(this.getSortedSteps()[this.getSortedSteps().length - 1]);
+          var sortedSteps = this.getSortedSteps();
+          this.totalTime = sortedSteps.length > 0 ? Number(sortedSteps[sortedSteps.length - 1]) : 0;
           this.totalIteration = this.totalTime * this.fps;
         } else if (this.delta > this.interval) {
           this.then = this.now - this.delta % this.interval;
@@ -2003,18 +2098,17 @@ var MultimediaObject = function () {
           // console.log(this.counter, this.totalIteration);
 
           this.interpolateStep(this.counter, this.secondsElapsed, this.fps);
-
           if (this.counter >= this.totalIteration && !this.reverse) {
             if (this.repeat > 0 && this.repeatCounter < this.repeat) {
-              this.counter = 0;
               this.repeatCounter++;
+              this.restartAnimation();
             } else {
               this.stopAnimation();
             }
           } else if (this.counter == 1 && this.reverse) {
             if (this.repeat > 0 && this.repeatCounter < this.repeat) {
-              this.counter = 0;
               this.repeatCounter++;
+              this.restartAnimation();
             } else {
               this.stopAnimation();
             }
@@ -2030,56 +2124,39 @@ var MultimediaObject = function () {
     * Add an event listener or a custom event
     * @param {string} listener - the name of the event
     * @param {function} fn - the function to execute on event dispatch
-    * @param {boolean} glob - is the custom event global or bind to the object id
     */
 
   }, {
     key: 'addListener',
-    value: function addListener(listener, fn, glob) {
-      glob = glob || /global/ig.test(listener);
-      if (glob) {
-        return eventManager.addListener(listener, fn);
-      }
-      return eventManager.addListener(this.uuid + '-' + listener, fn);
+    value: function addListener(listener, fn) {
+      return eventManager.addListener('' + listener, fn);
     }
 
     /**
     * Remove an event
     * @param {string} listener - the name of the event
     * @param {function} fn - the function to remove
-    * @param {boolean} glob - is the custom event global or bind to the object id
     */
 
   }, {
     key: 'removeListener',
-    value: function removeListener(listener, fn, glob) {
-      glob = glob || /global/ig.test(listener);
-      if (glob) {
-        if (fn instanceof Function) {
-          return eventManager.removeListener(listener, fn);
-        }
-        return eventManager.removeListener(listener, this[fn]);
-      } else if (fn instanceof Function) {
-        return eventManager.removeListener(this.uuid + '-' + listener, fn);
+    value: function removeListener(listener, fn) {
+      if (fn instanceof Function) {
+        return eventManager.removeListener('' + listener, fn);
       }
-      return eventManager.removeListener(this.uuid + '-' + listener, this[fn]);
+      return eventManager.removeListener('' + listener, this[fn]);
     }
 
     /**
     * Dispatch a custom event
     * @param {string} eventName - the name of the event
     * @param {object} params - the parameter to transmit
-    * @param {boolean} glob - is the custom event global or bind to the object id
     */
 
   }, {
     key: 'dispatchEvent',
-    value: function dispatchEvent(eventName, params, glob) {
-      glob = glob || /global/ig.test(eventName);
-      if (glob) {
-        return eventManager.dispatchEvent(eventName, params, this);
-      }
-      return eventManager.dispatchEvent(this.uuid + '-' + eventName, params, this);
+    value: function dispatchEvent(eventName, params) {
+      return eventManager.dispatchEvent(eventName, params, this);
     }
 
     /**
@@ -2099,7 +2176,7 @@ var MultimediaObject = function () {
 
       this.applyStyle(this._style);
       this.stopAnimation();
-      this.preInterpolateStep(this.fps);
+      this.preInterpolateStep();
     }
   }, {
     key: 'cleanCurrentAnimation',
@@ -2120,15 +2197,16 @@ var MultimediaObject = function () {
 
   }, {
     key: 'addAnimationProperties',
-    value: function addAnimationProperties(propertieArray, propValue, absoluteTime) {
+    value: function addAnimationProperties(propertieArray, propValue) {
       var _this12 = this;
+
+      var absoluteTime = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0.00;
 
       this.cleanCurrentAnimation();
       var existingProp = Object.keys(this.animatedProps);
       this.currentAnimation = this.currentAnimation || {};
       var time = absoluteTime;
 
-      time = time === 0 ? 0.00 : time;
       propertieArray.forEach(function (refProp) {
         var prop = refProp.key || refProp;
         var value = propValue || refProp.value || _this12._style[prop] || 0;
@@ -2141,7 +2219,7 @@ var MultimediaObject = function () {
         }
       });
       this.animations[this.selectedAnimation] = this.currentAnimation;
-      this.preInterpolateStep(this.fps);
+      this.preInterpolateStep();
       return this;
     }
 
@@ -2165,7 +2243,7 @@ var MultimediaObject = function () {
         }
       });
       this.cleanCurrentAnimation();
-      this.preInterpolateStep(this.fps);
+      this.preInterpolateStep();
       // this.dispatchEvent('actualize-timeline-elements', {}, true);
       return this;
     }
@@ -2186,7 +2264,7 @@ var MultimediaObject = function () {
           delete this.currentAnimation[time];
         }
         this.cleanCurrentAnimation();
-        this.preInterpolateStep(this.fps);
+        this.preInterpolateStep();
         // this.dispatchEvent('actualize-timeline-elements', {}, true);
       } else {
         console.log('animation at ' + time + ' don\'t exist');
@@ -2212,7 +2290,8 @@ var MultimediaObject = function () {
       this.currentAnimation[time][prop] = value;
       if (easing) this.currentAnimation[time].easing = easing;
       this.cleanCurrentAnimation();
-      this.preInterpolateStep(this.fps);
+      this.preInterpolateStep();
+      // console.log(time, prop, value);
       return this;
     }
 
@@ -2240,6 +2319,7 @@ var MultimediaObject = function () {
           delete this.currentAnimation[t];
         }
       }
+      this.totalTime = this.numericSteps[this.numericSteps.length - 1];
       return this.numericSteps;
     }
 
@@ -2271,7 +2351,7 @@ var MultimediaObject = function () {
 
       for (var p in this) {
         if (typeof this[p] !== 'undefined' && this[p] !== null) {
-          if (typeof this[p] !== 'function' && !this[p].element && !this[p].children && !this[p].elements && !/exportedFunctions|exportedEvents|childs|interval|then|now|delta|animated|animationStarted|currentIteration|computedAnimations|secondsElapsed|rafID|numericSteps|counter|totalIteration|animationStarted|direction|coords|bounds|geo|infowindow|map|marker|shop/.test(p)) {
+          if (typeof this[p] !== 'function' && p !== 'events' && p !== 'functions' && !this[p].element && !this[p].children && !this[p].elements && !/exportedFunctions|exportedEvents|childs|interval|then|now|delta|animated|animationStarted|currentIteration|computedAnimations|secondsElapsed|rafID|numericSteps|counter|totalIteration|animationStarted|direction|coords|bounds|geo|infowindow|map|marker|shop|/.test(p)) {
             ob[p] = this[p];
           }
         }
@@ -2296,22 +2376,26 @@ var MultimediaObject = function () {
       }
 
       this.childs.forEach(function (child) {
-        ob.childs.push(child.exportToJSON());
+        var c = child.exportToJSON();
+        ob.childs.push(c);
       });
 
       ob.style = this._style;
       ob.attributes = this.attributes;
       delete ob.attributes.id;
       ob.breakpoints = this.breakpoints;
+      ob.dependencies = this.dependencies;
       ob.globalStyle = this.globalStyle;
       ob.data = this.data || {};
-      ob.currentAnimation = this.currentAnimation;
+      ob.selectedAnimation = this.selectedAnimation;
       ob.animations = this.animations;
       ob.load = true;
       ob.type = this.type;
+      ob.uuid = this.uuid;
+      ob.name = this.name;
+      ob.repeat = this.repeat;
+      ob.DOMParentUUID = this.DOMParentUUID;
       ob.data.absoluteAssetURL = this.data.absoluteAssetURL || './';
-
-      // console.log(ob);
       return ob;
     }
 
@@ -2354,25 +2438,17 @@ var MultimediaObject = function () {
         if (key === 'animations' && !json.animations.default) {
           this.currentAnimation = json.animations;
           this.animations.default = json.animations;
-        } else {
+        } else if (key !== 'childs') {
           this[key] = json[key];
         }
       }
 
       for (var evt in json.exportedEvents) {
-        var args = json.exportedEvents[evt].args.map(function (el) {
-          return el.replace(/\n+|(\/\*\*\/\n)+/g, '').replace(/^(\n+|\t+|\t\n+)(?!\w)$/gm, '').replace(/`/gm, '');
-        }),
-            body = json.exportedEvents[evt].body;
-        this.events[evt] = new Function(args, body);
+        this.events[evt] = unserializeFunction(json.exportedEvents[evt]);
       }
 
       for (var func in json.exportedFunctions) {
-        var _args2 = json.exportedFunctions[func].args.map(function (el) {
-          return el.replace(/\n+|(\/\*\*\/\n)+/g, '').replace(/^(\n+|\t+|\t\n+)(?!\w)$/gm, '').replace(/`/gm, '');
-        }),
-            _body2 = json.exportedFunctions[func].body;
-        this.functions[func] = new Function(_args2, _body2);
+        this.functions[func] = unserializeFunction(json.exportedFunctions[func]);
       }
       if (json.childs) {
         json.childs.forEach(function (child, index) {
@@ -2380,15 +2456,22 @@ var MultimediaObject = function () {
           child.data = child.data || {};
           // child.data.absoluteAssetURL = json.data.absoluteAssetURL || "";
           child.data.autostart = parseBoolean(child.data.autostart);
+          child.data.forceStart = parseBoolean(child.data.forceStart);
           child.DOMParent = _this14;
-          _this14.childs[index] = new MultimediaObject(child);
+          child.DOMParentUUID = _this14.uuid;
+          _this14.childs.push(new MultimediaObject(child));
         });
       }
 
-      this.uuid = generateUUID();
+      this.uuid = json.uuid || generateUUID();
+      this.DOMParentUUID = json.DOMParentUUID || null;
+      this.selectedAnimation = json.selectedAnimation;
       this.data = json.data || {};
       this.type = json.type;
+      this.repeat = parseInt(json.repeat, 10);
+      this.dependencies = json.dependencies || [];
       this.data.autostart = json.data ? parseBoolean(json.data.autostart) : true;
+      this.data.forceStart = json.data ? parseBoolean(json.data.forceStart) : false;
       this.setAbsoluteAssetURL();
     }
   }]);
