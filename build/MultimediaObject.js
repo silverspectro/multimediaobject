@@ -897,6 +897,9 @@ var MultimediaObject = function () {
     this.DOMParent = null;
     this.DOMParentUUID = null;
 
+    this.reverse = false;
+    this.repeat = 0;
+
     if ((typeof type === 'undefined' ? 'undefined' : _typeof(type)) === 'object') {
       this.uuid = type.uuid || this.uuid;
       this.name = name || type.name;
@@ -929,8 +932,6 @@ var MultimediaObject = function () {
     this.totalIteration = 0;
     this.counter = 0;
 
-    this.reverse = false;
-    this.repeat = 0;
     this.animationStarted = false;
     this.repeatCounter = 0;
 
@@ -939,7 +940,6 @@ var MultimediaObject = function () {
         this.startAnimation();
       } else if (this.data.autostart && !(this.DOMParent instanceof MultimediaObject)) {
         this.addListener('startAfterPreload', function () {
-          console.log(_this.name, 'launched after preload');
           _this.startAnimation();
         });
       }
@@ -2075,7 +2075,7 @@ var MultimediaObject = function () {
           this.animationStarted = true;
           var sortedSteps = this.getSortedSteps();
           this.totalTime = sortedSteps.length > 0 ? Number(sortedSteps[sortedSteps.length - 1]) : 0;
-          this.totalIteration = this.totalTime * this.fps;
+          this.totalIteration = Math.floor(this.totalTime * this.fps);
         } else if (this.delta > this.interval) {
           this.then = this.now - this.delta % this.interval;
 
@@ -2098,8 +2098,10 @@ var MultimediaObject = function () {
           // console.log(this.counter, this.totalIteration);
 
           this.interpolateStep(this.counter, this.secondsElapsed, this.fps);
+          console.log(this.counter, this.totalIteration);
           if (this.animationStarted) {
             if (this.counter >= this.totalIteration && !this.reverse) {
+              console.log('in', this.counter, this.repeatCounter, this.repeat);
               if (this.repeat > 0 && this.repeatCounter < this.repeat) {
                 this.repeatCounter++;
                 this.restartAnimation();
