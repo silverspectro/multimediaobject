@@ -126,6 +126,9 @@ export default class MultimediaObject {
     this.DOMParent = null;
     this.DOMParentUUID = null;
 
+    this.reverse = false;
+    this.repeat = 0;
+
     if (typeof type === 'object') {
       this.uuid = type.uuid || this.uuid;
       this.name = name || type.name;
@@ -159,8 +162,6 @@ export default class MultimediaObject {
     this.totalIteration = 0;
     this.counter = 0;
 
-    this.reverse = false;
-    this.repeat = 0;
     this.animationStarted = false;
     this.repeatCounter = 0;
 
@@ -1172,7 +1173,7 @@ export default class MultimediaObject {
         this.animationStarted = true;
         const sortedSteps = this.getSortedSteps();
         this.totalTime = sortedSteps.length > 0 ? Number(sortedSteps[sortedSteps.length - 1]) : 0;
-        this.totalIteration = this.totalTime * this.fps;
+        this.totalIteration = Math.floor(this.totalTime * this.fps);
       } else if (this.delta > this.interval) {
         this.then = this.now - (this.delta % this.interval);
 
@@ -1195,8 +1196,10 @@ export default class MultimediaObject {
         // console.log(this.counter, this.totalIteration);
 
         this.interpolateStep(this.counter, this.secondsElapsed, this.fps);
+        console.log(this.counter, this.totalIteration);
         if (this.animationStarted) {
           if (this.counter >= this.totalIteration && !this.reverse) {
+            console.log('in', this.counter, this.repeatCounter, this.repeat);
             if (this.repeat > 0 && this.repeatCounter < this.repeat) {
               this.repeatCounter++;
               this.restartAnimation();
