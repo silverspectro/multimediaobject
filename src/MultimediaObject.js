@@ -1444,8 +1444,8 @@ export default class MultimediaObject {
     delete ob.attributes.id;
     ob.breakpoints = this.breakpoints;
     ob.dependencies = this.dependencies;
-    ob.globalStyle = this.globalStyle;
     ob.data = this.data || {};
+    ob.data.globalStyle = this.data.globalStyle;
     ob.selectedAnimation = this.selectedAnimation;
     ob.animations = this.animations;
     ob.load = true;
