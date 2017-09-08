@@ -1196,10 +1196,8 @@ export default class MultimediaObject {
         // console.log(this.counter, this.totalIteration);
 
         this.interpolateStep(this.counter, this.secondsElapsed, this.fps);
-        console.log(this.counter, this.totalIteration);
         if (this.animationStarted) {
           if (this.counter >= this.totalIteration && !this.reverse) {
-            console.log('in', this.counter, this.repeatCounter, this.repeat);
             if (this.repeat > 0 && this.repeatCounter < this.repeat) {
               this.repeatCounter++;
               this.restartAnimation();
