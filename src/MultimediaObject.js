@@ -860,6 +860,7 @@ export default class MultimediaObject {
           console.error(e);
         }
       }
+      this.checkBreakpoints();
     }, 0);
     return this;
   }
