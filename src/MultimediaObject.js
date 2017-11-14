@@ -592,8 +592,6 @@ export default class MultimediaObject {
         this.element.removeEventListener(eventName, this._events[eventName]);
         delete this.events[eventName];
         delete this._events[eventName];
-      } else {
-        console.log('Event does not exist');
       }
     } else if (eventName === 'swipe') {
       this.element.removeEventListener('touchstart', this.evtStart);
@@ -608,8 +606,6 @@ export default class MultimediaObject {
       this.removeListener(eventName, this._events[eventName]);
       delete this.events[eventName];
       delete this._events[eventName];
-    } else {
-      console.log('Event does not exist');
     }
     return this;
   }
@@ -633,8 +629,6 @@ export default class MultimediaObject {
       } else {
         this.removeListener(eventName, this._events[eventName]);
       }
-    } else {
-      console.log('Event does not exist');
     }
   }
 
@@ -648,8 +642,6 @@ export default class MultimediaObject {
     if (this.functions[functionName]) {
       delete this[functionName];
       delete this.functions[functionName];
-    } else {
-      console.log('Function does not exist');
     }
     return this;
   }
@@ -667,15 +659,11 @@ export default class MultimediaObject {
         if (this.attributes[propertieName]) {
           this.element.removeAttribute(propertieName);
           delete this.attributes[propertieName];
-        } else {
-          console.log(`${propertieName} attribute does not exist`);
         }
         break;
       case 'data' :
         if (this.data[propertieName]) {
           delete this.data[propertieName];
-        } else {
-          console.log(`${propertieName} data does not exist`);
         }
         break;
       case 'style' :
@@ -714,8 +702,6 @@ export default class MultimediaObject {
           this.element.style[utils.propertyWithPrefix(propertieName)] = '';
           this.element.style[propertieName] = '';
           delete this.style[propertieName];
-        } else if (propertieName) {
-          console.log(`${propertieName} style does not exist`);
         }
     }
 
@@ -860,6 +846,7 @@ export default class MultimediaObject {
           console.error(e);
         }
       }
+      this.checkBreakpoints();
     }, 0);
     return this;
   }
@@ -1196,10 +1183,8 @@ export default class MultimediaObject {
         // console.log(this.counter, this.totalIteration);
 
         this.interpolateStep(this.counter, this.secondsElapsed, this.fps);
-        console.log(this.counter, this.totalIteration);
         if (this.animationStarted) {
           if (this.counter >= this.totalIteration && !this.reverse) {
-            console.log('in', this.counter, this.repeatCounter, this.repeat);
             if (this.repeat > 0 && this.repeatCounter < this.repeat) {
               this.repeatCounter++;
               this.restartAnimation();
@@ -1446,8 +1431,8 @@ export default class MultimediaObject {
     delete ob.attributes.id;
     ob.breakpoints = this.breakpoints;
     ob.dependencies = this.dependencies;
-    ob.globalStyle = this.globalStyle;
     ob.data = this.data || {};
+    ob.data.globalStyle = this.data.globalStyle;
     ob.selectedAnimation = this.selectedAnimation;
     ob.animations = this.animations;
     ob.load = true;
@@ -1508,10 +1493,6 @@ export default class MultimediaObject {
     if (json.childs) {
       json.childs.forEach((child, index) => {
         child.load = true;
-        child.data = child.data || {};
-        // child.data.absoluteAssetURL = json.data.absoluteAssetURL || "";
-        child.data.autostart = utils.parseBoolean(child.data.autostart);
-        child.data.forceStart = utils.parseBoolean(child.data.forceStart);
         child.DOMParent = this;
         child.DOMParentUUID = this.uuid;
         this.childs.push(new MultimediaObject(child));
@@ -1525,8 +1506,12 @@ export default class MultimediaObject {
     this.type = json.type;
     this.repeat = parseInt(json.repeat, 10);
     this.dependencies = json.dependencies || [];
-    this.data.autostart = json.data ? utils.parseBoolean(json.data.autostart) : true;
-    this.data.forceStart = json.data ? utils.parseBoolean(json.data.forceStart) : false;
+    this.data.autostart = this.data.autostart ? utils.parseBoolean(json.data.autostart) : true;
+    this.data.forceStart = this.data.forceStart ? utils.parseBoolean(json.data.forceStart) : false;
+    // convert Booleans to Booleans 
+    Object.keys(this.data).forEach((key) => {
+      if (this.data[key] === 'false' || this.data[key] === 'true') this.data[key] = utils.parseBoolean(this.data[key]);
+    });
     this.setAbsoluteAssetURL();
   }
 }
