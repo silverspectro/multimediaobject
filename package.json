@@ -1,70 +1,40 @@
 {
   "name": "multimediaobject",
-  "version": "1.0.43",
+  "version": "2.0.0",
   "description": "Multimediaobject library",
-  "main": "src/MultimediaObject.js",
-  "dependencies": {
-    "babel-plugin-external-helpers": "^6.22.0",
-    "chalk": "^1.1.3",
-    "cross-env": "^4.0.0",
-    "fs-extra": "^2.1.2",
-    "prompt": "^1.0.0",
-    "rollup-plugin-node-resolve": "^3.0.0"
-  },
-  "devDependencies": {
-    "babel-preset-es2015": "^6.22.0",
-    "chai": "*",
-    "css-loader": "^0.23.1",
-    "eslint": "^3.13.0",
-    "eslint-config-airbnb": "^14.0.0",
-    "eslint-config-airbnb-base": "^11.0.1",
-    "eslint-loader": "^1.3.0",
-    "eslint-plugin-import": "^2.2.0",
-    "eslint-plugin-jsx-a11y": "^3.0.2",
-    "eslint-plugin-react": "^6.9.0",
-    "file-loader": "^0.8.5",
-    "html-loader": "^0.4.3",
-    "jasmine": "^2.5.3",
-    "jasmine-core": "^2.5.2",
-    "lodash": "^4.17.4",
-    "karma": "^1.4.0",
-    "karma-chrome-launcher": "^2.0.0",
-    "karma-cli": "^1.0.1",
-    "karma-coverage": "^1.1.1",
-    "karma-firefox-launcher": "^1.0.0",
-    "karma-ie-launcher": "^1.0.0",
-    "karma-jasmine": "^1.1.0",
-    "karma-phantomjs-launcher": "^1.0.2",
-    "karma-rollup-preprocessor": "^3.0.3",
-    "karma-sourcemap-loader": "^0.3.7",
-    "karma-spec-reporter": "0.0.30",
-    "karma-verbose-reporter": "0.0.4",
-    "raw-loader": "^0.5.1",
-    "rollup": "^0.41.4",
-    "rollup-plugin-babel": "^2.7.1",
-    "rollup-plugin-buble": "^0.15.0",
-    "rollup-plugin-uglify": "^1.0.1",
-    "rollup-watch": "^3.2.2"
-  },
+  "main": "index.js",
   "scripts": {
-    "start": "rollup -c rollup.config.test.js -w",
-    "build": "cross-env NODE_ENV=production && rollup -c",
-    "build-dev": "rollup -c rollup.config.test.js",
-    "build-tpl": "rollup -c -i src/javascript/main.prod.js -o public/main.prod.js",
-    "test": "karma start",
-    "pretest": "npm run build && npm run build-dev",
-    "generate-docs": "jsdoc --configure .jsdoc.json --verbose src/MultimediaObject.js"
+    "watch": "NODE_ENV=production webpack --watch --config config/webpack.config.js",
+    "build": "webpack --config config/webpack.config.js",
+    "build:dev": "cross-env NODE_ENV=development webpack --config config/webpack.config.js",
+    "test": "jest --coverage",
+    "test:watch": "jest --watch --coverage"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://B-Core@bitbucket.org/B-Core/multimediaobject.git"
   },
   "keywords": [
+    "MO",
     "MultimediaObject",
-    "Animations",
-    "RequestAnimationFrame",
-    "Webpack"
+    "javascript"
   ],
-  "repository": {
-    "url": "https://bitbucket.org/B-Core/multimediaobject",
-    "type": "git"
-  },
+  "sideEffects": false,
   "author": "Ciro DE CARO",
-  "license": "Apache-2.0"
+  "license": "Apache-2.0",
+  "homepage": "https://bitbucket.org/B-Core/multimediaobject#readme",
+  "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.4",
+    "babel-preset-env": "^1.7.0",
+    "babel-register": "^6.26.0",
+    "clean-webpack-plugin": "^0.1.19",
+    "cross-env": "^5.1.5",
+    "jest": "^22.4.4",
+    "webpack": "^4.8.3",
+    "webpack-cli": "^2.1.3"
+  },
+  "dependencies": {
+    "lodash": "^4.17.10"
+  }
 }
