@@ -1,9 +1,9 @@
-import check from 'Lib/check';
+import check from './libs/check';
 
-import { constructorSchema } from 'Schemas/constructor';
+import constructorSchema from './schemas/constructor';
 
 
-class MultimediaObject {
+export default class MultimediaObject {
   constructor(config) {
     check.validate(config, constructorSchema);
 
