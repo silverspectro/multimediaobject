@@ -146,6 +146,10 @@ describe('MultimediaObject.loadFromJSON', () => {
     const mo = new MultimediaObject(params);
     expect(typeof mo.repeat).toEqual('number');
     expect(mo.repeat).toEqual(10);
+
+    const mo2 = new MultimediaObject();
+    expect(typeof mo2.repeat).toEqual('number');
+    expect(mo2.repeat).toEqual(0);
   });
 
   test('should unserialize events and add them to this.events', () => {

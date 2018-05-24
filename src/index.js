@@ -2,6 +2,7 @@ import configuration from './config/config';
 import check from './libs/check';
 import uuid from './libs/uuid';
 import unserializeFunction from './libs/unserializeFunction';
+import parseBooleans from './libs/parseBooleans';
 
 import constructorSchema from './schemas/constructor';
 
@@ -81,7 +82,7 @@ export default class MultimediaObject {
         this.currentAnimation = json.animations;
         this.animations.default = json.animations;
       } else if (key !== 'childs' && key !== 'events' && key !== 'functions') {
-        this[key] = json[key];
+        if (json[key]) this[key] = json[key];
       }
     }
 
@@ -103,15 +104,12 @@ export default class MultimediaObject {
 
     this.DOMParentUUID = json.DOMParentUUID || null;
     this.selectedAnimation = json.selectedAnimation || this.selectedAnimation;
-    this.data = json.data || {};
-    this.type = json.type || 'block';
     this.repeat = parseInt(json.repeat, 10) || 0;
-    this.dependencies = json.dependencies || [];
-    this.data.autostart = this.data.autostart ? utils.parseBoolean(json.data.autostart) : true;
-    this.data.forceStart = this.data.forceStart ? utils.parseBoolean(json.data.forceStart) : false;
+    this.data.autostart = this.data.autostart ? parseBoolean(json.data.autostart) : true;
+    this.data.forceStart = this.data.forceStart ? parseBoolean(json.data.forceStart) : false;
     // convert Booleans to Booleans 
     Object.keys(this.data).forEach((key) => {
-      if (this.data[key] === 'false' || this.data[key] === 'true') this.data[key] = utils.parseBoolean(this.data[key]);
+      if (this.data[key] === 'false' || this.data[key] === 'true') this.data[key] = parseBoolean(this.data[key]);
     });
     this.setAbsoluteAssetURL();
   }

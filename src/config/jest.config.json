@@ -1,14 +1,14 @@
 {
   "testPathIgnorePatterns": [
     "/node_modules/",
-    "src/libs"
+    "src/libs/check"
   ],
   "coveragePathIgnorePatterns": [
     "/node_modules/",
-    "src/libs"
+    "src/libs/check"
   ],
   "rootDir": "../",
-  "coverageDirectory": "../../../coverage",
+  "coverageDirectory": "../coverage",
   "verbose": true,
   "bail": true
 }
