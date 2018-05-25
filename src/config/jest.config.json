@@ -1,11 +1,13 @@
 {
   "testPathIgnorePatterns": [
     "/node_modules/",
-    "src/libs/check"
+    "src/libs/check",
+    "src/libs/microutils"
   ],
   "coveragePathIgnorePatterns": [
     "/node_modules/",
-    "src/libs/check"
+    "src/libs/check",
+    "src/libs/microutils"
   ],
   "rootDir": "../",
   "coverageDirectory": "../coverage",

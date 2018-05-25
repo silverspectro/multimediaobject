@@ -1,10 +1,12 @@
 import configuration from './config/config';
 import check from './libs/check';
-import uuid from './libs/uuid';
-import unserializeFunction from './libs/unserializeFunction';
-import parseBooleans from './libs/parseBooleans';
+import { parseBooleans } from './libs/microutils/src/lang/parseBooleans';
+import { uuid } from './libs/microutils/src/lang/uuid';
+import { unserialize } from './libs/microutils/src/functions/unserialize';
 
 import constructorSchema from './schemas/constructor';
+
+console.log(uuid);
 
 
 export default class MultimediaObject {
@@ -87,11 +89,11 @@ export default class MultimediaObject {
     }
 
     for (const evt in json.exportedEvents) {
-      this.events[evt] = unserializeFunction(json.exportedEvents[evt]);
+      this.events[evt] = unserialize(json.exportedEvents[evt]);
     }
 
     for (const func in json.exportedFunctions) {
-      this.functions[func] = unserializeFunction(json.exportedFunctions[func]);
+      this.functions[func] = unserialize(json.exportedFunctions[func]);
     }
     if (json.childs) {
       json.childs.forEach((child, index) => {
@@ -105,11 +107,11 @@ export default class MultimediaObject {
     this.DOMParentUUID = json.DOMParentUUID || null;
     this.selectedAnimation = json.selectedAnimation || this.selectedAnimation;
     this.repeat = parseInt(json.repeat, 10) || 0;
-    this.data.autostart = this.data.autostart ? parseBoolean(json.data.autostart) : true;
-    this.data.forceStart = this.data.forceStart ? parseBoolean(json.data.forceStart) : false;
+    this.data.autostart = this.data.autostart ? parseBooleans(json.data.autostart) : true;
+    this.data.forceStart = this.data.forceStart ? parseBooleans(json.data.forceStart) : false;
     // convert Booleans to Booleans 
     Object.keys(this.data).forEach((key) => {
-      if (this.data[key] === 'false' || this.data[key] === 'true') this.data[key] = parseBoolean(this.data[key]);
+      if (this.data[key] === 'false' || this.data[key] === 'true') this.data[key] = parseBooleans(this.data[key]);
     });
     this.setAbsoluteAssetURL();
   }
