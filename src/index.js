@@ -6,9 +6,6 @@ import { unserialize } from './libs/microutils/src/functions/unserialize';
 
 import constructorSchema from './schemas/constructor';
 
-console.log(uuid);
-
-
 export default class MultimediaObject {
   constructor(config = {}) {
     check.validate(config, constructorSchema);

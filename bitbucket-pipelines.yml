@@ -16,7 +16,11 @@ pipelines:
           - npm
           - node
         script:
+          - cp src/config/config.tpl.js src/config/config.js
+          - sed -i 's/{{ globalnamespace }}/MultimediaObjectEditor/g' src/config/config.js
+          - sed -i 's/{{ namespace }}/_s4mConfig/g' src/config/config.js
+          - sed -i 's/{{ container }}/scene/g' src/config/config.js
           - git submodule init
-          - git submodule update
+          - git submodule update --recursive
           - npm install
           - npm test

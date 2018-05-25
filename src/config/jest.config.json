@@ -2,12 +2,14 @@
   "testPathIgnorePatterns": [
     "/node_modules/",
     "src/libs/check",
-    "src/libs/microutils"
+    "src/libs/microutils",
+    "src/modules/timeline"
   ],
   "coveragePathIgnorePatterns": [
     "/node_modules/",
     "src/libs/check",
-    "src/libs/microutils"
+    "src/libs/microutils",
+    "src/modules/timeline"
   ],
   "rootDir": "../",
   "coverageDirectory": "../coverage",
