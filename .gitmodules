@@ -1,3 +1,9 @@
 [submodule "src/libs/check"]
 	path = src/libs/check
 	url = https://B-Core@bitbucket.org/B-Core/check.git
+[submodule "src/modules/timeline"]
+	path = src/modules/timeline
+	url = https://B-Core@bitbucket.org/B-Core/multimediaobjecteditor-timeline.git
+[submodule "src/libs/microutils"]
+	path = src/libs/microutils
+	url = https://B-Core@bitbucket.org/B-Core/microutils.git
