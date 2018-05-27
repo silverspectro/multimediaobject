@@ -1,8 +1,8 @@
 import configuration from './config/config';
 import check from './libs/check';
-import { parseBooleans } from './libs/microutils/src/lang/parseBooleans';
-import { uuid } from './libs/microutils/src/lang/uuid';
-import { unserialize } from './libs/microutils/src/functions/unserialize';
+import parseBooleans from './libs/microutils/src/lang/parseBooleans';
+import uuid from './libs/microutils/src/lang/uuid';
+import unserialize from './libs/microutils/src/functions/unserialize';
 
 import constructorSchema from './schemas/constructor';
 
