@@ -33,6 +33,93 @@ describe('MultimediaObject.constructor', () => {
 //   });
 // });
 
+describe('NultimediaObject.setAbsoluteUrl', () => {
+
+  afterEach(() => {
+    delete window.MultimediaObjectEditor;
+    delete window._s4mConfig;
+  });
+
+  test('should not apply anything if window[configuration.namespace] is undefined', () => {
+    window.MultimediaObjectEditor = true;
+    window._s4mConfig = {};
+
+    const data = {
+      template: false,
+      load: true,
+    };
+
+    const mo = new MultimediaObject(data);
+
+    expect(mo.data.absoluteAssetURL).toBeUndefined();
+  });
+
+  test('should set absoluteAssetURL if window[namespace].absoluteAssetURL is set and no template', () => {
+    window.MultimediaObjectEditor = true;
+    window._s4mConfig = {};
+    window._s4mConfig.absoluteAssetURL = 'test';
+
+    const data = {
+      template: false,
+      load: true,
+    };
+
+    const mo = new MultimediaObject(data);
+
+    expect(mo.data.absoluteAssetURL).toEqual('test');
+  });
+
+  test('should apply templateURL if it is set', () => {
+    window.MultimediaObjectEditor = true;
+    window._s4mConfig = {};
+    window._s4mConfig.absoluteAssetURL = 'test';
+
+    const data = {
+      load: true,
+      data: {
+        templateURL: 'test',
+        template: true,
+      },
+    };
+
+    const mo = new MultimediaObject(data);
+
+    expect(mo.data.absoluteAssetURL).toEqual('test');
+  });
+
+  test('should apply window[namespace].absoluteAssetURL if it is set on non MultimediaObjectEditor context', () => {
+    window._s4mConfig = {};
+    window._s4mConfig.absoluteAssetURL = 'test';
+
+    const data = {
+      load: true,
+      data: {
+        templateURL: 'failed test !',
+        template: true,
+      },
+    };
+
+    const mo = new MultimediaObject(data);
+
+    expect(mo.data.absoluteAssetURL).toEqual('test');
+  });
+
+  test('should apply \'./\' if window[namespace].absoluteAssetURL is not set on non MultimediaObjectEditor context', () => {
+    window._s4mConfig = {
+      absoluteAssetURL: 'undefined',
+    };
+    const data = {
+      load: true,
+      data: {
+        templateURL: 'test',
+      },
+    };
+
+    const mo = new MultimediaObject(data);
+    expect(mo.data.absoluteAssetURL).toEqual('./');
+  });
+});
+
 describe('MultimediaObject.loadFromJSON', () => {
   test('should copy all keys if they are not ["animations", "events", "functions", "childs"]', () => {
     const params = {
@@ -56,6 +143,7 @@ describe('MultimediaObject.loadFromJSON', () => {
       functions: {
         test: 'lol',
       },
+      test: undefined,
     };
 
     const mo = new MultimediaObject(params);
@@ -67,6 +155,7 @@ describe('MultimediaObject.loadFromJSON', () => {
     expect(mo.childs).not.toEqual(params.childs);
     expect(mo.events).not.toEqual(params.events);
     expect(mo.functions).not.toEqual(params.functions);
+    expect(mo.test).toBeUndefined();
   });
 
   test('should copy animations and add a default animation if "default" key doesn\'t exist (for legacy purpose)', () => {
@@ -238,5 +327,19 @@ describe('MultimediaObject.loadFromJSON', () => {
     const mo = new MultimediaObject();
 
     expect(mo.DOMParentUUID).toBeNull();
+  });
+
+  test('should convert booleans in data', () => {
+    const data = {
+      test: "false",
+      test1: "true",
+    };
+
+    const mo = new MultimediaObject({
+      data,
+    });
+
+    expect(mo.data.test).toEqual(false);
+    expect(mo.data.test1).toEqual(true);
   });
 });
