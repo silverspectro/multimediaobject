@@ -15,9 +15,10 @@ export default class MultimediaObject {
 
     this.uuid = config.uuid || uuid();
     this.name = config.name || `multimediaobject-${this.uuid}`;
-    this.type = 'block';
+    this.type = 'div';
     
     this.data = {};
+    this.data.drivers = {};
 
     this.style = {};
     this._style = {};
@@ -25,13 +26,28 @@ export default class MultimediaObject {
     this.events = {};
     this._events = {};
     this.functions = {};
+    this.drivers = [];
     this.breakpoints = [];
     this.dependencies = [];
     this.childs = [];
 
     this.loadFromJSON(config);
 
-    // this.init();
+    this.init();
+  }
+
+  /**
+   * Initialize the MultimediaObject
+   * load and initialise all drivers
+   * on there namespace
+   * 
+   * @memberOf MultimediaObject
+   */
+  init() {
+    this.drivers.forEach((driver) => {
+      this.data.drivers[driver.id] = this.data.drivers[driver.id] || {};
+      driver.init(this.data.drivers[driver.id]);
+    });
   }
 
   /**
@@ -44,10 +60,9 @@ export default class MultimediaObject {
    * @return {Driver|Number}
    */
   findDriver(id, index = true) {
-    this.data.drivers = this.data.drivers || [];
     return index ?
-    this.data.drivers.findIndex(d => d.id === id)
-    : this.data.drivers.find(d => d.id === id);
+    this.drivers.findIndex(d => d.id === id)
+    : this.drivers.find(d => d.id === id);
   }
 
   /**
@@ -75,8 +90,8 @@ export default class MultimediaObject {
     check.validate(driver, driverSchema);
     const index = this.findDriver(driver.id);
     if (index === -1) {
-      this.data.drivers.push(driver);
-      this.data.drivers[driver.id] = this.data.drivers[driver.id] || {};
+      this.drivers.push(driver);
+      this.drivers[driver.id] = this.drivers[driver.id] || {};
     } else {
       console.error(`Driver ${driver.name || driver.id} is loaded`);
     }
@@ -90,14 +105,13 @@ export default class MultimediaObject {
    * 
    * @memberOf MultimediaObject
    */
-  removeDriver(driver) {
-    check.validate(driver, driverSchema);
-    const index = this.findDriver(driver.id);
+  removeDriver(id) {
+    const index = this.findDriver(id);
     if (index >= 0) {
-      this.data.drivers.splice(index, 1);
-      delete this.data.drivers[driver.id];
+      this.drivers.splice(index, 1);
+      delete this.data.drivers[id];
     } else {
-      console.error(`Driver ${driver.name || driver.id} does not exist`);
+      console.error(`Driver ${id} does not exist`);
     }
   }
 

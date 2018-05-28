@@ -7,3 +7,6 @@
 [submodule "src/libs/microutils"]
 	path = src/libs/microutils
 	url = https://B-Core@bitbucket.org/B-Core/microutils.git
+[submodule "src/drivers"]
+	path = src/drivers
+	url = https://B-Core@bitbucket.org/B-Core/multimediaobject-drivers.git

@@ -3,13 +3,15 @@
     "/node_modules/",
     "src/libs/check",
     "src/libs/microutils",
-    "src/modules/timeline"
+    "src/modules/timeline",
+    "src/drivers"
   ],
   "coveragePathIgnorePatterns": [
     "/node_modules/",
     "src/libs/check",
     "src/libs/microutils",
-    "src/modules/timeline"
+    "src/modules/timeline",
+    "src/drivers"
   ],
   "rootDir": "../",
   "coverageDirectory": "../coverage",

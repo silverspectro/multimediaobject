@@ -1,5 +1,7 @@
 import MultimediaObject from './index';
 
+import DOMDriver from './drivers/drivers/DOM';
+
 describe('MultimediaObject.constructor', () => {
   test('should instanciate a MultimediaObject', () => {
     const mo = new MultimediaObject();
@@ -12,25 +14,21 @@ describe('MultimediaObject.constructor', () => {
 describe('MultimediaObject.findDriver', () => {
   test('should find driver by id', () => {
     const mo = new MultimediaObject();
-
-    mo.loadDrivers([
+    const drivers = [
       {
         id: 'test',
+        init: () => {},
       },
       {
         id: 'test2',
+        init: () => {},
       }
-    ]);
+    ];
+    mo.loadDrivers(drivers);
 
     expect(mo.findDriver('test')).toEqual(0);
     expect(mo.findDriver('test2')).toEqual(1);
-    expect(mo.findDriver('test2', false)).toEqual({ id: 'test2' });
-  });
-  test('should create drivers array if not present', () => {
-    const mo = new MultimediaObject();
-    expect(mo.data.drivers).toBeUndefined();
-    mo.findDriver('test');
-    expect(mo.data.drivers).toEqual([]);
+    expect(mo.findDriver('test2', false)).toEqual(drivers[1]);
   });
 });
 
@@ -44,19 +42,22 @@ describe('MultimediaObject.loadDrivers', () => {
     mo.loadDrivers([
       {
         id: 'test',
+        init: () => {},
       },
     ]);
 
     expect(mo.findDriver('test')).toEqual(0);
-    expect(mo.data.drivers).toHaveLength(1);
+    expect(mo.drivers).toHaveLength(1);
+    expect(mo.data.drivers.test).toBeUndefined();
 
     mo.loadDrivers([
       {
         id: 'test',
+        init: () => {},
       },
     ]);
 
-    expect(mo.data.drivers).toHaveLength(1);
+    expect(mo.drivers).toHaveLength(1);
     expect(console.error).toHaveBeenCalled();
 
     console.error = originalError;
@@ -77,54 +78,62 @@ describe('MultimediaObject.removeDriver', () => {
     mo.loadDrivers([
       {
         id: 'test',
+        init: () => {},
       },
       {
         id: 'test2',
+        init: () => {},
       }
     ]);
 
-    expect(mo.data.drivers).toHaveLength(2);
+    expect(mo.drivers).toHaveLength(2);
 
-    mo.removeDriver({ id: 'test' });
+    mo.removeDriver('test');
 
-    expect(mo.data.drivers).toHaveLength(1);
+    expect(mo.drivers).toHaveLength(1);
 
-    expect(mo.data.drivers).toHaveLength(1);
-    mo.removeDriver({ id: 'test' });
+    expect(mo.drivers).toHaveLength(1);
+    mo.removeDriver('test');
     expect(console.error).toHaveBeenCalled();
     console.error = originalError;
   });
-  test('should throw if not id', () => {
-    const mo = new MultimediaObject();
-    expect(() => mo.removeDriver('test')).toThrowError();
+});
+
+describe('MultimediaObject.init', () => {
+  test('should load all drivers and trigger there init method', () => {
+    const originalInit = DOMDriver.init;
+    DOMDriver.init = jest.fn();
+
+    const mo = new MultimediaObject({
+      drivers: [DOMDriver],
+    });
+
+    expect(DOMDriver.init).toHaveBeenCalledWith(mo.data.drivers.DOM);
+
+    DOMDriver.init = originalInit;
+  });
+  test('should keep old driver data unless erased', () => {
+    const originalInit = DOMDriver.init;
+    DOMDriver.init = jest.fn();
+    const domdata = {
+      type: 'input',
+    };
+    const mo = new MultimediaObject({
+      drivers: [DOMDriver],
+      data: {
+        drivers: {
+          DOM: domdata,
+        },
+      }
+    });
+
+    expect(DOMDriver.init).toHaveBeenCalledWith(domdata);
+
+    DOMDriver.init = originalInit;
   });
 });
 
-// describe('MultimediaObject init', () => {
-//   const types = [
-//     'div',
-//     'input',
-//     'form',
-//     'img',
-//     'iframe',
-//     'video',
-//     'audio',
-//   ];
-
-//   types.forEach((type) => {
-//     const ob = new MultimediaObject({ type });
-//     test.skip(`should generate a DOMElement based on the type ${type}`, () => {
-//       expect(ob.element.nodeName).toEqual(type.toUpperCase());
-//     });
-//   });
-
-//   test.skip('should append the element to the body', () => {
-//     const ob2 = new MultimediaObject();
-//     expect(document.getElementById(ob2.uuid)).toEqual(ob2.element);
-//   });
-// });
-
-describe('NultimediaObject.setAbsoluteUrl', () => {
+describe('MultimediaObject.setAbsoluteUrl', () => {
 
   afterEach(() => {
     delete window.MultimediaObjectEditor;
@@ -249,7 +258,7 @@ describe('MultimediaObject.loadFromJSON', () => {
     expect(mo.test).toBeUndefined();
   });
 
-  test('should copy type if present, else put block', () => {
+  test('should copy type if present, else put div', () => {
     const params = {
       type: 'video',
     };
@@ -257,7 +266,7 @@ describe('MultimediaObject.loadFromJSON', () => {
     expect(mo.type).toEqual('video');
 
     const mo2 = new MultimediaObject();
-    expect(mo2.type).toEqual('block');
+    expect(mo2.type).toEqual('div');
   });
 
   test('should unserialize events and add them to this.events', () => {
@@ -292,6 +301,28 @@ describe('MultimediaObject.loadFromJSON', () => {
     expect(mo.functions).toHaveProperty('logMe');
     expect(mo.functions.logMe).toBeInstanceOf(Function);
     expect(mo.functions.logMe('test')).toEqual('test');
+  });
+
+  test('should not throw error if function is badly formed', () => {
+    const originalError = console.error;
+    console.error = jest.fn();
+
+    const params = {
+      exportedFunctions: {
+        "logMe": {
+          "args": ["test"],
+          "body": "return test var function"
+        },
+      },
+    };
+
+    expect(() => new MultimediaObject(params)).not.toThrow();
+
+    const mo = new MultimediaObject(params);
+
+    expect(mo.functions.logMe).toBeInstanceOf(Function);
+    expect(console.error).toHaveBeenCalled();
+    console.error = originalError;
   });
 
   test('should unserialize childs and add them as new MultimediaObjects and add ["load", "DOMParent", "DOMParentUUID"] keys', () => {
