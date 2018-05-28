@@ -9,6 +9,97 @@ describe('MultimediaObject.constructor', () => {
   });
 });
 
+describe('MultimediaObject.findDriver', () => {
+  test('should find driver by id', () => {
+    const mo = new MultimediaObject();
+
+    mo.loadDrivers([
+      {
+        id: 'test',
+      },
+      {
+        id: 'test2',
+      }
+    ]);
+
+    expect(mo.findDriver('test')).toEqual(0);
+    expect(mo.findDriver('test2')).toEqual(1);
+    expect(mo.findDriver('test2', false)).toEqual({ id: 'test2' });
+  });
+  test('should create drivers array if not present', () => {
+    const mo = new MultimediaObject();
+    expect(mo.data.drivers).toBeUndefined();
+    mo.findDriver('test');
+    expect(mo.data.drivers).toEqual([]);
+  });
+});
+
+describe('MultimediaObject.loadDrivers', () => {
+  test('should add drivers to array if not already present', () => {
+    const mo = new MultimediaObject();
+    
+    const originalError = console.error;
+    console.error = jest.fn();
+
+    mo.loadDrivers([
+      {
+        id: 'test',
+      },
+    ]);
+
+    expect(mo.findDriver('test')).toEqual(0);
+    expect(mo.data.drivers).toHaveLength(1);
+
+    mo.loadDrivers([
+      {
+        id: 'test',
+      },
+    ]);
+
+    expect(mo.data.drivers).toHaveLength(1);
+    expect(console.error).toHaveBeenCalled();
+
+    console.error = originalError;
+  });
+  test('should throw if not array', () => {
+    const mo = new MultimediaObject();
+    expect(() => mo.loadDrivers('test')).toThrowError(/should be of type/);
+  });
+});
+
+describe('MultimediaObject.removeDriver', () => {
+  test('should remove a driver by id if present', () => {
+    const mo = new MultimediaObject();
+
+    const originalError = console.error;
+    console.error = jest.fn();
+
+    mo.loadDrivers([
+      {
+        id: 'test',
+      },
+      {
+        id: 'test2',
+      }
+    ]);
+
+    expect(mo.data.drivers).toHaveLength(2);
+
+    mo.removeDriver({ id: 'test' });
+
+    expect(mo.data.drivers).toHaveLength(1);
+
+    expect(mo.data.drivers).toHaveLength(1);
+    mo.removeDriver({ id: 'test' });
+    expect(console.error).toHaveBeenCalled();
+    console.error = originalError;
+  });
+  test('should throw if not id', () => {
+    const mo = new MultimediaObject();
+    expect(() => mo.removeDriver('test')).toThrowError();
+  });
+});
+
 // describe('MultimediaObject init', () => {
 //   const types = [
 //     'div',
@@ -121,7 +212,7 @@ describe('NultimediaObject.setAbsoluteUrl', () => {
 });
 
 describe('MultimediaObject.loadFromJSON', () => {
-  test('should copy all keys if they are not ["animations", "events", "functions", "childs"]', () => {
+  test('should copy all keys if they are not ["events", "functions", "childs"]', () => {
     const params = {
       name: 'test',
       titi: 'test',
@@ -158,65 +249,6 @@ describe('MultimediaObject.loadFromJSON', () => {
     expect(mo.test).toBeUndefined();
   });
 
-  test('should copy animations and add a default animation if "default" key doesn\'t exist (for legacy purpose)', () => {
-    const params = {
-      animations: {
-        '0.01': {
-          stepTime: '0.01',
-          propertie: 'top',
-          stepValue: '10px',
-          easing: 'linear',
-        },
-        '1.00': {
-          stepTime: '1.00',
-          propertie: 'top',
-          stepValue: '100px',
-          easing: 'linear',
-        },
-      },
-    };
-
-    const mo = new MultimediaObject(params);
-
-    expect(mo.currentAnimation).toEqual(params.animations);
-    expect(mo.animations.default).toEqual(params.animations);
-  });
-
-  test('should copy animations and not add default if it exists', () => {
-    const params = {
-      animations: {
-        default : {
-          '0.01': {
-            stepTime: '0.01',
-            propertie: 'top',
-            stepValue: '10px',
-            easing: 'linear',
-          },
-          '1.00': {
-            stepTime: '1.00',
-            propertie: 'top',
-            stepValue: '100px',
-            easing: 'linear',
-          },
-        },
-      },
-    };
-
-    const mo = new MultimediaObject(params);
-
-    expect(mo.currentAnimation).toEqual({});
-    expect(mo.selectedAnimation).toEqual('default');
-    expect(mo.animations.default).toEqual(params.animations.default);
-  });
-
-  test('should copy selectedAnimation if present', () => {
-    const params = {
-      selectedAnimation: 'test',
-    };
-    const mo = new MultimediaObject(params);
-    expect(mo.selectedAnimation).toEqual('test');
-  });
-
   test('should copy type if present, else put block', () => {
     const params = {
       type: 'video',
@@ -226,19 +258,6 @@ describe('MultimediaObject.loadFromJSON', () => {
 
     const mo2 = new MultimediaObject();
     expect(mo2.type).toEqual('block');
-  });
-
-  test('should parse repeat value and copy else 0', () => {
-    const params = {
-      repeat: '10',
-    };
-    const mo = new MultimediaObject(params);
-    expect(typeof mo.repeat).toEqual('number');
-    expect(mo.repeat).toEqual(10);
-
-    const mo2 = new MultimediaObject();
-    expect(typeof mo2.repeat).toEqual('number');
-    expect(mo2.repeat).toEqual(0);
   });
 
   test('should unserialize events and add them to this.events', () => {
@@ -302,31 +321,10 @@ describe('MultimediaObject.loadFromJSON', () => {
     expect(mo.childs[1].name).toEqual('test2');
     expect(mo.childs[0].load).toEqual(true);
     expect(mo.childs[1].load).toEqual(true);
-    expect(mo.childs[0].DOMParent).toEqual(mo);
-    expect(mo.childs[1].DOMParent).toEqual(mo);
-    expect(mo.childs[0].DOMParentUUID).toEqual(mo.childs[1].DOMParentUUID);
-    expect(mo.childs[0].DOMParentUUID).toEqual(mo.uuid);
-    expect(mo.childs[1].DOMParentUUID).toEqual(mo.uuid);
 
     expect(mo.childs[0].titi).toEqual('test');
     expect(mo.childs[0].randomKey).toBeTruthy();
     expect(mo.childs[0].randomKey.test).toEqual('inside');
-  });
-
-  test('should add { "DOMParentUUID": json.DOMParentUUID } to MultimediaObject if in json', () => {
-    const params = {
-      DOMParentUUID: 'uuid',
-    };
-
-    const mo = new MultimediaObject(params);
-
-    expect(mo.DOMParentUUID).toEqual('uuid');
-  });
-
-  test('should add { "DOMParentUUID": null } to MultimediaObject if not in json', () => {
-    const mo = new MultimediaObject();
-
-    expect(mo.DOMParentUUID).toBeNull();
   });
 
   test('should convert booleans in data', () => {
